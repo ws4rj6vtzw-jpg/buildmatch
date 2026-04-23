@@ -28,6 +28,7 @@ type Persisted = {
   matches: Match[];
   messages: Message[];
   ratings: Rating[];
+  savedJobs: string[];
 };
 
 type DataContextValue = Persisted & {
@@ -51,6 +52,8 @@ type DataContextValue = Persisted & {
     comment?: string,
   ) => void;
   markJobComplete: (jobId: string) => void;
+  toggleSavedJob: (jobId: string) => void;
+  isJobSaved: (jobId: string) => boolean;
 };
 
 const DataContext = createContext<DataContextValue | null>(null);
@@ -68,6 +71,7 @@ const seed: Persisted = {
   matches: [],
   messages: [],
   ratings: [],
+  savedJobs: [],
 };
 
 export function DataProvider({ children }: { children: React.ReactNode }) {
@@ -88,6 +92,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
             matches: parsed.matches ?? [],
             messages: parsed.messages ?? [],
             ratings: parsed.ratings ?? [],
+            savedJobs: parsed.savedJobs ?? [],
           });
         }
       })
@@ -294,9 +299,27 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
       setData((prev) => ({
         ...prev,
         jobs: prev.jobs.filter((j) => j.id !== jobId),
+        savedJobs: prev.savedJobs.filter((id) => id !== jobId),
       }));
     },
     [],
+  );
+
+  const toggleSavedJob = useCallback<DataContextValue["toggleSavedJob"]>(
+    (jobId) => {
+      setData((prev) => ({
+        ...prev,
+        savedJobs: prev.savedJobs.includes(jobId)
+          ? prev.savedJobs.filter((id) => id !== jobId)
+          : [jobId, ...prev.savedJobs],
+      }));
+    },
+    [],
+  );
+
+  const isJobSaved = useCallback(
+    (jobId: string) => data.savedJobs.includes(jobId),
+    [data.savedJobs],
   );
 
   const value = useMemo<DataContextValue>(
@@ -311,6 +334,8 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
       sendMessage,
       rateUser,
       markJobComplete,
+      toggleSavedJob,
+      isJobSaved,
     }),
     [
       data,
@@ -323,6 +348,8 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
       sendMessage,
       rateUser,
       markJobComplete,
+      toggleSavedJob,
+      isJobSaved,
     ],
   );
 

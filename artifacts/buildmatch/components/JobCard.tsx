@@ -9,9 +9,11 @@ type Props = {
   job: Job;
   builderName?: string;
   onPress?: () => void;
+  saved?: boolean;
+  onToggleSave?: () => void;
 };
 
-export function JobCard({ job, builderName, onPress }: Props) {
+export function JobCard({ job, builderName, onPress, saved, onToggleSave }: Props) {
   const colors = useColors();
   return (
     <Pressable
@@ -31,12 +33,36 @@ export function JobCard({ job, builderName, onPress }: Props) {
             {job.trade}
           </Text>
         </View>
-        <Text style={[styles.rate, { color: colors.foreground }]}>
-          ${job.payRate}
-          <Text style={[styles.rateUnit, { color: colors.mutedForeground }]}>
-            /{job.payType === "hour" ? "hr" : "day"}
+        <View style={styles.headerRight}>
+          <Text style={[styles.rate, { color: colors.foreground }]}>
+            ${job.payRate}
+            <Text style={[styles.rateUnit, { color: colors.mutedForeground }]}>
+              /{job.payType === "hour" ? "hr" : "day"}
+            </Text>
           </Text>
-        </Text>
+          {onToggleSave ? (
+            <Pressable
+              onPress={(e) => {
+                e.stopPropagation();
+                onToggleSave();
+              }}
+              hitSlop={10}
+              style={({ pressed }) => [
+                styles.saveBtn,
+                {
+                  backgroundColor: saved ? colors.primary : colors.secondary,
+                  opacity: pressed ? 0.7 : 1,
+                },
+              ]}
+            >
+              <Feather
+                name="bookmark"
+                size={16}
+                color={saved ? colors.primaryForeground : colors.foreground}
+              />
+            </Pressable>
+          ) : null}
+        </View>
       </View>
 
       <Text style={[styles.title, { color: colors.foreground }]} numberOfLines={2}>
@@ -99,6 +125,18 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
+  },
+  headerRight: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+  },
+  saveBtn: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    alignItems: "center",
+    justifyContent: "center",
   },
   tradeChip: {
     paddingHorizontal: 10,
