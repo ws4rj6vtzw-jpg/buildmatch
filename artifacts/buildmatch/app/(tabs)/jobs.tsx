@@ -8,6 +8,7 @@ import {
   ScrollView,
   StyleSheet,
   Text,
+  TextInput,
   View,
 } from "react-native";
 
@@ -28,6 +29,8 @@ export default function JobsScreen() {
   const { savedJobs, toggleSavedJob } = useData();
   const [filter, setFilter] = useState<string | null>(null);
   const [savedOnly, setSavedOnly] = useState(false);
+  const [query, setQuery] = useState("");
+  const [minPay, setMinPay] = useState<number>(0);
 
   const myJobs = useMemo(
     () => (isWorker ? [] : jobs.filter((j) => j.builderId === user?.id)),
@@ -40,8 +43,38 @@ export default function JobsScreen() {
       const set = new Set(savedJobs);
       list = list.filter((j) => set.has(j.id));
     }
-    return filter ? list.filter((j) => j.trade === filter) : list;
-  }, [isWorker, jobs, filter, user?.id, savedOnly, savedJobs]);
+    if (filter) list = list.filter((j) => j.trade === filter);
+    if (isWorker && minPay > 0) {
+      list = list.filter((j) => {
+        const hourly = j.payType === "hour" ? j.payRate : j.payRate / 8;
+        return hourly >= minPay;
+      });
+    }
+    if (isWorker && query.trim().length > 0) {
+      const q = query.trim().toLowerCase();
+      list = list.filter((j) => {
+        const builder = builders.find((b) => b.id === j.builderId);
+        return (
+          j.title.toLowerCase().includes(q) ||
+          j.trade.toLowerCase().includes(q) ||
+          j.suburb.toLowerCase().includes(q) ||
+          j.postcode.toLowerCase().includes(q) ||
+          j.description.toLowerCase().includes(q) ||
+          j.requiredTickets.some((t) => t.toLowerCase().includes(q)) ||
+          (builder?.name?.toLowerCase().includes(q) ?? false)
+        );
+      });
+    }
+    return list;
+  }, [isWorker, jobs, filter, user?.id, savedOnly, savedJobs, query, minPay, builders]);
+
+  const PAY_OPTIONS: { label: string; value: number }[] = [
+    { label: "Any pay", value: 0 },
+    { label: "$40+/hr", value: 40 },
+    { label: "$60+/hr", value: 60 },
+    { label: "$80+/hr", value: 80 },
+    { label: "$100+/hr", value: 100 },
+  ];
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
@@ -163,6 +196,32 @@ export default function JobsScreen() {
             </Pressable>
           </View>
 
+          <View style={styles.searchRow}>
+            <View
+              style={[
+                styles.searchBox,
+                { backgroundColor: colors.card, borderColor: colors.border },
+              ]}
+            >
+              <Feather name="search" size={16} color={colors.mutedForeground} />
+              <TextInput
+                value={query}
+                onChangeText={setQuery}
+                placeholder="Search jobs, trades, tickets, suburbs"
+                placeholderTextColor={colors.mutedForeground}
+                style={[styles.searchInput, { color: colors.foreground }]}
+                returnKeyType="search"
+                autoCapitalize="none"
+                autoCorrect={false}
+              />
+              {query.length > 0 && (
+                <Pressable onPress={() => setQuery("")} hitSlop={8}>
+                  <Feather name="x-circle" size={16} color={colors.mutedForeground} />
+                </Pressable>
+              )}
+            </View>
+          </View>
+
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
@@ -175,6 +234,21 @@ export default function JobsScreen() {
                 label={t}
                 selected={filter === t}
                 onPress={() => setFilter(filter === t ? null : t)}
+              />
+            ))}
+          </ScrollView>
+
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={[styles.filters, { paddingTop: 0 }]}
+          >
+            {PAY_OPTIONS.map((opt) => (
+              <Pill
+                key={opt.value}
+                label={opt.label}
+                selected={minPay === opt.value}
+                onPress={() => setMinPay(opt.value)}
               />
             ))}
           </ScrollView>
@@ -259,6 +333,25 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 12,
     gap: 8,
+  },
+  searchRow: {
+    paddingHorizontal: 20,
+    paddingTop: 12,
+  },
+  searchBox: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    height: 44,
+    borderRadius: 12,
+    paddingHorizontal: 12,
+    borderWidth: 1,
+  },
+  searchInput: {
+    flex: 1,
+    fontSize: 14,
+    fontFamily: "Inter_500Medium",
+    paddingVertical: 0,
   },
   list: {
     padding: 20,
