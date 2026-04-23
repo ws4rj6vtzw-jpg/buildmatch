@@ -1,11 +1,12 @@
 import { Feather } from "@expo/vector-icons";
 import { router } from "expo-router";
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import {
   Alert,
   Platform,
   Pressable,
   ScrollView,
+  Share,
   StyleSheet,
   Text,
   View,
@@ -24,9 +25,38 @@ export default function ProfileScreen() {
   const { mode: themeMode, setMode: setThemeMode } = useTheme();
   const { user, signOut, setRole, updateProfile } = useAuth();
   const { matches, swipes, jobs, ratings, completedSnaps } = useData();
+  const [copied, setCopied] = useState(false);
 
   if (!user) return null;
   const isWorker = user.role === "worker";
+
+  // Stable referral code from user id
+  const referralCode = ("BM-" + user.id.replace(/\D/g, "").slice(0, 6).padEnd(6, "0")).toUpperCase();
+  const profileSlug = user.id.slice(0, 8);
+  const profileUrl = `https://buildmatch.app/u/${profileSlug}`;
+
+  const handleInvite = async () => {
+    const name = isWorker ? (user.fullName ?? "A tradie") : (user.companyName ?? "A builder");
+    const message = isWorker
+      ? `${name} is on BuildMatch — the app connecting tradies with builders. Join free and find your next job 👷\n\nhttps://buildmatch.app/join?ref=${referralCode}`
+      : `${name} is hiring on BuildMatch — the Tinder for construction jobs. Find great tradies fast 🔨\n\nhttps://buildmatch.app/join?ref=${referralCode}`;
+    try {
+      await Share.share({ message, url: `https://buildmatch.app/join?ref=${referralCode}` });
+    } catch {
+      // dismissed
+    }
+  };
+
+  const handleCopyLink = () => {
+    if (Platform.OS === "web" && typeof navigator !== "undefined" && navigator.clipboard) {
+      navigator.clipboard.writeText(profileUrl).then(() => {
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      });
+    } else {
+      Alert.alert("Profile link", profileUrl, [{ text: "OK" }]);
+    }
+  };
 
   const onSignOut = () => {
     if (Platform.OS === "web") {
@@ -280,6 +310,74 @@ export default function ProfileScreen() {
             </View>
           </View>
         )}
+
+        {/* Invite & share */}
+        <View style={[styles.section, { backgroundColor: colors.card, borderColor: colors.border }]}>
+          <View style={styles.inviteHeader}>
+            <View style={[styles.inviteIconWrap, { backgroundColor: colors.primary + "22" }]}>
+              <Feather name="users" size={20} color={colors.primary} />
+            </View>
+            <View style={{ flex: 1 }}>
+              <Text style={[styles.inviteTitle, { color: colors.foreground }]}>
+                Invite a mate
+              </Text>
+              <Text style={[styles.inviteBody, { color: colors.mutedForeground }]}>
+                {isWorker
+                  ? "Know a tradie looking for work? Send them your link."
+                  : "Know a builder who needs crew? Bring them on board."}
+              </Text>
+            </View>
+          </View>
+
+          {/* Referral code pill */}
+          <View style={[styles.refCodeRow, { backgroundColor: colors.elevated, borderColor: colors.border }]}>
+            <Text style={[styles.refCodeLabel, { color: colors.mutedForeground }]}>Your code</Text>
+            <Text style={[styles.refCode, { color: colors.primary }]}>{referralCode}</Text>
+          </View>
+
+          {/* Action buttons */}
+          <View style={styles.shareActions}>
+            <Pressable
+              onPress={handleInvite}
+              style={({ pressed }) => [
+                styles.shareBtn,
+                { backgroundColor: colors.primary, opacity: pressed ? 0.85 : 1, flex: 1 },
+              ]}
+            >
+              <Feather name="share-2" size={16} color={colors.primaryForeground} />
+              <Text style={[styles.shareBtnText, { color: colors.primaryForeground }]}>
+                Share invite
+              </Text>
+            </Pressable>
+
+            <Pressable
+              onPress={handleCopyLink}
+              style={({ pressed }) => [
+                styles.shareBtn,
+                {
+                  backgroundColor: colors.elevated,
+                  borderWidth: 1,
+                  borderColor: colors.border,
+                  opacity: pressed ? 0.85 : 1,
+                  flex: 1,
+                },
+              ]}
+            >
+              <Feather
+                name={copied ? "check" : "link"}
+                size={16}
+                color={copied ? colors.success : colors.foreground}
+              />
+              <Text style={[styles.shareBtnText, { color: copied ? colors.success : colors.foreground }]}>
+                {copied ? "Copied!" : "Copy profile"}
+              </Text>
+            </Pressable>
+          </View>
+
+          <Text style={[styles.profileUrlText, { color: colors.mutedForeground }]} numberOfLines={1}>
+            {profileUrl}
+          </Text>
+        </View>
 
         {/* Theme picker */}
         <View style={[styles.section, { backgroundColor: colors.card, borderColor: colors.border, gap: 12 }]}>
@@ -536,5 +634,72 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontFamily: "Inter_600SemiBold",
     letterSpacing: 0.2,
+  },
+  inviteHeader: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    gap: 12,
+  },
+  inviteIconWrap: {
+    width: 44,
+    height: 44,
+    borderRadius: 12,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  inviteTitle: {
+    fontSize: 15,
+    fontFamily: "Inter_700Bold",
+    letterSpacing: -0.2,
+    marginBottom: 2,
+  },
+  inviteBody: {
+    fontSize: 12,
+    fontFamily: "Inter_400Regular",
+    lineHeight: 18,
+  },
+  refCodeRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    borderRadius: 12,
+    borderWidth: 1,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    marginTop: 12,
+  },
+  refCodeLabel: {
+    fontSize: 11,
+    fontFamily: "Inter_600SemiBold",
+    letterSpacing: 0.5,
+    textTransform: "uppercase",
+  },
+  refCode: {
+    fontSize: 16,
+    fontFamily: "Inter_700Bold",
+    letterSpacing: 2,
+  },
+  shareActions: {
+    flexDirection: "row",
+    gap: 10,
+    marginTop: 10,
+  },
+  shareBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 8,
+    paddingVertical: 12,
+    borderRadius: 12,
+  },
+  shareBtnText: {
+    fontSize: 13,
+    fontFamily: "Inter_600SemiBold",
+  },
+  profileUrlText: {
+    fontSize: 11,
+    fontFamily: "Inter_400Regular",
+    textAlign: "center",
+    marginTop: 8,
   },
 });
