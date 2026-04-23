@@ -29,6 +29,7 @@ type Persisted = {
   messages: Message[];
   ratings: Rating[];
   savedJobs: string[];
+  lastReadAt: Record<string, number>;
 };
 
 type DataContextValue = Persisted & {
@@ -54,6 +55,9 @@ type DataContextValue = Persisted & {
   markJobComplete: (jobId: string) => void;
   toggleSavedJob: (jobId: string) => void;
   isJobSaved: (jobId: string) => boolean;
+  markMatchRead: (matchId: string) => void;
+  unreadCount: (matchId: string) => number;
+  totalUnread: number;
 };
 
 const DataContext = createContext<DataContextValue | null>(null);
@@ -72,6 +76,7 @@ const seed: Persisted = {
   messages: [],
   ratings: [],
   savedJobs: [],
+  lastReadAt: {},
 };
 
 export function DataProvider({ children }: { children: React.ReactNode }) {
@@ -93,6 +98,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
             messages: parsed.messages ?? [],
             ratings: parsed.ratings ?? [],
             savedJobs: parsed.savedJobs ?? [],
+            lastReadAt: parsed.lastReadAt ?? {},
           });
         }
       })
@@ -322,6 +328,38 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
     [data.savedJobs],
   );
 
+  const markMatchRead = useCallback<DataContextValue["markMatchRead"]>(
+    (matchId) => {
+      setData((prev) => ({
+        ...prev,
+        lastReadAt: { ...prev.lastReadAt, [matchId]: Date.now() },
+      }));
+    },
+    [],
+  );
+
+  const unreadCount = useCallback(
+    (matchId: string) => {
+      if (!meId) return 0;
+      const since = data.lastReadAt[matchId] ?? 0;
+      return data.messages.filter(
+        (m) => m.matchId === matchId && m.senderId !== meId && m.ts > since,
+      ).length;
+    },
+    [data.lastReadAt, data.messages, meId],
+  );
+
+  const totalUnread = useMemo(() => {
+    if (!meId) return 0;
+    let count = 0;
+    for (const m of data.messages) {
+      if (m.senderId === meId) continue;
+      const since = data.lastReadAt[m.matchId] ?? 0;
+      if (m.ts > since) count += 1;
+    }
+    return count;
+  }, [data.lastReadAt, data.messages, meId]);
+
   const value = useMemo<DataContextValue>(
     () => ({
       ...data,
@@ -336,6 +374,9 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
       markJobComplete,
       toggleSavedJob,
       isJobSaved,
+      markMatchRead,
+      unreadCount,
+      totalUnread,
     }),
     [
       data,
@@ -350,6 +391,9 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
       markJobComplete,
       toggleSavedJob,
       isJobSaved,
+      markMatchRead,
+      unreadCount,
+      totalUnread,
     ],
   );
 

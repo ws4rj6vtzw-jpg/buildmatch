@@ -19,7 +19,7 @@ import { useData } from "@/contexts/DataContext";
 export default function MatchesScreen() {
   const colors = useColors();
   const { user } = useAuth();
-  const { matches, messages, workers, builders, jobs } = useData();
+  const { matches, messages, workers, builders, jobs, unreadCount } = useData();
   const isWorker = user?.role === "worker";
 
   const items = useMemo(() => {
@@ -45,10 +45,11 @@ export default function MatchesScreen() {
             : (partner as { primaryTrade?: string } | undefined)?.primaryTrade ?? "",
           preview: lastMsg?.text ?? "Say hello — start the conversation",
           ts: lastMsg?.ts ?? m.createdAt,
+          unread: unreadCount(m.id),
         };
       })
       .sort((a, b) => b.ts - a.ts);
-  }, [matches, messages, workers, builders, jobs, isWorker]);
+  }, [matches, messages, workers, builders, jobs, isWorker, unreadCount]);
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
@@ -97,9 +98,28 @@ export default function MatchesScreen() {
                   {item.subtitle}
                 </Text>
               ) : null}
-              <Text style={[styles.preview, { color: colors.mutedForeground }]} numberOfLines={1}>
-                {item.preview}
-              </Text>
+              <View style={styles.previewRow}>
+                <Text
+                  style={[
+                    styles.preview,
+                    {
+                      color: item.unread > 0 ? colors.foreground : colors.mutedForeground,
+                      fontFamily:
+                        item.unread > 0 ? "Inter_600SemiBold" : "Inter_400Regular",
+                    },
+                  ]}
+                  numberOfLines={1}
+                >
+                  {item.preview}
+                </Text>
+                {item.unread > 0 ? (
+                  <View style={[styles.unreadDot, { backgroundColor: colors.primary }]}>
+                    <Text style={[styles.unreadText, { color: colors.primaryForeground }]}>
+                      {item.unread > 9 ? "9+" : item.unread}
+                    </Text>
+                  </View>
+                ) : null}
+              </View>
             </View>
           </Pressable>
         )}
@@ -156,10 +176,27 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontFamily: "Inter_600SemiBold",
   },
-  preview: {
-    fontSize: 14,
-    fontFamily: "Inter_400Regular",
+  previewRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
     marginTop: 2,
+  },
+  preview: {
+    flex: 1,
+    fontSize: 14,
+  },
+  unreadDot: {
+    minWidth: 22,
+    height: 22,
+    borderRadius: 11,
+    paddingHorizontal: 7,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  unreadText: {
+    fontSize: 11,
+    fontFamily: "Inter_700Bold",
   },
   empty: {
     flex: 1,

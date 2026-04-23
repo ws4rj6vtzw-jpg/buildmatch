@@ -2,13 +2,15 @@ import { Feather } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
 import { isLiquidGlassAvailable } from "expo-glass-effect";
 import { Tabs } from "expo-router";
-import { Icon, Label, NativeTabs } from "expo-router/unstable-native-tabs";
+import { Badge, Icon, Label, NativeTabs } from "expo-router/unstable-native-tabs";
 import React from "react";
 import { Platform, StyleSheet, View } from "react-native";
 
 import { useColors } from "@/hooks/useColors";
+import { useData } from "@/contexts/DataContext";
 
 function NativeTabLayout() {
+  const { totalUnread } = useData();
   return (
     <NativeTabs>
       <NativeTabs.Trigger name="discover">
@@ -22,6 +24,9 @@ function NativeTabLayout() {
       <NativeTabs.Trigger name="matches">
         <Icon sf={{ default: "message", selected: "message.fill" }} />
         <Label>Matches</Label>
+        {totalUnread > 0 ? (
+          <Badge>{totalUnread > 99 ? "99+" : String(totalUnread)}</Badge>
+        ) : null}
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="profile">
         <Icon sf={{ default: "person", selected: "person.fill" }} />
@@ -33,6 +38,7 @@ function NativeTabLayout() {
 
 function ClassicTabLayout() {
   const colors = useColors();
+  const { totalUnread } = useData();
   const isIOS = Platform.OS === "ios";
   const isWeb = Platform.OS === "web";
 
@@ -91,6 +97,16 @@ function ClassicTabLayout() {
         options={{
           title: "Matches",
           tabBarIcon: ({ color }) => <Feather name="message-circle" size={22} color={color} />,
+          tabBarBadge: totalUnread > 0 ? (totalUnread > 99 ? "99+" : totalUnread) : undefined,
+          tabBarBadgeStyle: {
+            backgroundColor: colors.primary,
+            color: colors.primaryForeground,
+            fontSize: 10,
+            fontFamily: "Inter_700Bold",
+            minWidth: 18,
+            height: 18,
+            lineHeight: 14,
+          },
         }}
       />
       <Tabs.Screen

@@ -1,6 +1,6 @@
 import { Feather } from "@expo/vector-icons";
 import { Stack, useLocalSearchParams } from "expo-router";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   FlatList,
   Platform,
@@ -34,9 +34,18 @@ export default function ChatScreen() {
     sendMessage,
     rateUser,
     markJobComplete,
+    markMatchRead,
   } = useData();
   const [draft, setDraft] = useState("");
   const [rateOpen, setRateOpen] = useState(false);
+
+  useEffect(() => {
+    if (id) markMatchRead(id);
+  }, [id, markMatchRead]);
+
+  useEffect(() => {
+    if (id && messages.length > 0) markMatchRead(id);
+  }, [id, messages.length, markMatchRead]);
 
   const match = matches.find((m) => m.id === id);
   const isWorker = user?.role === "worker";
