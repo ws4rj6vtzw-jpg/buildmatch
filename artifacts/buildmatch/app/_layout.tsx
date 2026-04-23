@@ -19,6 +19,7 @@ import { Notifier } from "@/components/Notifier";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { DataProvider } from "@/contexts/DataContext";
 import { NotificationProvider } from "@/contexts/NotificationContext";
+import { ThemeProvider } from "@/contexts/ThemeContext";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -60,15 +61,17 @@ export default function RootLayout() {
         <QueryClientProvider client={queryClient}>
           <GestureHandlerRootView style={{ flex: 1 }}>
             <KeyboardProvider>
-              <AuthProvider>
-                <DataProvider>
-                  <NotificationProvider>
-                    <StatusBar style="light" />
-                    <RootLayoutNav />
-                    <Notifier />
-                  </NotificationProvider>
-                </DataProvider>
-              </AuthProvider>
+              <ThemeProvider>
+                <AuthProvider>
+                  <DataProvider>
+                    <NotificationProvider>
+                      <StatusBar style="auto" />
+                      <RootLayoutNav />
+                      <Notifier />
+                    </NotificationProvider>
+                  </DataProvider>
+                </AuthProvider>
+              </ThemeProvider>
             </KeyboardProvider>
           </GestureHandlerRootView>
         </QueryClientProvider>

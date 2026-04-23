@@ -31,6 +31,41 @@ const colors = {
     surface: "#13151A",
     elevated: "#1E2128",
   },
+
+  // True light palette — warm off-whites, same brand
+  lightMode: {
+    text: "#0E0F12",
+    tint: "#FFB800",
+
+    background: "#F4F5F7",
+    foreground: "#0E0F12",
+
+    card: "#FFFFFF",
+    cardForeground: "#0E0F12",
+
+    primary: "#FFB800",
+    primaryForeground: "#0E0F12",
+
+    secondary: "#EDEFF3",
+    secondaryForeground: "#0E0F12",
+
+    muted: "#EDEFF3",
+    mutedForeground: "#64697A",
+
+    accent: "#FF5A1F",
+    accentForeground: "#FFFFFF",
+
+    destructive: "#EF4444",
+    destructiveForeground: "#FFFFFF",
+
+    border: "#E2E4EA",
+    input: "#E2E4EA",
+
+    success: "#22C55E",
+    surface: "#FAFBFC",
+    elevated: "#FFFFFF",
+  },
+
   radius: 16,
 };
 

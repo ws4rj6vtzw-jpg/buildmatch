@@ -17,9 +17,11 @@ import { ScreenHeader } from "@/components/ScreenHeader";
 import { useColors } from "@/hooks/useColors";
 import { useAuth } from "@/contexts/AuthContext";
 import { useData } from "@/contexts/DataContext";
+import { useTheme } from "@/contexts/ThemeContext";
 
 export default function ProfileScreen() {
   const colors = useColors();
+  const { mode: themeMode, setMode: setThemeMode } = useTheme();
   const { user, signOut, setRole, updateProfile } = useAuth();
   const { matches, swipes, jobs, ratings, completedSnaps } = useData();
 
@@ -279,6 +281,51 @@ export default function ProfileScreen() {
           </View>
         )}
 
+        {/* Theme picker */}
+        <View style={[styles.section, { backgroundColor: colors.card, borderColor: colors.border, gap: 12 }]}>
+          <Text style={[styles.sectionLabel, { color: colors.mutedForeground }]}>
+            Appearance
+          </Text>
+          <View style={styles.themeRow}>
+            {(
+              [
+                { value: "dark", icon: "moon", label: "Dark" },
+                { value: "light", icon: "sun", label: "Light" },
+                { value: "system", icon: "smartphone", label: "System" },
+              ] as const
+            ).map((opt) => {
+              const active = themeMode === opt.value;
+              return (
+                <Pressable
+                  key={opt.value}
+                  onPress={() => setThemeMode(opt.value)}
+                  style={({ pressed }) => [
+                    styles.themeOpt,
+                    {
+                      backgroundColor: active ? colors.primary : colors.elevated,
+                      opacity: pressed ? 0.85 : 1,
+                    },
+                  ]}
+                >
+                  <Feather
+                    name={opt.icon}
+                    size={18}
+                    color={active ? colors.primaryForeground : colors.mutedForeground}
+                  />
+                  <Text
+                    style={[
+                      styles.themeLabel,
+                      { color: active ? colors.primaryForeground : colors.foreground },
+                    ]}
+                  >
+                    {opt.label}
+                  </Text>
+                </Pressable>
+              );
+            })}
+          </View>
+        </View>
+
         <Row
           icon="edit-3"
           label="Edit profile"
@@ -471,5 +518,23 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontFamily: "Inter_500Medium",
     marginTop: 2,
+  },
+  themeRow: {
+    flexDirection: "row",
+    gap: 8,
+  },
+  themeOpt: {
+    flex: 1,
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 6,
+    paddingVertical: 14,
+    borderRadius: 12,
+  },
+  themeLabel: {
+    fontSize: 11,
+    fontFamily: "Inter_600SemiBold",
+    letterSpacing: 0.2,
   },
 });
