@@ -30,7 +30,7 @@ function jobDistanceKm(jobId: string) {
 export default function DiscoverScreen() {
   const colors = useColors();
   const { user, updateProfile } = useAuth();
-  const { workers, builders, jobs, swipes, swipeWorker, swipeJob } = useData();
+  const { workers, builders, jobs, swipes, swipeWorker, swipeJob, undoLastSwipe, canUndo } = useData();
   const [matchModal, setMatchModal] = useState<{ matchId: string; title: string } | null>(null);
   const [radiusOpen, setRadiusOpen] = useState(false);
 
@@ -168,28 +168,40 @@ export default function DiscoverScreen() {
         )}
       </View>
 
-      {top && (
+      {(top || canUndo) && (
         <View style={styles.actions}>
           <ActionBtn
-            icon="x"
-            color={colors.mutedForeground}
+            icon="rotate-ccw"
+            color={canUndo ? colors.accent : colors.mutedForeground}
             bg={colors.card}
-            onPress={() => handleSwipe(top.id, "left")}
-          />
-          <ActionBtn
-            icon="zap"
-            color={colors.accent}
-            bg={colors.card}
-            onPress={() => handleSwipe(top.id, "right")}
+            disabled={!canUndo}
+            onPress={() => {
+              const res = undoLastSwipe();
+              if (res && Platform.OS !== "web") {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(
+                  () => undefined,
+                );
+              }
+            }}
             small
           />
-          <ActionBtn
-            icon="check"
-            color={colors.primaryForeground}
-            bg={colors.primary}
-            onPress={() => handleSwipe(top.id, "right")}
-            big
-          />
+          {top && (
+            <ActionBtn
+              icon="x"
+              color={colors.mutedForeground}
+              bg={colors.card}
+              onPress={() => handleSwipe(top.id, "left")}
+            />
+          )}
+          {top && (
+            <ActionBtn
+              icon="check"
+              color={colors.primaryForeground}
+              bg={colors.primary}
+              onPress={() => handleSwipe(top.id, "right")}
+              big
+            />
+          )}
         </View>
       )}
 
@@ -309,6 +321,7 @@ function ActionBtn({
   onPress,
   big,
   small,
+  disabled,
 }: {
   icon: keyof typeof Feather.glyphMap;
   color: string;
@@ -316,12 +329,14 @@ function ActionBtn({
   onPress: () => void;
   big?: boolean;
   small?: boolean;
+  disabled?: boolean;
 }) {
   const size = big ? 68 : small ? 50 : 60;
   const iconSize = big ? 30 : small ? 22 : 26;
   return (
     <Pressable
       onPress={onPress}
+      disabled={disabled}
       style={({ pressed }) => [
         {
           width: size,
@@ -330,7 +345,7 @@ function ActionBtn({
           backgroundColor: bg,
           alignItems: "center",
           justifyContent: "center",
-          opacity: pressed ? 0.8 : 1,
+          opacity: disabled ? 0.4 : pressed ? 0.8 : 1,
           shadowColor: "#000",
           shadowOpacity: 0.4,
           shadowOffset: { width: 0, height: 6 },

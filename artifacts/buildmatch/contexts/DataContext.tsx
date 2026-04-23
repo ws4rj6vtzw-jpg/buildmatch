@@ -59,6 +59,8 @@ type DataContextValue = Persisted & {
   unreadCount: (matchId: string) => number;
   totalUnread: number;
   typingMatches: string[];
+  undoLastSwipe: () => { undoneId: string } | null;
+  canUndo: boolean;
 };
 
 const DataContext = createContext<DataContextValue | null>(null);
@@ -337,6 +339,60 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
     [data.savedJobs],
   );
 
+  const undoLastSwipe = useCallback<DataContextValue["undoLastSwipe"]>(() => {
+    let undone: { undoneId: string } | null = null;
+    setData((prev) => {
+      // Find last swipe by me
+      let idx = -1;
+      for (let i = prev.swipes.length - 1; i >= 0; i--) {
+        if (prev.swipes[i].fromId === meId) {
+          idx = i;
+          break;
+        }
+      }
+      if (idx === -1) return prev;
+      const last = prev.swipes[idx];
+      undone = { undoneId: last.toId };
+      const swipes = [...prev.swipes.slice(0, idx), ...prev.swipes.slice(idx + 1)];
+      // Remove any match created from this right-swipe
+      let matches = prev.matches;
+      let jobs = prev.jobs;
+      let messages = prev.messages;
+      if (last.direction === "right") {
+        const isJob = prev.jobs.some((j) => j.id === last.toId);
+        if (isJob) {
+          matches = matches.filter(
+            (m) => !(m.jobId === last.toId && m.workerId === meId),
+          );
+          jobs = jobs.map((j) =>
+            j.id === last.toId
+              ? { ...j, applicants: j.applicants.filter((a) => a !== meId) }
+              : j,
+          );
+        } else {
+          matches = matches.filter(
+            (m) => !(m.workerId === last.toId && m.builderId === meId && !m.jobId),
+          );
+        }
+        const removedIds = new Set(
+          prev.matches
+            .filter((m) => !matches.find((mm) => mm.id === m.id))
+            .map((m) => m.id),
+        );
+        if (removedIds.size > 0) {
+          messages = messages.filter((m) => !removedIds.has(m.matchId));
+        }
+      }
+      return { ...prev, swipes, matches, jobs, messages };
+    });
+    return undone;
+  }, [meId]);
+
+  const canUndo = useMemo(
+    () => data.swipes.some((s) => s.fromId === meId),
+    [data.swipes, meId],
+  );
+
   const markMatchRead = useCallback<DataContextValue["markMatchRead"]>(
     (matchId) => {
       setData((prev) => ({
@@ -387,6 +443,8 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
       unreadCount,
       totalUnread,
       typingMatches,
+      undoLastSwipe,
+      canUndo,
     }),
     [
       data,
@@ -405,6 +463,8 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
       markMatchRead,
       unreadCount,
       totalUnread,
+      undoLastSwipe,
+      canUndo,
     ],
   );
 
