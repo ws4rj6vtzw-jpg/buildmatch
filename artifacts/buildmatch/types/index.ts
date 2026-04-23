@@ -82,6 +82,18 @@ export type Rating = {
   ts: number;
 };
 
+export type CompletedSnap = {
+  jobId: string;
+  builderId: string;
+  workerId: string;
+  title: string;
+  trade: string;
+  payRate: number;
+  payType: "hour" | "day";
+  durationDays: number;
+  completedAt: number;
+};
+
 export type AuthUser = {
   id: string;
   phone: string;

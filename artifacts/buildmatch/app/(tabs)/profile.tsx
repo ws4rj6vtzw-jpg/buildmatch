@@ -1,6 +1,6 @@
 import { Feather } from "@expo/vector-icons";
 import { router } from "expo-router";
-import React from "react";
+import React, { useMemo } from "react";
 import {
   Alert,
   Platform,
@@ -21,7 +21,7 @@ import { useData } from "@/contexts/DataContext";
 export default function ProfileScreen() {
   const colors = useColors();
   const { user, signOut, setRole, updateProfile } = useAuth();
-  const { matches, swipes, jobs } = useData();
+  const { matches, swipes, jobs, ratings, completedSnaps } = useData();
 
   if (!user) return null;
   const isWorker = user.role === "worker";
@@ -47,11 +47,114 @@ export default function ProfileScreen() {
     router.replace("/onboarding/profile");
   };
 
+  // Ratings received by me
+  const myRatings = useMemo(
+    () => ratings.filter((r) => r.toId === user.id),
+    [ratings, user.id],
+  );
+
+  const avgRating = useMemo(() => {
+    if (myRatings.length === 0) return null;
+    return myRatings.reduce((s, r) => s + r.stars, 0) / myRatings.length;
+  }, [myRatings]);
+
+  // My completed snaps
+  const mySnaps = useMemo(
+    () =>
+      completedSnaps.filter((s) =>
+        isWorker ? s.workerId === user.id : s.builderId === user.id,
+      ),
+    [completedSnaps, isWorker, user.id],
+  );
+
+  // Estimated earnings/spend: payRate * durationDays * 8hrs (if hourly)
+  const totalDollars = useMemo(
+    () =>
+      mySnaps.reduce((sum, s) => {
+        const daily = s.payType === "hour" ? s.payRate * 8 : s.payRate;
+        return sum + daily * s.durationDays;
+      }, 0),
+    [mySnaps],
+  );
+
+  // Active jobs in progress (workers matched to an active job)
+  const activeJobs = useMemo(() => {
+    if (isWorker) {
+      return matches.filter((m) => {
+        if (!m.jobId) return false;
+        return jobs.some((j) => j.id === m.jobId);
+      });
+    }
+    return jobs.filter((j) => j.builderId === user.id);
+  }, [isWorker, matches, jobs, user.id]);
+
   const stats = [
     { label: "Matches", value: matches.length },
-    { label: isWorker ? "Applied" : "Posted", value: isWorker ? swipes.filter((s) => s.direction === "right").length : jobs.filter((j) => j.builderId === user.id).length },
-    { label: "Rating", value: (user.rating ?? 0).toFixed(1) },
+    {
+      label: isWorker ? "Applied" : "Posted",
+      value: isWorker
+        ? swipes.filter((s) => s.direction === "right").length
+        : jobs.filter((j) => j.builderId === user.id).length,
+    },
+    {
+      label: "Rating",
+      value: avgRating !== null ? avgRating.toFixed(1) : (user.rating ?? 0).toFixed(1),
+    },
   ];
+
+  const activityCards = isWorker
+    ? [
+        {
+          icon: "check-circle" as const,
+          label: "Jobs completed",
+          value: mySnaps.length.toString(),
+          color: colors.primary,
+        },
+        {
+          icon: "dollar-sign" as const,
+          label: "Est. earnings",
+          value: totalDollars > 0 ? `$${Math.round(totalDollars).toLocaleString()}` : "$0",
+          color: colors.accent,
+        },
+        {
+          icon: "briefcase" as const,
+          label: "Active now",
+          value: activeJobs.length.toString(),
+          color: colors.secondary,
+        },
+        {
+          icon: "star" as const,
+          label: "Reviews",
+          value: myRatings.length.toString(),
+          color: colors.primary,
+        },
+      ]
+    : [
+        {
+          icon: "check-circle" as const,
+          label: "Jobs completed",
+          value: mySnaps.length.toString(),
+          color: colors.primary,
+        },
+        {
+          icon: "dollar-sign" as const,
+          label: "Est. spend",
+          value: totalDollars > 0 ? `$${Math.round(totalDollars).toLocaleString()}` : "$0",
+          color: colors.accent,
+        },
+        {
+          icon: "users" as const,
+          label: "Hired",
+          value: matches.length.toString(),
+          color: colors.secondary,
+        },
+        {
+          icon: "star" as const,
+          label: "Reviews",
+          value: myRatings.length.toString(),
+          color: colors.primary,
+        },
+      ];
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
@@ -90,6 +193,59 @@ export default function ProfileScreen() {
               </View>
             ))}
           </View>
+        </View>
+
+        {/* Activity stats */}
+        <View style={[styles.section, { backgroundColor: colors.card, borderColor: colors.border, gap: 14 }]}>
+          <Text style={[styles.sectionLabel, { color: colors.mutedForeground }]}>
+            {isWorker ? "Your activity" : "Hiring activity"}
+          </Text>
+          <View style={styles.activityGrid}>
+            {activityCards.map((card) => (
+              <View
+                key={card.label}
+                style={[styles.activityCell, { backgroundColor: colors.elevated }]}
+              >
+                <View style={[styles.activityIcon, { backgroundColor: card.color + "22" }]}>
+                  <Feather name={card.icon} size={16} color={card.color} />
+                </View>
+                <Text style={[styles.activityValue, { color: colors.foreground }]}>
+                  {card.value}
+                </Text>
+                <Text style={[styles.activityLabel, { color: colors.mutedForeground }]}>
+                  {card.label}
+                </Text>
+              </View>
+            ))}
+          </View>
+
+          {mySnaps.length > 0 && (
+            <View style={{ gap: 8 }}>
+              <Text style={[styles.sectionLabel, { color: colors.mutedForeground }]}>
+                Recent completions
+              </Text>
+              {mySnaps.slice(-3).reverse().map((s) => (
+                <View
+                  key={s.jobId}
+                  style={[styles.snapRow, { borderColor: colors.border }]}
+                >
+                  <View
+                    style={[styles.snapDot, { backgroundColor: colors.primary + "33" }]}
+                  >
+                    <Feather name="check" size={12} color={colors.primary} />
+                  </View>
+                  <View style={{ flex: 1 }}>
+                    <Text style={[styles.snapTitle, { color: colors.foreground }]} numberOfLines={1}>
+                      {s.title}
+                    </Text>
+                    <Text style={[styles.snapMeta, { color: colors.mutedForeground }]}>
+                      {s.trade}  ·  {s.durationDays}d  ·  ${s.payType === "hour" ? `${s.payRate}/hr` : `${s.payRate}/day`}
+                    </Text>
+                  </View>
+                </View>
+              ))}
+            </View>
+          )}
         </View>
 
         {user.bio ? (
@@ -261,5 +417,59 @@ const styles = StyleSheet.create({
     fontFamily: "Inter_400Regular",
     textAlign: "center",
     marginTop: 16,
+  },
+  activityGrid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 10,
+  },
+  activityCell: {
+    flexBasis: "47%",
+    flexGrow: 1,
+    borderRadius: 12,
+    padding: 14,
+    gap: 4,
+    alignItems: "flex-start",
+  },
+  activityIcon: {
+    width: 32,
+    height: 32,
+    borderRadius: 10,
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 6,
+  },
+  activityValue: {
+    fontSize: 20,
+    fontFamily: "Inter_700Bold",
+    letterSpacing: -0.4,
+  },
+  activityLabel: {
+    fontSize: 11,
+    fontFamily: "Inter_500Medium",
+    letterSpacing: 0.2,
+  },
+  snapRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+    paddingVertical: 8,
+    borderTopWidth: 1,
+  },
+  snapDot: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  snapTitle: {
+    fontSize: 13,
+    fontFamily: "Inter_600SemiBold",
+  },
+  snapMeta: {
+    fontSize: 11,
+    fontFamily: "Inter_500Medium",
+    marginTop: 2,
   },
 });

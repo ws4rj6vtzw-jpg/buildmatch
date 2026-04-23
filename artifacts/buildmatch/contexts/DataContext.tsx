@@ -11,6 +11,7 @@ import React, {
 import { SEED_BUILDERS, SEED_JOBS, SEED_WORKERS } from "@/constants/seed";
 import type {
   Builder,
+  CompletedSnap,
   Job,
   Match,
   Message,
@@ -28,6 +29,7 @@ type Persisted = {
   matches: Match[];
   messages: Message[];
   ratings: Rating[];
+  completedSnaps: CompletedSnap[];
   savedJobs: string[];
   lastReadAt: Record<string, number>;
 };
@@ -78,6 +80,7 @@ const seed: Persisted = {
   matches: [],
   messages: [],
   ratings: [],
+  completedSnaps: [],
   savedJobs: [],
   lastReadAt: {},
 };
@@ -101,6 +104,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
             matches: parsed.matches ?? [],
             messages: parsed.messages ?? [],
             ratings: parsed.ratings ?? [],
+            completedSnaps: parsed.completedSnaps ?? [],
             savedJobs: parsed.savedJobs ?? [],
             lastReadAt: parsed.lastReadAt ?? {},
           });
@@ -313,11 +317,32 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
 
   const markJobComplete = useCallback<DataContextValue["markJobComplete"]>(
     (jobId) => {
-      setData((prev) => ({
-        ...prev,
-        jobs: prev.jobs.filter((j) => j.id !== jobId),
-        savedJobs: prev.savedJobs.filter((id) => id !== jobId),
-      }));
+      setData((prev) => {
+        const job = prev.jobs.find((j) => j.id === jobId);
+        const match = prev.matches.find((m) => m.jobId === jobId);
+        const snaps = job && match
+          ? [
+              ...prev.completedSnaps,
+              {
+                jobId: job.id,
+                builderId: job.builderId,
+                workerId: match.workerId,
+                title: job.title,
+                trade: job.trade,
+                payRate: job.payRate,
+                payType: job.payType,
+                durationDays: job.durationDays,
+                completedAt: Date.now(),
+              } satisfies CompletedSnap,
+            ]
+          : prev.completedSnaps;
+        return {
+          ...prev,
+          jobs: prev.jobs.filter((j) => j.id !== jobId),
+          savedJobs: prev.savedJobs.filter((id) => id !== jobId),
+          completedSnaps: snaps,
+        };
+      });
     },
     [],
   );
