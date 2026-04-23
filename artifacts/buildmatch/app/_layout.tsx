@@ -30,6 +30,7 @@ function RootLayoutNav() {
       <Stack.Screen name="(tabs)" />
       <Stack.Screen name="chat" />
       <Stack.Screen name="job" />
+      <Stack.Screen name="worker" />
       <Stack.Screen name="post-job" options={{ presentation: "modal" }} />
     </Stack>
   );

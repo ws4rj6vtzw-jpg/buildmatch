@@ -114,21 +114,38 @@ export default function JobDetail() {
               job.applicants.map((aid) => {
                 const w = workers.find((x) => x.id === aid);
                 return (
-                  <View
+                  <Pressable
                     key={aid}
-                    style={[styles.applicant, { backgroundColor: colors.card, borderColor: colors.border }]}
+                    onPress={() =>
+                      router.push({
+                        pathname: "/worker/[id]",
+                        params: { id: aid, jobId: job.id },
+                      })
+                    }
+                    style={({ pressed }) => [
+                      styles.applicant,
+                      {
+                        backgroundColor: colors.card,
+                        borderColor: colors.border,
+                        opacity: pressed ? 0.85 : 1,
+                      },
+                    ]}
                   >
                     <Avatar uri={w?.photo} name={w?.name ?? "Worker"} size={44} />
                     <View style={{ flex: 1 }}>
                       <Text style={[styles.builderName, { color: colors.foreground }]}>
                         {w?.name ?? "Worker"}
                       </Text>
-                      <Text style={[styles.builderMeta, { color: colors.mutedForeground }]}>
-                        {w?.primaryTrade ?? "Worker"}  ·  {w?.yearsExperience ?? 0} yrs
-                      </Text>
+                      <View style={{ flexDirection: "row", alignItems: "center", gap: 6, marginTop: 2 }}>
+                        <Feather name="star" size={11} color={colors.primary} />
+                        <Text style={[styles.builderMeta, { color: colors.mutedForeground }]}>
+                          {(w?.rating ?? 0).toFixed(1)}  ·  {w?.primaryTrade ?? "Worker"}  ·  {w?.yearsExperience ?? 0}y
+                        </Text>
+                      </View>
                     </View>
                     <Pressable
                       onPress={() => declineApplicant(job.id, aid)}
+                      hitSlop={6}
                       style={({ pressed }) => [
                         styles.actionSm,
                         { backgroundColor: colors.secondary, opacity: pressed ? 0.8 : 1 },
@@ -141,6 +158,7 @@ export default function JobDetail() {
                         const matchId = acceptApplicant(job.id, aid);
                         router.push(`/chat/${matchId}`);
                       }}
+                      hitSlop={6}
                       style={({ pressed }) => [
                         styles.actionSm,
                         { backgroundColor: colors.primary, opacity: pressed ? 0.85 : 1 },
@@ -148,7 +166,7 @@ export default function JobDetail() {
                     >
                       <Feather name="check" size={18} color={colors.primaryForeground} />
                     </Pressable>
-                  </View>
+                  </Pressable>
                 );
               })
             )}
