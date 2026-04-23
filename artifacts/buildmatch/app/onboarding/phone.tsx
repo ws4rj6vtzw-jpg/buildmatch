@@ -20,7 +20,7 @@ export default function PhoneScreen() {
   const { setPendingPhone } = useAuth();
   const [phone, setPhone] = useState("");
 
-  const valid = phone.replace(/\D/g, "").length >= 9;
+  const valid = phone.replace(/\D/g, "").length >= 10;
 
   const onContinue = () => {
     setPendingPhone(phone);
@@ -46,11 +46,11 @@ export default function PhoneScreen() {
           </Text>
 
           <View style={[styles.inputWrap, { backgroundColor: colors.card, borderColor: colors.border }]}>
-            <Text style={[styles.prefix, { color: colors.mutedForeground }]}>+61</Text>
+            <Text style={[styles.prefix, { color: colors.mutedForeground }]}>+44</Text>
             <TextInput
               value={phone}
               onChangeText={setPhone}
-              placeholder="412 345 678"
+              placeholder="7911 123456"
               placeholderTextColor={colors.mutedForeground}
               keyboardType="phone-pad"
               style={[styles.input, { color: colors.foreground }]}
