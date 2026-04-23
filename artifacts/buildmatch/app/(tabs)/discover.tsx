@@ -17,28 +17,43 @@ import { useColors } from "@/hooks/useColors";
 import { useAuth } from "@/contexts/AuthContext";
 import { useData } from "@/contexts/DataContext";
 
+const RADIUS_OPTIONS = [5, 15, 30, 50, 100, 0] as const; // 0 = any
+const DEFAULT_RADIUS = 25;
+
+function jobDistanceKm(jobId: string) {
+  // Deterministic pseudo-distance derived from job id (1..80km)
+  let h = 0;
+  for (let i = 0; i < jobId.length; i++) h = (h * 31 + jobId.charCodeAt(i)) | 0;
+  return Math.abs(h % 80) + 1;
+}
+
 export default function DiscoverScreen() {
   const colors = useColors();
-  const { user } = useAuth();
+  const { user, updateProfile } = useAuth();
   const { workers, builders, jobs, swipes, swipeWorker, swipeJob } = useData();
   const [matchModal, setMatchModal] = useState<{ matchId: string; title: string } | null>(null);
+  const [radiusOpen, setRadiusOpen] = useState(false);
 
   const isWorker = user?.role === "worker";
+  const radius = user?.travelRadiusKm ?? DEFAULT_RADIUS;
+  const radiusLabel = radius === 0 ? "Any distance" : `${radius}km`;
 
   const deck: SwipeCardData[] = useMemo(() => {
     const swipedIds = new Set(swipes.map((s) => s.toId));
+    const within = (km: number) => radius === 0 || km <= radius;
 
     if (isWorker) {
-      // Workers see jobs (and builder profiles when no jobs)
       const jobCards: SwipeCardData[] = jobs
         .filter((j) => !swipedIds.has(j.id))
-        .map((j) => {
+        .map((j) => ({ j, km: jobDistanceKm(j.id) }))
+        .filter(({ km }) => within(km))
+        .map(({ j, km }) => {
           const builder = builders.find((b) => b.id === j.builderId);
           return {
             id: j.id,
             title: j.title,
             subtitle: `${j.trade}  ·  ${builder?.name ?? "Builder"}`,
-            meta: `${j.suburb}  ·  ${j.startDate}  ·  $${j.payRate}/${j.payType === "hour" ? "hr" : "day"}`,
+            meta: `${j.suburb}  ·  ${km}km away  ·  $${j.payRate}/${j.payType === "hour" ? "hr" : "day"}`,
             photo: builder?.photo,
             badges: [
               { label: j.trade, tone: "primary" },
@@ -54,6 +69,7 @@ export default function DiscoverScreen() {
 
     return workers
       .filter((w) => !swipedIds.has(w.id))
+      .filter((w) => within(w.distanceKm))
       .map((w) => ({
         id: w.id,
         title: w.name,
@@ -71,7 +87,7 @@ export default function DiscoverScreen() {
         jobCount: w.completedJobs,
         description: w.bio,
       }));
-  }, [isWorker, jobs, workers, builders, swipes]);
+  }, [isWorker, jobs, workers, builders, swipes, radius]);
 
   const handleSwipe = (id: string, dir: "left" | "right") => {
     if (Platform.OS !== "web") {
@@ -102,6 +118,24 @@ export default function DiscoverScreen() {
       <ScreenHeader
         title={isWorker ? "Jobs near you" : "Discover workers"}
         subtitle={isWorker ? "Swipe right to apply" : "Swipe right to connect"}
+        right={
+          <Pressable
+            onPress={() => setRadiusOpen(true)}
+            style={({ pressed }) => [
+              styles.radiusBtn,
+              {
+                backgroundColor: colors.card,
+                borderColor: colors.border,
+                opacity: pressed ? 0.85 : 1,
+              },
+            ]}
+          >
+            <Feather name="map-pin" size={14} color={colors.primary} />
+            <Text style={[styles.radiusBtnText, { color: colors.foreground }]}>
+              {radiusLabel}
+            </Text>
+          </Pressable>
+        }
       />
 
       <View style={styles.deckWrap}>
@@ -198,6 +232,71 @@ export default function DiscoverScreen() {
             </Pressable>
           </View>
         </View>
+      </Modal>
+
+      <Modal
+        transparent
+        animationType="fade"
+        visible={radiusOpen}
+        onRequestClose={() => setRadiusOpen(false)}
+      >
+        <Pressable style={styles.modalBg} onPress={() => setRadiusOpen(false)}>
+          <Pressable
+            onPress={(e) => e.stopPropagation()}
+            style={[styles.radiusCard, { backgroundColor: colors.card }]}
+          >
+            <View style={[styles.modalIcon, { backgroundColor: colors.primary, marginBottom: 8 }]}>
+              <Feather name="map-pin" size={28} color={colors.primaryForeground} />
+            </View>
+            <Text style={[styles.modalTitle, { color: colors.foreground }]}>
+              Search radius
+            </Text>
+            <Text style={[styles.modalText, { color: colors.mutedForeground }]}>
+              Only show {isWorker ? "jobs" : "workers"} within this distance.
+            </Text>
+            <View style={styles.radiusGrid}>
+              {RADIUS_OPTIONS.map((km) => {
+                const selected = radius === km;
+                const label = km === 0 ? "Any" : `${km}km`;
+                return (
+                  <Pressable
+                    key={km}
+                    onPress={() => updateProfile({ travelRadiusKm: km })}
+                    style={({ pressed }) => [
+                      styles.radiusOpt,
+                      {
+                        backgroundColor: selected ? colors.primary : colors.elevated,
+                        opacity: pressed ? 0.85 : 1,
+                      },
+                    ]}
+                  >
+                    <Text
+                      style={[
+                        styles.radiusOptText,
+                        {
+                          color: selected ? colors.primaryForeground : colors.foreground,
+                        },
+                      ]}
+                    >
+                      {label}
+                    </Text>
+                  </Pressable>
+                );
+              })}
+            </View>
+            <Pressable
+              onPress={() => setRadiusOpen(false)}
+              style={({ pressed }) => [
+                styles.modalBtn,
+                { backgroundColor: colors.primary, opacity: pressed ? 0.85 : 1, marginTop: 18 },
+              ]}
+            >
+              <Text style={[styles.modalBtnText, { color: colors.primaryForeground }]}>
+                Done
+              </Text>
+            </Pressable>
+          </Pressable>
+        </Pressable>
       </Modal>
     </View>
   );
@@ -335,5 +434,44 @@ const styles = StyleSheet.create({
   modalLink: {
     fontSize: 14,
     fontFamily: "Inter_500Medium",
+  },
+  radiusBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 99,
+    borderWidth: 1,
+  },
+  radiusBtnText: {
+    fontSize: 13,
+    fontFamily: "Inter_600SemiBold",
+  },
+  radiusCard: {
+    width: "100%",
+    maxWidth: 380,
+    borderRadius: 24,
+    padding: 26,
+    alignItems: "center",
+  },
+  radiusGrid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "center",
+    gap: 10,
+    marginTop: 18,
+    alignSelf: "stretch",
+  },
+  radiusOpt: {
+    flexBasis: "30%",
+    flexGrow: 1,
+    paddingVertical: 14,
+    borderRadius: 12,
+    alignItems: "center",
+  },
+  radiusOptText: {
+    fontSize: 14,
+    fontFamily: "Inter_700Bold",
   },
 });
