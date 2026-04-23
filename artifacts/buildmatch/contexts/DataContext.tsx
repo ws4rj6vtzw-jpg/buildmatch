@@ -58,6 +58,7 @@ type DataContextValue = Persisted & {
   markMatchRead: (matchId: string) => void;
   unreadCount: (matchId: string) => number;
   totalUnread: number;
+  typingMatches: string[];
 };
 
 const DataContext = createContext<DataContextValue | null>(null);
@@ -82,6 +83,7 @@ const seed: Persisted = {
 export function DataProvider({ children }: { children: React.ReactNode }) {
   const { user } = useAuth();
   const [data, setData] = useState<Persisted>(seed);
+  const [typingMatches, setTypingMatches] = useState<string[]>([]);
   const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
@@ -257,8 +259,15 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
       };
       setData((prev) => ({ ...prev, messages: [...prev.messages, msg] }));
 
-      // Auto-reply from the other side after a brief delay (demo polish)
+      // Show typing indicator briefly, then auto-reply
       setTimeout(() => {
+        setTypingMatches((prev) =>
+          prev.includes(matchId) ? prev : [...prev, matchId],
+        );
+      }, 450);
+
+      setTimeout(() => {
+        setTypingMatches((prev) => prev.filter((id) => id !== matchId));
         setData((prev) => {
           const match = prev.matches.find((m) => m.id === matchId);
           if (!match) return prev;
@@ -279,7 +288,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
           };
           return { ...prev, messages: [...prev.messages, reply] };
         });
-      }, 1400);
+      }, 1900);
     },
     [meId],
   );
@@ -343,7 +352,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
       if (!meId) return 0;
       const since = data.lastReadAt[matchId] ?? 0;
       return data.messages.filter(
-        (m) => m.matchId === matchId && m.senderId !== meId && m.ts > since,
+        (m) => m.matchId === matchId && m.fromId !== meId && m.ts > since,
       ).length;
     },
     [data.lastReadAt, data.messages, meId],
@@ -353,7 +362,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
     if (!meId) return 0;
     let count = 0;
     for (const m of data.messages) {
-      if (m.senderId === meId) continue;
+      if (m.fromId === meId) continue;
       const since = data.lastReadAt[m.matchId] ?? 0;
       if (m.ts > since) count += 1;
     }
@@ -377,9 +386,11 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
       markMatchRead,
       unreadCount,
       totalUnread,
+      typingMatches,
     }),
     [
       data,
+      typingMatches,
       swipeWorker,
       swipeJob,
       applyToJob,

@@ -15,6 +15,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { Avatar } from "@/components/Avatar";
 import { RatingModal } from "@/components/RatingModal";
+import { TypingIndicator } from "@/components/TypingIndicator";
 import { useColors } from "@/hooks/useColors";
 import { useAuth } from "@/contexts/AuthContext";
 import { useData } from "@/contexts/DataContext";
@@ -35,7 +36,9 @@ export default function ChatScreen() {
     rateUser,
     markJobComplete,
     markMatchRead,
+    typingMatches,
   } = useData();
+  const isPartnerTyping = !!id && typingMatches.includes(id);
   const [draft, setDraft] = useState("");
   const [rateOpen, setRateOpen] = useState(false);
 
@@ -172,6 +175,7 @@ export default function ChatScreen() {
           keyboardDismissMode="interactive"
           keyboardShouldPersistTaps="handled"
           contentContainerStyle={styles.thread}
+          ListHeaderComponent={isPartnerTyping ? <TypingIndicator /> : null}
           ListEmptyComponent={
             <View style={styles.empty}>
               <Text style={[styles.emptyText, { color: colors.mutedForeground }]}>
