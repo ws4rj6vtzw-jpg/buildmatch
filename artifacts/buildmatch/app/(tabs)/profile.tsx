@@ -11,7 +11,7 @@ import {
   View,
 } from "react-native";
 
-import { Avatar } from "@/components/Avatar";
+import { AvatarPicker } from "@/components/AvatarPicker";
 import { Pill } from "@/components/Pill";
 import { ScreenHeader } from "@/components/ScreenHeader";
 import { useColors } from "@/hooks/useColors";
@@ -20,7 +20,7 @@ import { useData } from "@/contexts/DataContext";
 
 export default function ProfileScreen() {
   const colors = useColors();
-  const { user, signOut, setRole } = useAuth();
+  const { user, signOut, setRole, updateProfile } = useAuth();
   const { matches, swipes, jobs } = useData();
 
   if (!user) return null;
@@ -63,7 +63,12 @@ export default function ProfileScreen() {
       >
         <View style={[styles.card, { backgroundColor: colors.card, borderColor: colors.border }]}>
           <View style={{ alignItems: "center", gap: 12 }}>
-            <Avatar uri={user.photo} name={isWorker ? user.fullName : user.companyName} size={88} />
+            <AvatarPicker
+              uri={user.photo}
+              name={isWorker ? user.fullName : user.companyName}
+              size={88}
+              onChange={(uri) => updateProfile({ photo: uri })}
+            />
             <View style={{ alignItems: "center", gap: 4 }}>
               <Text style={[styles.name, { color: colors.foreground }]}>
                 {isWorker ? user.fullName : user.companyName}
