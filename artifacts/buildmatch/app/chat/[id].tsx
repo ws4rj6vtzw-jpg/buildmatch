@@ -14,6 +14,7 @@ import { KeyboardAvoidingView } from "react-native-keyboard-controller";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { Avatar } from "@/components/Avatar";
+import { RatingModal } from "@/components/RatingModal";
 import { useColors } from "@/hooks/useColors";
 import { useAuth } from "@/contexts/AuthContext";
 import { useData } from "@/contexts/DataContext";
@@ -23,8 +24,19 @@ export default function ChatScreen() {
   const insets = useSafeAreaInsets();
   const { id } = useLocalSearchParams<{ id: string }>();
   const { user } = useAuth();
-  const { matches, messages, workers, builders, jobs, sendMessage } = useData();
+  const {
+    matches,
+    messages,
+    workers,
+    builders,
+    jobs,
+    ratings,
+    sendMessage,
+    rateUser,
+    markJobComplete,
+  } = useData();
   const [draft, setDraft] = useState("");
+  const [rateOpen, setRateOpen] = useState(false);
 
   const match = matches.find((m) => m.id === id);
   const isWorker = user?.role === "worker";
@@ -53,6 +65,26 @@ export default function ChatScreen() {
     setDraft("");
   };
 
+  const partnerId = match
+    ? match.builderId === user?.id
+      ? match.workerId
+      : match.builderId
+    : "";
+  const alreadyRated = !!match && ratings.some(
+    (r) => r.fromId === user?.id && r.jobId === (match.jobId ?? ""),
+  );
+  const jobCompleted = !!match?.jobId && !job;
+
+  const onSubmitRating = (stars: number, comment: string) => {
+    if (!match) return;
+    const jobIdForRating = match.jobId ?? `match-${match.id}`;
+    rateUser(jobIdForRating, partnerId, stars, comment || undefined);
+    if (match.jobId && !jobCompleted) {
+      markJobComplete(match.jobId);
+    }
+    setRateOpen(false);
+  };
+
   if (!match) return null;
 
   return (
@@ -77,8 +109,47 @@ export default function ChatScreen() {
               </View>
             </View>
           ),
+          headerRight: () =>
+            alreadyRated ? (
+              <View style={[styles.headerBadge, { backgroundColor: colors.success }]}>
+                <Feather name="check" size={14} color="#fff" />
+              </View>
+            ) : (
+              <Pressable
+                onPress={() => setRateOpen(true)}
+                style={({ pressed }) => [
+                  styles.headerBtn,
+                  { backgroundColor: colors.primary, opacity: pressed ? 0.85 : 1 },
+                ]}
+              >
+                <Feather name="check" size={14} color={colors.primaryForeground} />
+                <Text
+                  style={[styles.headerBtnText, { color: colors.primaryForeground }]}
+                >
+                  {jobCompleted ? "Rate" : "Complete"}
+                </Text>
+              </Pressable>
+            ),
         }}
       />
+
+      {(jobCompleted || alreadyRated) && (
+        <View
+          style={[
+            styles.banner,
+            { backgroundColor: colors.elevated, borderBottomColor: colors.border },
+          ]}
+        >
+          <Feather
+            name={alreadyRated ? "star" : "check-circle"}
+            size={14}
+            color={colors.primary}
+          />
+          <Text style={[styles.bannerText, { color: colors.foreground }]}>
+            {alreadyRated ? "You rated this job" : "Job marked complete"}
+          </Text>
+        </View>
+      )}
 
       <KeyboardAvoidingView
         behavior="padding"
@@ -173,6 +244,14 @@ export default function ChatScreen() {
           </Pressable>
         </View>
       </KeyboardAvoidingView>
+
+      <RatingModal
+        visible={rateOpen}
+        partnerName={partner?.name ?? "this person"}
+        jobTitle={job?.title}
+        onClose={() => setRateOpen(false)}
+        onSubmit={onSubmitRating}
+      />
     </View>
   );
 }
@@ -235,5 +314,39 @@ const styles = StyleSheet.create({
     borderRadius: 22,
     alignItems: "center",
     justifyContent: "center",
+  },
+  headerBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 5,
+    paddingHorizontal: 12,
+    paddingVertical: 7,
+    borderRadius: 99,
+    marginRight: 12,
+  },
+  headerBtnText: {
+    fontSize: 12,
+    fontFamily: "Inter_600SemiBold",
+    letterSpacing: 0.2,
+  },
+  headerBadge: {
+    width: 26,
+    height: 26,
+    borderRadius: 13,
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: 12,
+  },
+  banner: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+  },
+  bannerText: {
+    fontSize: 13,
+    fontFamily: "Inter_500Medium",
   },
 });
