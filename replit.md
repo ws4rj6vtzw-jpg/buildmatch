@@ -1,27 +1,44 @@
-# Workspace
+# BuildMatch
 
-## Overview
+A Tinder-style mobile app that connects construction builders with skilled workers.
 
-pnpm workspace monorepo using TypeScript. Each package manages its own dependencies.
+## What it does
+
+- **Phone + OTP onboarding** (mocked for MVP — any 6-digit code works)
+- **Role selection**: builder or worker
+- **Profile setup** with trade, skills, tickets/licences, location
+- **Discover** — swipe deck of jobs (worker view) or workers (builder view) with PASS/MATCH stamps
+- **Job board** with trade filters, post a job (builder), apply (worker)
+- **Matches** list with chats — auto-reply demo for delight
+- **Profile** with stats, skill pills, edit, role switch, sign out
 
 ## Stack
 
-- **Monorepo tool**: pnpm workspaces
-- **Node.js version**: 24
-- **Package manager**: pnpm
-- **TypeScript version**: 5.9
-- **API framework**: Express 5
-- **Database**: PostgreSQL + Drizzle ORM
-- **Validation**: Zod (`zod/v4`), `drizzle-zod`
-- **API codegen**: Orval (from OpenAPI spec)
-- **Build**: esbuild (CJS bundle)
+- Expo SDK 54, React Native 0.81, expo-router 6
+- Frontend-only — AsyncStorage for persistence
+- Inter font, dark theme (charcoal + safety yellow + orange accent)
+- NativeTabs (liquid glass on iOS 26+) with classic Tabs fallback
 
-## Key Commands
+## Structure
 
-- `pnpm run typecheck` — full typecheck across all packages
-- `pnpm run build` — typecheck + build all packages
-- `pnpm --filter @workspace/api-spec run codegen` — regenerate API hooks and Zod schemas from OpenAPI spec
-- `pnpm --filter @workspace/db run push` — push DB schema changes (dev only)
-- `pnpm --filter @workspace/api-server run dev` — run API server locally
+```
+artifacts/buildmatch/
+├── app/
+│   ├── _layout.tsx           # Providers + Stack
+│   ├── index.tsx             # Auth redirect
+│   ├── onboarding/           # phone, otp, role, profile
+│   ├── (tabs)/               # discover, jobs, matches, profile
+│   ├── chat/[id].tsx         # 1:1 chat
+│   ├── job/[id].tsx          # Job detail + applicants
+│   └── post-job.tsx          # Builder job posting
+├── components/               # SwipeCard, JobCard, Pill, Avatar, ScreenHeader, PrimaryButton
+├── contexts/                 # AuthContext, DataContext (AsyncStorage-backed)
+├── constants/                # colors, trades, seed data
+└── types/index.ts
+```
 
-See the `pnpm-workspace` skill for workspace structure, TypeScript setup, and package details.
+## Notes
+
+- 6 seeded workers, 3 builders, 4 jobs to bring the swipe deck to life immediately
+- Right-swipe in MVP demo simulates mutual interest and creates a match instantly
+- Sending a chat message triggers a randomised auto-reply after ~1.4s (demo only)

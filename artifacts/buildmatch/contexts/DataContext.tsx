@@ -1,0 +1,336 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
+
+import { SEED_BUILDERS, SEED_JOBS, SEED_WORKERS } from "@/constants/seed";
+import type {
+  Builder,
+  Job,
+  Match,
+  Message,
+  Rating,
+  Swipe,
+  Worker,
+} from "@/types";
+import { useAuth } from "@/contexts/AuthContext";
+
+type Persisted = {
+  workers: Worker[];
+  builders: Builder[];
+  jobs: Job[];
+  swipes: Swipe[];
+  matches: Match[];
+  messages: Message[];
+  ratings: Rating[];
+};
+
+type DataContextValue = Persisted & {
+  swipeWorker: (
+    workerId: string,
+    direction: "right" | "left",
+  ) => { matched: boolean; matchId?: string };
+  swipeJob: (
+    jobId: string,
+    direction: "right" | "left",
+  ) => { matched: boolean; matchId?: string };
+  applyToJob: (jobId: string) => void;
+  acceptApplicant: (jobId: string, workerId: string) => string;
+  declineApplicant: (jobId: string, workerId: string) => void;
+  postJob: (job: Omit<Job, "id" | "createdAt" | "applicants" | "builderId">) => void;
+  sendMessage: (matchId: string, text: string) => void;
+  rateUser: (
+    jobId: string,
+    toId: string,
+    stars: number,
+    comment?: string,
+  ) => void;
+  markJobComplete: (jobId: string) => void;
+};
+
+const DataContext = createContext<DataContextValue | null>(null);
+const STORAGE_KEY = "buildmatch.data.v1";
+
+function newId(prefix = "id") {
+  return `${prefix}-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+}
+
+const seed: Persisted = {
+  workers: SEED_WORKERS,
+  builders: SEED_BUILDERS,
+  jobs: SEED_JOBS,
+  swipes: [],
+  matches: [],
+  messages: [],
+  ratings: [],
+};
+
+export function DataProvider({ children }: { children: React.ReactNode }) {
+  const { user } = useAuth();
+  const [data, setData] = useState<Persisted>(seed);
+  const [hydrated, setHydrated] = useState(false);
+
+  useEffect(() => {
+    AsyncStorage.getItem(STORAGE_KEY)
+      .then((raw) => {
+        if (raw) {
+          const parsed = JSON.parse(raw) as Persisted;
+          setData({
+            workers: parsed.workers?.length ? parsed.workers : SEED_WORKERS,
+            builders: parsed.builders?.length ? parsed.builders : SEED_BUILDERS,
+            jobs: parsed.jobs ?? [],
+            swipes: parsed.swipes ?? [],
+            matches: parsed.matches ?? [],
+            messages: parsed.messages ?? [],
+            ratings: parsed.ratings ?? [],
+          });
+        }
+      })
+      .finally(() => setHydrated(true));
+  }, []);
+
+  useEffect(() => {
+    if (hydrated) {
+      AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    }
+  }, [data, hydrated]);
+
+  const meId = user?.id ?? "anon";
+
+  const swipeWorker = useCallback<DataContextValue["swipeWorker"]>(
+    (workerId, direction) => {
+      let matched = false;
+      let matchId: string | undefined;
+      setData((prev) => {
+        const swipe: Swipe = { fromId: meId, toId: workerId, direction, ts: Date.now() };
+        let matches = prev.matches;
+        if (direction === "right") {
+          // Auto-match: in MVP demo, every right-swipe on a seeded worker creates a match
+          // (simulating mutual interest from seed data).
+          matchId = newId("m");
+          matched = true;
+          matches = [
+            ...matches,
+            { id: matchId, builderId: meId, workerId, createdAt: Date.now() },
+          ];
+        }
+        return { ...prev, swipes: [...prev.swipes, swipe], matches };
+      });
+      return { matched, matchId };
+    },
+    [meId],
+  );
+
+  const swipeJob = useCallback<DataContextValue["swipeJob"]>(
+    (jobId, direction) => {
+      let matched = false;
+      let matchId: string | undefined;
+      setData((prev) => {
+        const job = prev.jobs.find((j) => j.id === jobId);
+        const swipe: Swipe = { fromId: meId, toId: jobId, direction, ts: Date.now() };
+        let matches = prev.matches;
+        let jobs = prev.jobs;
+        if (direction === "right" && job) {
+          // Worker right-swiping on job acts as an application
+          jobs = jobs.map((j) =>
+            j.id === jobId && !j.applicants.includes(meId)
+              ? { ...j, applicants: [...j.applicants, meId] }
+              : j,
+          );
+          // Auto-accept in demo for delight
+          matchId = newId("m");
+          matched = true;
+          matches = [
+            ...matches,
+            {
+              id: matchId,
+              builderId: job.builderId,
+              workerId: meId,
+              jobId: job.id,
+              createdAt: Date.now(),
+            },
+          ];
+        }
+        return { ...prev, swipes: [...prev.swipes, swipe], matches, jobs };
+      });
+      return { matched, matchId };
+    },
+    [meId],
+  );
+
+  const applyToJob = useCallback(
+    (jobId: string) => {
+      setData((prev) => ({
+        ...prev,
+        jobs: prev.jobs.map((j) =>
+          j.id === jobId && !j.applicants.includes(meId)
+            ? { ...j, applicants: [...j.applicants, meId] }
+            : j,
+        ),
+      }));
+    },
+    [meId],
+  );
+
+  const acceptApplicant = useCallback<DataContextValue["acceptApplicant"]>(
+    (jobId, workerId) => {
+      const matchId = newId("m");
+      setData((prev) => {
+        const job = prev.jobs.find((j) => j.id === jobId);
+        if (!job) return prev;
+        return {
+          ...prev,
+          matches: [
+            ...prev.matches,
+            {
+              id: matchId,
+              builderId: job.builderId,
+              workerId,
+              jobId,
+              createdAt: Date.now(),
+            },
+          ],
+          jobs: prev.jobs.map((j) =>
+            j.id === jobId
+              ? { ...j, applicants: j.applicants.filter((a) => a !== workerId) }
+              : j,
+          ),
+        };
+      });
+      return matchId;
+    },
+    [],
+  );
+
+  const declineApplicant = useCallback<DataContextValue["declineApplicant"]>(
+    (jobId, workerId) => {
+      setData((prev) => ({
+        ...prev,
+        jobs: prev.jobs.map((j) =>
+          j.id === jobId
+            ? { ...j, applicants: j.applicants.filter((a) => a !== workerId) }
+            : j,
+        ),
+      }));
+    },
+    [],
+  );
+
+  const postJob = useCallback<DataContextValue["postJob"]>(
+    (job) => {
+      const fresh: Job = {
+        ...job,
+        id: newId("j"),
+        builderId: meId,
+        createdAt: Date.now(),
+        applicants: [],
+      };
+      setData((prev) => ({ ...prev, jobs: [fresh, ...prev.jobs] }));
+    },
+    [meId],
+  );
+
+  const sendMessage = useCallback<DataContextValue["sendMessage"]>(
+    (matchId, text) => {
+      const msg: Message = {
+        id: newId("msg"),
+        matchId,
+        fromId: meId,
+        text,
+        ts: Date.now(),
+      };
+      setData((prev) => ({ ...prev, messages: [...prev.messages, msg] }));
+
+      // Auto-reply from the other side after a brief delay (demo polish)
+      setTimeout(() => {
+        setData((prev) => {
+          const match = prev.matches.find((m) => m.id === matchId);
+          if (!match) return prev;
+          const otherId = match.builderId === meId ? match.workerId : match.builderId;
+          const replies = [
+            "Sounds good. When can you start?",
+            "Cheers — I'll send through the address shortly.",
+            "Yep, I've got the tickets you need.",
+            "On site by 7? I'll bring my own tools.",
+            "All good. Let me confirm with the crew.",
+          ];
+          const reply: Message = {
+            id: newId("msg"),
+            matchId,
+            fromId: otherId,
+            text: replies[Math.floor(Math.random() * replies.length)] ?? "Sounds good.",
+            ts: Date.now(),
+          };
+          return { ...prev, messages: [...prev.messages, reply] };
+        });
+      }, 1400);
+    },
+    [meId],
+  );
+
+  const rateUser = useCallback<DataContextValue["rateUser"]>(
+    (jobId, toId, stars, comment) => {
+      const r: Rating = {
+        id: newId("r"),
+        jobId,
+        fromId: meId,
+        toId,
+        stars,
+        comment,
+        ts: Date.now(),
+      };
+      setData((prev) => ({ ...prev, ratings: [...prev.ratings, r] }));
+    },
+    [meId],
+  );
+
+  const markJobComplete = useCallback<DataContextValue["markJobComplete"]>(
+    (jobId) => {
+      setData((prev) => ({
+        ...prev,
+        jobs: prev.jobs.filter((j) => j.id !== jobId),
+      }));
+    },
+    [],
+  );
+
+  const value = useMemo<DataContextValue>(
+    () => ({
+      ...data,
+      swipeWorker,
+      swipeJob,
+      applyToJob,
+      acceptApplicant,
+      declineApplicant,
+      postJob,
+      sendMessage,
+      rateUser,
+      markJobComplete,
+    }),
+    [
+      data,
+      swipeWorker,
+      swipeJob,
+      applyToJob,
+      acceptApplicant,
+      declineApplicant,
+      postJob,
+      sendMessage,
+      rateUser,
+      markJobComplete,
+    ],
+  );
+
+  return <DataContext.Provider value={value}>{children}</DataContext.Provider>;
+}
+
+export function useData() {
+  const ctx = useContext(DataContext);
+  if (!ctx) throw new Error("useData must be used inside DataProvider");
+  return ctx;
+}

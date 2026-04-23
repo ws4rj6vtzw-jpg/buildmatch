@@ -1,0 +1,8 @@
+uploads = []
+outputs = []
+
+[[generated]]
+id = "HyVHFOQV9TlV-Fyv1oArs"
+uri = "file://artifacts/buildmatch/assets/images/icon.png"
+type = "image"
+title = "generated_image"
