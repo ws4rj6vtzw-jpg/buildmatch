@@ -36,9 +36,10 @@ type Props = {
   onSwipe: (direction: "left" | "right") => void;
   onTap?: () => void;
   stackOffset?: number;
+  rightLabel?: string;
 };
 
-export function SwipeCard({ data, isTop, onSwipe, onTap, stackOffset = 0 }: Props) {
+export function SwipeCard({ data, isTop, onSwipe, onTap, stackOffset = 0, rightLabel = "MATCH" }: Props) {
   const colors = useColors();
   const translateX = useRef(new Animated.Value(0)).current;
   const translateY = useRef(new Animated.Value(0)).current;
@@ -130,7 +131,7 @@ export function SwipeCard({ data, isTop, onSwipe, onTap, stackOffset = 0 }: Prop
             { borderColor: colors.primary, opacity: likeOpacity },
           ]}
         >
-          <Text style={[styles.stampText, { color: colors.primary }]}>MATCH</Text>
+          <Text style={[styles.stampText, { color: colors.primary }]}>{rightLabel}</Text>
         </Animated.View>
         <Animated.View
           style={[

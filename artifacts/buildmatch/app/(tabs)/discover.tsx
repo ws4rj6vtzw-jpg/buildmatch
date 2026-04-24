@@ -164,6 +164,7 @@ export default function DiscoverScreen() {
             isTop
             stackOffset={0}
             onSwipe={(d) => handleSwipe(top.id, d)}
+            rightLabel={isWorker ? "MATCH" : "GO"}
           />
         )}
       </View>
