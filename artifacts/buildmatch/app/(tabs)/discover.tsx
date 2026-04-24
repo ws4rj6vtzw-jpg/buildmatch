@@ -81,6 +81,7 @@ export default function DiscoverScreen() {
             label: w.availableNow ? "Available now" : `Avail. ${w.availableFrom ?? "soon"}`,
             tone: w.availableNow ? "primary" : "default",
           },
+          ...(w.publicLiabilityInsured ? [{ label: "Insured", tone: "accent" as const }] : []),
           ...w.skills.slice(0, 2).map((s) => ({ label: s })),
         ],
         rating: w.rating,

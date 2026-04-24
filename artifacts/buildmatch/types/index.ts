@@ -17,6 +17,8 @@ export type Worker = {
   bio: string;
   tickets: string[];
   hourlyRate: number;
+  publicLiabilityInsured?: boolean;
+  insurerName?: string;
 };
 
 export type Builder = {
@@ -118,4 +120,6 @@ export type AuthUser = {
   rating?: number;
   completedJobs?: number;
   profileComplete?: boolean;
+  publicLiabilityInsured?: boolean;
+  insurerName?: string;
 };

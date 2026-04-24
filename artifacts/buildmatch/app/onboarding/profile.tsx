@@ -4,6 +4,7 @@ import {
   Platform,
   ScrollView,
   StyleSheet,
+  Switch,
   Text,
   TextInput,
   View,
@@ -32,6 +33,8 @@ export default function ProfileSetupScreen() {
   const [suburb, setSuburb] = useState(user?.suburb ?? "");
   const [postcode, setPostcode] = useState(user?.postcode ?? "");
   const [bio, setBio] = useState(user?.bio ?? "");
+  const [publicLiabilityInsured, setPublicLiabilityInsured] = useState(user?.publicLiabilityInsured ?? false);
+  const [insurerName, setInsurerName] = useState(user?.insurerName ?? "");
 
   const toggle = (
     list: string[],
@@ -57,6 +60,8 @@ export default function ProfileSetupScreen() {
         postcode,
         bio,
         availableNow: true,
+        publicLiabilityInsured,
+        insurerName: publicLiabilityInsured ? insurerName : "",
       });
     } else {
       await updateProfile({
@@ -159,6 +164,34 @@ export default function ProfileSetupScreen() {
                   />
                 ))}
               </View>
+            </Field>
+
+            <Field label="Public liability insurance">
+              <View style={[styles.insuranceRow, { backgroundColor: colors.card, borderColor: publicLiabilityInsured ? colors.primary : colors.border }]}>
+                <View style={{ flex: 1 }}>
+                  <Text style={[styles.insuranceTitle, { color: colors.foreground }]}>
+                    I hold PLI cover
+                  </Text>
+                  <Text style={[styles.insuranceSub, { color: colors.mutedForeground }]}>
+                    Required for most commercial sites
+                  </Text>
+                </View>
+                <Switch
+                  value={publicLiabilityInsured}
+                  onValueChange={setPublicLiabilityInsured}
+                  trackColor={{ false: colors.border, true: colors.primary }}
+                  thumbColor={colors.primaryForeground}
+                />
+              </View>
+              {publicLiabilityInsured && (
+                <TextInput
+                  value={insurerName}
+                  onChangeText={setInsurerName}
+                  placeholder="Insurer name (e.g. AXA, Hiscox)"
+                  placeholderTextColor={colors.mutedForeground}
+                  style={[styles.input, { color: colors.foreground, backgroundColor: colors.card, borderColor: colors.border, marginTop: 8 }]}
+                />
+              )}
             </Field>
 
             <Field label="Years of experience">
@@ -286,5 +319,22 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     flexWrap: "wrap",
     gap: 8,
+  },
+  insuranceRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+    padding: 14,
+    borderRadius: 12,
+    borderWidth: 1.5,
+  },
+  insuranceTitle: {
+    fontSize: 14,
+    fontFamily: "Inter_600SemiBold",
+  },
+  insuranceSub: {
+    fontSize: 12,
+    fontFamily: "Inter_400Regular",
+    marginTop: 2,
   },
 });

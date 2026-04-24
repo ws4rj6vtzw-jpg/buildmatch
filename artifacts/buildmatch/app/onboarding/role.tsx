@@ -17,7 +17,7 @@ export default function RoleScreen() {
   const onContinue = async () => {
     if (!selected) return;
     await setRole(selected);
-    router.replace("/onboarding/profile");
+    router.replace("/onboarding/disclaimer");
   };
 
   const Card = ({
