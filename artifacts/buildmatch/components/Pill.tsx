@@ -45,9 +45,14 @@ const styles = StyleSheet.create({
     paddingVertical: 7,
     borderRadius: 99,
     borderWidth: 1,
+    alignItems: "center",
+    justifyContent: "center",
   },
   text: {
     fontSize: 13,
     fontFamily: "Inter_500Medium",
+    lineHeight: 18,
+    includeFontPadding: false,
+    textAlignVertical: "center",
   },
 });
