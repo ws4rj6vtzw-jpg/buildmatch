@@ -40,7 +40,7 @@ export function Notifier() {
         // Suppress if currently in chat for this match
         if (pathname?.includes(`/chat/${m.id}`)) continue;
         notify({
-          title: "It's a match",
+          title: "✓ Matched",
           body: job
             ? `${other?.name ?? "Someone"} on ${job.title}`
             : `${other?.name ?? "Someone"} wants to connect`,

@@ -215,11 +215,8 @@ export default function DiscoverScreen() {
         <View style={styles.modalBg}>
           <View style={[styles.modalCard, { backgroundColor: colors.card }]}>
             <View style={[styles.modalIcon, { backgroundColor: colors.primary }]}>
-              <Feather name="zap" size={36} color={colors.primaryForeground} />
+              <Feather name="check" size={36} color={colors.primaryForeground} />
             </View>
-            <Text style={[styles.modalTitle, { color: colors.foreground }]}>
-              It's a match
-            </Text>
             <Text style={[styles.modalText, { color: colors.mutedForeground }]}>
               {matchModal?.title}
             </Text>
