@@ -17,6 +17,8 @@ export const SEED_WORKERS: Worker[] = [
     bio: "Second-fix specialist. Reliable, on time, brings my own tools.",
     tickets: ["White Card", "Working at Heights"],
     hourlyRate: 78,
+    publicLiabilityInsured: true,
+    insurerName: "Hiscox",
   },
   {
     id: "w-002",
@@ -52,6 +54,8 @@ export const SEED_WORKERS: Worker[] = [
     bio: "Licensed sparky. Residential rough-ins and commercial fit-outs.",
     tickets: ["White Card", "EWP License"],
     hourlyRate: 92,
+    publicLiabilityInsured: true,
+    insurerName: "AXA",
   },
   {
     id: "w-004",
@@ -69,6 +73,8 @@ export const SEED_WORKERS: Worker[] = [
     bio: "Heritage restoration and modern builds. 200 bricks/hour pace.",
     tickets: ["White Card", "First Aid"],
     hourlyRate: 80,
+    publicLiabilityInsured: true,
+    insurerName: "Zurich",
   },
   {
     id: "w-005",
@@ -104,6 +110,8 @@ export const SEED_WORKERS: Worker[] = [
     bio: "Hot water, gas, drainage. Emergency calls accepted.",
     tickets: ["White Card", "Confined Space", "First Aid"],
     hourlyRate: 95,
+    publicLiabilityInsured: true,
+    insurerName: "Simply Business",
   },
 ];
 
