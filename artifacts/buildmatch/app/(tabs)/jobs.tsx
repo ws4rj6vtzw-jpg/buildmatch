@@ -70,10 +70,10 @@ export default function JobsScreen() {
 
   const PAY_OPTIONS: { label: string; value: number }[] = [
     { label: "Any pay", value: 0 },
-    { label: "$40+/hr", value: 40 },
-    { label: "$60+/hr", value: 60 },
-    { label: "$80+/hr", value: 80 },
-    { label: "$100+/hr", value: 100 },
+    { label: "£20+/hr", value: 20 },
+    { label: "£30+/hr", value: 30 },
+    { label: "£40+/hr", value: 40 },
+    { label: "£50+/hr", value: 50 },
   ];
 
   return (
@@ -207,7 +207,7 @@ export default function JobsScreen() {
               <TextInput
                 value={query}
                 onChangeText={setQuery}
-                placeholder="Search jobs, trades, tickets, suburbs"
+                placeholder="Search jobs, trades, tickets, areas"
                 placeholderTextColor={colors.mutedForeground}
                 style={[styles.searchInput, { color: colors.foreground }]}
                 returnKeyType="search"

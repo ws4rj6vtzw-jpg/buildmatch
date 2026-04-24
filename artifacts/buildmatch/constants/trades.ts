@@ -24,14 +24,16 @@ export const TRADES = [
 export type Trade = (typeof TRADES)[number];
 
 export const TICKETS = [
-  "White Card",
+  "CSCS Card",
   "Working at Heights",
   "Confined Space",
-  "EWP License",
-  "Forklift License",
+  "IPAF Card",
+  "FLT Licence",
   "First Aid",
   "Asbestos Awareness",
-  "Traffic Control",
+  "Streetworks Licence",
+  "SMSTS",
+  "SSSTS",
 ] as const;
 
 export type Ticket = (typeof TICKETS)[number];

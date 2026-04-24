@@ -35,7 +35,7 @@ export function JobCard({ job, builderName, onPress, saved, onToggleSave }: Prop
         </View>
         <View style={styles.headerRight}>
           <Text style={[styles.rate, { color: colors.foreground }]}>
-            ${job.payRate}
+            £{job.payRate}
             <Text style={[styles.rateUnit, { color: colors.mutedForeground }]}>
               /{job.payType === "hour" ? "hr" : "day"}
             </Text>

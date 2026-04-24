@@ -49,7 +49,7 @@ export default function OtpScreen() {
             Enter the 6-digit code
           </Text>
           <Text style={[styles.subtitle, { color: colors.mutedForeground }]}>
-            Sent to +61 {pendingPhone ?? ""}. For this demo any 6 digits will work.
+            Sent to +44 {pendingPhone ?? ""}. For this demo any 6 digits will work.
           </Text>
 
           <Pressable onPress={() => inputRef.current?.focus()} style={styles.cellRow}>

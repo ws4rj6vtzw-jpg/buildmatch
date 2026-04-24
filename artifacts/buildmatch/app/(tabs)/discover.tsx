@@ -53,7 +53,7 @@ export default function DiscoverScreen() {
             id: j.id,
             title: j.title,
             subtitle: `${j.trade}  ·  ${builder?.name ?? "Builder"}`,
-            meta: `${j.suburb}  ·  ${km}km away  ·  $${j.payRate}/${j.payType === "hour" ? "hr" : "day"}`,
+            meta: `${j.suburb}  ·  ${km}km away  ·  £${j.payRate}/${j.payType === "hour" ? "hr" : "day"}`,
             photo: builder?.photo,
             badges: [
               { label: j.trade, tone: "primary" },

@@ -38,8 +38,8 @@ export default function ProfileScreen() {
   const handleInvite = async () => {
     const name = isWorker ? (user.fullName ?? "A tradie") : (user.companyName ?? "A builder");
     const message = isWorker
-      ? `${name} is on BuildMatch — the app connecting tradies with builders. Join free and find your next job 👷\n\nhttps://buildmatch.app/join?ref=${referralCode}`
-      : `${name} is hiring on BuildMatch — the Tinder for construction jobs. Find great tradies fast 🔨\n\nhttps://buildmatch.app/join?ref=${referralCode}`;
+      ? `${name} is on BuildMatch — the app connecting tradespeople with builders across the UK. Join free and find your next job 👷\n\nhttps://buildmatch.app/join?ref=${referralCode}`
+      : `${name} is hiring on BuildMatch — connecting UK builders with skilled tradespeople. Find great workers fast 🔨\n\nhttps://buildmatch.app/join?ref=${referralCode}`;
     try {
       await Share.share({ message, url: `https://buildmatch.app/join?ref=${referralCode}` });
     } catch {
@@ -145,7 +145,7 @@ export default function ProfileScreen() {
         {
           icon: "dollar-sign" as const,
           label: "Est. earnings",
-          value: totalDollars > 0 ? `$${Math.round(totalDollars).toLocaleString()}` : "$0",
+          value: totalDollars > 0 ? `£${Math.round(totalDollars).toLocaleString()}` : "£0",
           color: colors.accent,
         },
         {
@@ -171,7 +171,7 @@ export default function ProfileScreen() {
         {
           icon: "dollar-sign" as const,
           label: "Est. spend",
-          value: totalDollars > 0 ? `$${Math.round(totalDollars).toLocaleString()}` : "$0",
+          value: totalDollars > 0 ? `£${Math.round(totalDollars).toLocaleString()}` : "£0",
           color: colors.accent,
         },
         {
@@ -271,7 +271,7 @@ export default function ProfileScreen() {
                       {s.title}
                     </Text>
                     <Text style={[styles.snapMeta, { color: colors.mutedForeground }]}>
-                      {s.trade}  ·  {s.durationDays}d  ·  ${s.payType === "hour" ? `${s.payRate}/hr` : `${s.payRate}/day`}
+                      {s.trade}  ·  {s.durationDays}d  ·  £{s.payType === "hour" ? `${s.payRate}/hr` : `${s.payRate}/day`}
                     </Text>
                   </View>
                 </View>

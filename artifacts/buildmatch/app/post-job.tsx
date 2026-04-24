@@ -87,7 +87,7 @@ export default function PostJob() {
               <TextInput
                 value={suburb}
                 onChangeText={setSuburb}
-                placeholder="Surry Hills"
+                placeholder="Shoreditch"
                 placeholderTextColor={colors.mutedForeground}
                 style={[styles.input, { color: colors.foreground, backgroundColor: colors.card, borderColor: colors.border }]}
               />
@@ -97,10 +97,10 @@ export default function PostJob() {
             <Field label="Postcode">
               <TextInput
                 value={postcode}
-                onChangeText={(v) => setPostcode(v.replace(/\D/g, "").slice(0, 4))}
-                placeholder="2010"
+                onChangeText={(v) => setPostcode(v.toUpperCase().slice(0, 8))}
+                placeholder="E1 6RF"
                 placeholderTextColor={colors.mutedForeground}
-                keyboardType="number-pad"
+                autoCapitalize="characters"
                 style={[styles.input, { color: colors.foreground, backgroundColor: colors.card, borderColor: colors.border }]}
               />
             </Field>
@@ -135,7 +135,7 @@ export default function PostJob() {
 
         <View style={{ flexDirection: "row", gap: 12, alignItems: "flex-end" }}>
           <View style={{ flex: 1 }}>
-            <Field label="Pay rate ($)">
+            <Field label="Pay rate (£)">
               <TextInput
                 value={payRate}
                 onChangeText={(v) => setPayRate(v.replace(/\D/g, ""))}

@@ -228,7 +228,7 @@ export default function ProfileSetupScreen() {
               <TextInput
                 value={suburb}
                 onChangeText={setSuburb}
-                placeholder="Surry Hills"
+                placeholder="Shoreditch"
                 placeholderTextColor={colors.mutedForeground}
                 style={[styles.input, { color: colors.foreground, backgroundColor: colors.card, borderColor: colors.border }]}
               />
@@ -238,10 +238,10 @@ export default function ProfileSetupScreen() {
             <Field label="Postcode">
               <TextInput
                 value={postcode}
-                onChangeText={(v) => setPostcode(v.replace(/\D/g, "").slice(0, 4))}
-                placeholder="2010"
+                onChangeText={(v) => setPostcode(v.toUpperCase().slice(0, 8))}
+                placeholder="E1 6RF"
+                autoCapitalize="characters"
                 placeholderTextColor={colors.mutedForeground}
-                keyboardType="number-pad"
                 style={[styles.input, { color: colors.foreground, backgroundColor: colors.card, borderColor: colors.border }]}
               />
             </Field>

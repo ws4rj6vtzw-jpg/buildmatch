@@ -73,7 +73,7 @@ export default function WorkerProfile() {
             <Stat label="Rating" value={worker.rating.toFixed(1)} icon="star" colors={colors} />
             <Stat label="Jobs" value={String(worker.completedJobs)} icon="check-circle" colors={colors} />
             <Stat label="Years" value={String(worker.yearsExperience)} icon="award" colors={colors} />
-            <Stat label="Rate" value={`$${worker.hourlyRate}/hr`} icon="dollar-sign" colors={colors} />
+            <Stat label="Rate" value={`£${worker.hourlyRate}/hr`} icon="pound-sign" colors={colors} />
           </View>
 
           <View
