@@ -6,3 +6,21 @@ id = "HyVHFOQV9TlV-Fyv1oArs"
 uri = "file://artifacts/buildmatch/assets/images/icon.png"
 type = "image"
 title = "generated_image"
+
+[[generated]]
+id = "IaGTJ4dggCG9lAXgJAoTD"
+uri = "file://artifacts/buildmatch-web/public/images/hero-bg.png"
+type = "image"
+title = "Construction worker using phone on site"
+
+[[generated]]
+id = "H918Ifs0cwBecBGAzTVI-"
+uri = "file://artifacts/buildmatch-web/public/images/worker-1.png"
+type = "image"
+title = "Skilled tradesman portrait"
+
+[[generated]]
+id = "nwiH3PKc_5EMXoJWr3gcP"
+uri = "file://artifacts/buildmatch-web/public/images/manager-1.png"
+type = "image"
+title = "Site manager portrait"

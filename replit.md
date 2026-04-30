@@ -42,3 +42,27 @@ artifacts/buildmatch/
 - 6 seeded workers, 3 builders, 4 jobs to bring the swipe deck to life immediately
 - Right-swipe in MVP demo simulates mutual interest and creates a match instantly
 - Sending a chat message triggers a randomised auto-reply after ~1.4s (demo only)
+
+## Marketing Landing Page (buildmatch-web)
+
+A React+Vite web app at `/web` serving as the BuildMatch marketing site.
+
+**Stack**: React, Vite, Tailwind CSS, Framer Motion
+
+**Key files**:
+```
+artifacts/buildmatch-web/
+├── src/pages/Home.tsx       # 8-section landing page (693 lines)
+├── vite.config.ts           # PORT=8082 default, BASE_PATH=/web
+└── .replit-artifact/artifact.toml
+```
+
+**CRITICAL: Port must be in 808x range**
+
+The Replit workflow manager can only detect ports in the 808x range for development servers. Ports like 5173 (Vite default) and 3000 are invisible to the workflow health check. This artifact uses port **8082** (localPort=8082, BASE_PATH=/web).
+
+All services use ports in their respective ranges:
+- API server: 8080
+- mockup-sandbox: 8081
+- buildmatch-web: 8082
+- expo: 25671
