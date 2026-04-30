@@ -116,7 +116,7 @@ export default function Home() {
             </FadeIn>
             <FadeIn delay={0.2}>
               <p className="text-xl sm:text-2xl text-muted-foreground mb-10 max-w-lg leading-snug font-medium">
-                The UK's first swipe-to-hire platform for construction. Find CSCS-certified plasterers by Monday, or land your next contract without the agency markup.
+                The UK's first swipe-to-hire platform for construction. Match and connect with qualified and reliable labour and skilled tradespeople in your area. Vetting done by you and no agencies.
               </p>
             </FadeIn>
             <FadeIn delay={0.3} className="flex flex-col sm:flex-row gap-4">
