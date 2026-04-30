@@ -122,4 +122,5 @@ export type AuthUser = {
   profileComplete?: boolean;
   publicLiabilityInsured?: boolean;
   insurerName?: string;
+  isPro?: boolean;
 };

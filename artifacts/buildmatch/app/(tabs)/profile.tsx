@@ -14,6 +14,7 @@ import {
 
 import { AvatarPicker } from "@/components/AvatarPicker";
 import { Pill } from "@/components/Pill";
+import { ProModal } from "@/components/ProModal";
 import { ScreenHeader } from "@/components/ScreenHeader";
 import { useColors } from "@/hooks/useColors";
 import { useAuth } from "@/contexts/AuthContext";
@@ -26,6 +27,7 @@ export default function ProfileScreen() {
   const { user, signOut, setRole, updateProfile } = useAuth();
   const { matches, swipes, jobs, ratings, completedSnaps } = useData();
   const [copied, setCopied] = useState(false);
+  const [proModalVisible, setProModalVisible] = useState(false);
 
   if (!user) return null;
   const isWorker = user.role === "worker";
@@ -214,6 +216,14 @@ export default function ProfileScreen() {
               <Text style={[styles.location, { color: colors.mutedForeground }]}>
                 {user.suburb}{user.postcode ? `, ${user.postcode}` : ""}
               </Text>
+              {user.isPro && (
+                <View style={[styles.proBadge, { backgroundColor: colors.accent + "22", borderColor: colors.accent + "55" }]}>
+                  <Feather name="award" size={11} color={colors.accent} />
+                  <Text style={[styles.proBadgeText, { color: colors.accent }]}>
+                    {isWorker ? "Pro Member" : "Pro · Unlimited"}
+                  </Text>
+                </View>
+              )}
             </View>
           </View>
 
@@ -279,6 +289,28 @@ export default function ProfileScreen() {
             </View>
           )}
         </View>
+
+        {/* Pro upgrade / status card */}
+        {isWorker && !user.isPro && (
+          <Pressable
+            onPress={() => setProModalVisible(true)}
+            style={({ pressed }) => [
+              styles.proCard,
+              { backgroundColor: colors.accent + "14", borderColor: colors.accent + "44", opacity: pressed ? 0.85 : 1 },
+            ]}
+          >
+            <View style={[styles.proCardIcon, { backgroundColor: colors.accent }]}>
+              <Feather name="award" size={18} color="#fff" />
+            </View>
+            <View style={{ flex: 1 }}>
+              <Text style={[styles.proCardTitle, { color: colors.foreground }]}>Upgrade to Pro</Text>
+              <Text style={[styles.proCardSub, { color: colors.mutedForeground }]}>
+                Verified badge · Priority in searches · £9.99/mo
+              </Text>
+            </View>
+            <Feather name="chevron-right" size={18} color={colors.accent} />
+          </Pressable>
+        )}
 
         {user.bio ? (
           <View style={[styles.section, { backgroundColor: colors.card, borderColor: colors.border }]}>
@@ -440,6 +472,15 @@ export default function ProfileScreen() {
           BuildMatch · v1.0 (MVP)
         </Text>
       </ScrollView>
+
+      <ProModal
+        visible={proModalVisible}
+        onUpgrade={() => {
+          updateProfile({ isPro: true });
+          setProModalVisible(false);
+        }}
+        onClose={() => setProModalVisible(false)}
+      />
     </View>
   );
 }
@@ -701,5 +742,44 @@ const styles = StyleSheet.create({
     fontFamily: "Inter_400Regular",
     textAlign: "center",
     marginTop: 8,
+  },
+  proBadge: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 5,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 99,
+    borderWidth: 1,
+    marginTop: 4,
+  },
+  proBadgeText: {
+    fontSize: 11,
+    fontFamily: "Inter_700Bold",
+    letterSpacing: 0.3,
+  },
+  proCard: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 14,
+    padding: 16,
+    borderRadius: 16,
+    borderWidth: 1,
+  },
+  proCardIcon: {
+    width: 42,
+    height: 42,
+    borderRadius: 21,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  proCardTitle: {
+    fontSize: 15,
+    fontFamily: "Inter_700Bold",
+  },
+  proCardSub: {
+    fontSize: 12,
+    fontFamily: "Inter_400Regular",
+    marginTop: 2,
   },
 });

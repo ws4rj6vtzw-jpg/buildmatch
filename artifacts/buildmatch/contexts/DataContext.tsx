@@ -32,6 +32,7 @@ type Persisted = {
   completedSnaps: CompletedSnap[];
   savedJobs: string[];
   lastReadAt: Record<string, number>;
+  boostedJobs: string[];
 };
 
 type DataContextValue = Persisted & {
@@ -63,6 +64,7 @@ type DataContextValue = Persisted & {
   typingMatches: string[];
   undoLastSwipe: () => { undoneId: string } | null;
   canUndo: boolean;
+  boostJob: (jobId: string) => void;
 };
 
 const DataContext = createContext<DataContextValue | null>(null);
@@ -83,6 +85,7 @@ const seed: Persisted = {
   completedSnaps: [],
   savedJobs: [],
   lastReadAt: {},
+  boostedJobs: [],
 };
 
 export function DataProvider({ children }: { children: React.ReactNode }) {
@@ -107,6 +110,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
             completedSnaps: parsed.completedSnaps ?? [],
             savedJobs: parsed.savedJobs ?? [],
             lastReadAt: parsed.lastReadAt ?? {},
+            boostedJobs: parsed.boostedJobs ?? [],
           });
         }
       })
@@ -364,6 +368,18 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
     [data.savedJobs],
   );
 
+  const boostJob = useCallback(
+    (jobId: string) => {
+      setData((prev) => ({
+        ...prev,
+        boostedJobs: prev.boostedJobs.includes(jobId)
+          ? prev.boostedJobs
+          : [jobId, ...prev.boostedJobs],
+      }));
+    },
+    [],
+  );
+
   const undoLastSwipe = useCallback<DataContextValue["undoLastSwipe"]>(() => {
     let undone: { undoneId: string } | null = null;
     setData((prev) => {
@@ -470,6 +486,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
       typingMatches,
       undoLastSwipe,
       canUndo,
+      boostJob,
     }),
     [
       data,
@@ -490,6 +507,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
       totalUnread,
       undoLastSwipe,
       canUndo,
+      boostJob,
     ],
   );
 

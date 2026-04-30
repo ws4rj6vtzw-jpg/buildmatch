@@ -3,6 +3,7 @@ import { router } from "expo-router";
 import React, { useMemo, useState } from "react";
 import {
   FlatList,
+  Modal,
   Platform,
   Pressable,
   ScrollView,
@@ -23,8 +24,9 @@ import { useData } from "@/contexts/DataContext";
 export default function JobsScreen() {
   const colors = useColors();
   const { user } = useAuth();
-  const { jobs, builders } = useData();
+  const { jobs, builders, boostedJobs, boostJob } = useData();
   const isWorker = user?.role === "worker";
+  const [boostingJobId, setBoostingJobId] = useState<string | null>(null);
 
   const { savedJobs, toggleSavedJob } = useData();
   const [filter, setFilter] = useState<string | null>(null);
@@ -103,40 +105,105 @@ export default function JobsScreen() {
           <Text style={[styles.sectionLabel, { color: colors.mutedForeground }]}>
             Your posts
           </Text>
-          {myJobs.map((j) => (
-            <Pressable
-              key={j.id}
-              onPress={() => router.push(`/job/${j.id}`)}
-              style={({ pressed }) => [
-                styles.myJob,
-                {
-                  backgroundColor: colors.card,
-                  borderColor: colors.border,
-                  opacity: pressed ? 0.85 : 1,
-                },
-              ]}
-            >
-              <View style={{ flex: 1, gap: 4 }}>
-                <Text style={[styles.myJobTitle, { color: colors.foreground }]} numberOfLines={1}>
-                  {j.title}
-                </Text>
-                <Text style={[styles.myJobMeta, { color: colors.mutedForeground }]}>
-                  {j.trade}  ·  {j.suburb}
-                </Text>
-              </View>
-              <View style={[styles.applicantBadge, { backgroundColor: colors.primary }]}>
-                <Text style={[styles.applicantBadgeText, { color: colors.primaryForeground }]}>
-                  {j.applicants.length}
-                </Text>
-              </View>
-              <Feather name="chevron-right" size={20} color={colors.mutedForeground} />
-            </Pressable>
-          ))}
+          {myJobs.map((j) => {
+            const boosted = boostedJobs.includes(j.id);
+            return (
+              <Pressable
+                key={j.id}
+                onPress={() => router.push(`/job/${j.id}`)}
+                style={({ pressed }) => [
+                  styles.myJob,
+                  {
+                    backgroundColor: colors.card,
+                    borderColor: boosted ? colors.accent + "88" : colors.border,
+                    opacity: pressed ? 0.85 : 1,
+                  },
+                ]}
+              >
+                <View style={{ flex: 1, gap: 4 }}>
+                  <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
+                    <Text style={[styles.myJobTitle, { color: colors.foreground }]} numberOfLines={1}>
+                      {j.title}
+                    </Text>
+                    {boosted && (
+                      <View style={[styles.boostedChip, { backgroundColor: colors.accent + "22" }]}>
+                        <Feather name="zap" size={10} color={colors.accent} />
+                        <Text style={[styles.boostedChipText, { color: colors.accent }]}>Boosted</Text>
+                      </View>
+                    )}
+                  </View>
+                  <Text style={[styles.myJobMeta, { color: colors.mutedForeground }]}>
+                    {j.trade}  ·  {j.suburb}
+                  </Text>
+                </View>
+                <View style={[styles.applicantBadge, { backgroundColor: colors.primary }]}>
+                  <Text style={[styles.applicantBadgeText, { color: colors.primaryForeground }]}>
+                    {j.applicants.length}
+                  </Text>
+                </View>
+                {!boosted && (
+                  <Pressable
+                    onPress={(e) => { e.stopPropagation(); setBoostingJobId(j.id); }}
+                    style={[styles.boostBtn, { backgroundColor: colors.accent + "1A", borderColor: colors.accent + "55" }]}
+                    hitSlop={6}
+                  >
+                    <Feather name="zap" size={14} color={colors.accent} />
+                  </Pressable>
+                )}
+                <Feather name="chevron-right" size={20} color={colors.mutedForeground} />
+              </Pressable>
+            );
+          })}
           <Text style={[styles.sectionLabel, { color: colors.mutedForeground, marginTop: 12 }]}>
             Other postings
           </Text>
         </View>
       )}
+
+      {/* Boost confirmation modal */}
+      <Modal
+        transparent
+        animationType="fade"
+        visible={!!boostingJobId}
+        onRequestClose={() => setBoostingJobId(null)}
+      >
+        <Pressable style={styles.boostModalBg} onPress={() => setBoostingJobId(null)}>
+          <Pressable
+            onPress={(e) => e.stopPropagation()}
+            style={[styles.boostModalCard, { backgroundColor: colors.card }]}
+          >
+            <View style={[styles.boostModalIcon, { backgroundColor: colors.accent }]}>
+              <Feather name="zap" size={26} color="#fff" />
+            </View>
+            <Text style={[styles.boostModalTitle, { color: colors.foreground }]}>
+              Boost this job
+            </Text>
+            <Text style={[styles.boostModalSub, { color: colors.mutedForeground }]}>
+              Your listing moves to the top of every matching worker's discover feed for 7 days.
+            </Text>
+            <View style={[styles.boostPrice, { backgroundColor: colors.elevated }]}>
+              <Text style={[styles.boostPriceAmount, { color: colors.accent }]}>£9.99</Text>
+              <Text style={[styles.boostPriceLabel, { color: colors.mutedForeground }]}>one-off · 7 days</Text>
+            </View>
+            <Pressable
+              onPress={() => {
+                if (boostingJobId) boostJob(boostingJobId);
+                setBoostingJobId(null);
+              }}
+              style={({ pressed }) => [
+                styles.boostConfirmBtn,
+                { backgroundColor: colors.accent, opacity: pressed ? 0.85 : 1 },
+              ]}
+            >
+              <Feather name="zap" size={16} color="#fff" />
+              <Text style={styles.boostConfirmBtnText}>Boost for £9.99</Text>
+            </Pressable>
+            <Pressable onPress={() => setBoostingJobId(null)} style={{ marginTop: 10 }}>
+              <Text style={[styles.boostCancel, { color: colors.mutedForeground }]}>Cancel</Text>
+            </Pressable>
+          </Pressable>
+        </Pressable>
+      </Modal>
 
       {isWorker && (
         <>
@@ -413,5 +480,94 @@ const styles = StyleSheet.create({
   applicantBadgeText: {
     fontSize: 13,
     fontFamily: "Inter_700Bold",
+  },
+  boostBtn: {
+    width: 32,
+    height: 32,
+    borderRadius: 10,
+    borderWidth: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  boostedChip: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    paddingHorizontal: 7,
+    paddingVertical: 2,
+    borderRadius: 6,
+  },
+  boostedChipText: {
+    fontSize: 10,
+    fontFamily: "Inter_700Bold",
+  },
+  boostModalBg: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.75)",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 28,
+  },
+  boostModalCard: {
+    width: "100%",
+    maxWidth: 340,
+    borderRadius: 24,
+    padding: 26,
+    alignItems: "center",
+    gap: 12,
+  },
+  boostModalIcon: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  boostModalTitle: {
+    fontSize: 20,
+    fontFamily: "Inter_700Bold",
+    letterSpacing: -0.3,
+  },
+  boostModalSub: {
+    fontSize: 13,
+    fontFamily: "Inter_400Regular",
+    textAlign: "center",
+    lineHeight: 19,
+  },
+  boostPrice: {
+    flexDirection: "row",
+    alignItems: "baseline",
+    gap: 8,
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    borderRadius: 14,
+    alignSelf: "stretch",
+    justifyContent: "center",
+  },
+  boostPriceAmount: {
+    fontSize: 26,
+    fontFamily: "Inter_700Bold",
+  },
+  boostPriceLabel: {
+    fontSize: 13,
+    fontFamily: "Inter_400Regular",
+  },
+  boostConfirmBtn: {
+    alignSelf: "stretch",
+    height: 50,
+    borderRadius: 14,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 8,
+  },
+  boostConfirmBtnText: {
+    fontSize: 15,
+    fontFamily: "Inter_700Bold",
+    color: "#fff",
+  },
+  boostCancel: {
+    fontSize: 14,
+    fontFamily: "Inter_500Medium",
   },
 });
