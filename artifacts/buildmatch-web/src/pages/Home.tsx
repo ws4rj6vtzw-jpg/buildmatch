@@ -107,9 +107,9 @@ export default function Home() {
             </FadeIn>
             <FadeIn delay={0.1}>
               <h1 className="text-6xl sm:text-7xl lg:text-8xl font-black leading-[0.95] mb-6 uppercase tracking-tighter">
-                Where Hardhat <br />
+                Hire Smarter, <br />
                 <span className="text-primary relative inline-block">
-                  Meets Algorithm
+                  Build Faster.
                   <div className="absolute bottom-1 left-0 w-full h-3 bg-primary/20 -z-10 transform -skew-x-12"></div>
                 </span>
               </h1>
