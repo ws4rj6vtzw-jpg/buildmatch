@@ -11,15 +11,33 @@ import { useData } from "@/contexts/DataContext";
 
 export default function WorkerProfile() {
   const colors = useColors();
-  const { id } = useLocalSearchParams<{ id: string; jobId?: string }>();
-  const params = useLocalSearchParams<{ jobId?: string }>();
+  const { id } = useLocalSearchParams<{ id: string; jobId?: string; matchId?: string }>();
+  const params = useLocalSearchParams<{ jobId?: string; matchId?: string }>();
   const { user } = useAuth();
-  const { workers, jobs, acceptApplicant, declineApplicant } = useData();
+  const { workers, jobs, matches, ratings, acceptApplicant, declineApplicant } = useData();
 
   const worker = workers.find((w) => w.id === id);
   const job = params.jobId ? jobs.find((j) => j.id === params.jobId) : undefined;
   const isOwnerBuilder =
     !!job && job.builderId === user?.id && job.applicants.includes(id ?? "");
+
+  // Determine if a review can be left via a matchId param or by finding a match
+  const matchId = params.matchId;
+  const reviewMatch = matchId
+    ? matches.find((m) => m.id === matchId)
+    : matches.find(
+        (m) =>
+          m.workerId === id &&
+          (m.builderId === user?.id || user?.role === "builder"),
+      );
+  const alreadyRated =
+    !!reviewMatch &&
+    ratings.some(
+      (r) =>
+        r.fromId === user?.id && r.jobId === (reviewMatch.jobId ?? ""),
+    );
+  const canLeaveReview =
+    !!reviewMatch && !alreadyRated && user?.role === "builder";
 
   if (!worker) {
     return (
@@ -130,6 +148,32 @@ export default function WorkerProfile() {
             </View>
           </Section>
         )}
+
+        {canLeaveReview && reviewMatch ? (
+          <Section label="Review" colors={colors}>
+            <Pressable
+              onPress={() => router.push(`/review/${reviewMatch.id}`)}
+              style={({ pressed }) => [
+                styles.reviewBtn,
+                { backgroundColor: colors.primary, opacity: pressed ? 0.85 : 1 },
+              ]}
+            >
+              <Feather name="star" size={16} color={colors.primaryForeground} />
+              <Text style={[styles.reviewBtnText, { color: colors.primaryForeground }]}>
+                Leave a Review
+              </Text>
+            </Pressable>
+          </Section>
+        ) : !!reviewMatch && alreadyRated ? (
+          <Section label="Review" colors={colors}>
+            <View style={[styles.reviewedBadge, { backgroundColor: colors.elevated, borderColor: colors.border }]}>
+              <Feather name="check-circle" size={15} color={colors.success} />
+              <Text style={[styles.reviewedText, { color: colors.mutedForeground }]}>
+                You've already reviewed this worker
+              </Text>
+            </View>
+          </Section>
+        ) : null}
 
         {isOwnerBuilder && job ? (
           <Section label={`Application for "${job.title}"`} colors={colors}>
@@ -280,6 +324,30 @@ const styles = StyleSheet.create({
     lineHeight: 22,
   },
   pills: { flexDirection: "row", flexWrap: "wrap", gap: 6 },
+  reviewBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 8,
+    paddingVertical: 14,
+    borderRadius: 12,
+  },
+  reviewBtnText: {
+    fontSize: 15,
+    fontFamily: "Inter_600SemiBold",
+  },
+  reviewedBadge: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    padding: 12,
+    borderRadius: 10,
+    borderWidth: 1,
+  },
+  reviewedText: {
+    fontSize: 13,
+    fontFamily: "Inter_500Medium",
+  },
   actionRow: {
     flexDirection: "row",
     gap: 10,

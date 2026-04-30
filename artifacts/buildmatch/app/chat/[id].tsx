@@ -1,5 +1,5 @@
 import { Feather } from "@expo/vector-icons";
-import { Stack, useLocalSearchParams } from "expo-router";
+import { Stack, router, useLocalSearchParams } from "expo-router";
 import React, { useEffect, useMemo, useState } from "react";
 import {
   FlatList,
@@ -14,7 +14,6 @@ import { KeyboardAvoidingView } from "react-native-keyboard-controller";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { Avatar } from "@/components/Avatar";
-import { RatingModal } from "@/components/RatingModal";
 import { TypingIndicator } from "@/components/TypingIndicator";
 import { useColors } from "@/hooks/useColors";
 import { useAuth } from "@/contexts/AuthContext";
@@ -33,14 +32,11 @@ export default function ChatScreen() {
     jobs,
     ratings,
     sendMessage,
-    rateUser,
-    markJobComplete,
     markMatchRead,
     typingMatches,
   } = useData();
   const isPartnerTyping = !!id && typingMatches.includes(id);
   const [draft, setDraft] = useState("");
-  const [rateOpen, setRateOpen] = useState(false);
 
   useEffect(() => {
     if (id) markMatchRead(id);
@@ -77,24 +73,20 @@ export default function ChatScreen() {
     setDraft("");
   };
 
-  const partnerId = match
-    ? match.builderId === user?.id
-      ? match.workerId
-      : match.builderId
-    : "";
-  const alreadyRated = !!match && ratings.some(
-    (r) => r.fromId === user?.id && r.jobId === (match.jobId ?? ""),
-  );
+  const alreadyRated =
+    !!match &&
+    ratings.some(
+      (r) => r.fromId === user?.id && r.jobId === (match.jobId ?? ""),
+    );
   const jobCompleted = !!match?.jobId && !job;
 
-  const onSubmitRating = (stars: number, comment: string) => {
-    if (!match) return;
-    const jobIdForRating = match.jobId ?? `match-${match.id}`;
-    rateUser(jobIdForRating, partnerId, stars, comment || undefined);
-    if (match.jobId && !jobCompleted) {
-      markJobComplete(match.jobId);
-    }
-    setRateOpen(false);
+  const goToReview = () => router.push(`/review/${id}`);
+
+  const goToWorkerProfile = () => {
+    if (!match || !partner) return;
+    const profilePath = isWorker ? `/job/${match.jobId}` : `/worker/${partner.id}`;
+    const params = !isWorker ? `?matchId=${id}` : "";
+    router.push(`${profilePath}${params}` as any);
   };
 
   if (!match) return null;
@@ -107,36 +99,63 @@ export default function ChatScreen() {
           headerStyle: { backgroundColor: colors.background },
           headerTintColor: colors.foreground,
           headerTitle: () => (
-            <View style={styles.headerTitle}>
+            <Pressable
+              onPress={goToWorkerProfile}
+              style={({ pressed }) => [
+                styles.headerTitle,
+                { opacity: pressed ? 0.7 : 1 },
+              ]}
+            >
               <Avatar uri={partner?.photo} name={partner?.name} size={32} />
               <View>
-                <Text style={[styles.partnerName, { color: colors.foreground }]} numberOfLines={1}>
+                <Text
+                  style={[styles.partnerName, { color: colors.foreground }]}
+                  numberOfLines={1}
+                >
                   {partner?.name ?? "BuildMatch user"}
                 </Text>
                 {job && (
-                  <Text style={[styles.partnerJob, { color: colors.primary }]} numberOfLines={1}>
+                  <Text
+                    style={[styles.partnerJob, { color: colors.primary }]}
+                    numberOfLines={1}
+                  >
                     {job.title}
                   </Text>
                 )}
               </View>
-            </View>
+            </Pressable>
           ),
           headerRight: () =>
             alreadyRated ? (
-              <View style={[styles.headerBadge, { backgroundColor: colors.success }]}>
-                <Feather name="check" size={14} color="#fff" />
+              <View
+                style={[
+                  styles.headerBadge,
+                  { backgroundColor: colors.success },
+                ]}
+              >
+                <Feather name="star" size={13} color="#fff" />
               </View>
             ) : (
               <Pressable
-                onPress={() => setRateOpen(true)}
+                onPress={goToReview}
                 style={({ pressed }) => [
                   styles.headerBtn,
-                  { backgroundColor: colors.primary, opacity: pressed ? 0.85 : 1 },
+                  {
+                    backgroundColor: colors.primary,
+                    opacity: pressed ? 0.85 : 1,
+                  },
                 ]}
               >
-                <Feather name="check" size={14} color={colors.primaryForeground} />
+                <Feather
+                  name={jobCompleted ? "star" : "check"}
+                  size={14}
+                  color={colors.primaryForeground}
+                />
                 <Text
-                  style={[styles.headerBtnText, { color: colors.primaryForeground }]}
+                  style={[
+                    styles.headerBtnText,
+                    { color: colors.primaryForeground },
+                  ]}
                 >
                   {jobCompleted ? "Rate" : "Complete"}
                 </Text>
@@ -149,7 +168,10 @@ export default function ChatScreen() {
         <View
           style={[
             styles.banner,
-            { backgroundColor: colors.elevated, borderBottomColor: colors.border },
+            {
+              backgroundColor: colors.elevated,
+              borderBottomColor: colors.border,
+            },
           ]}
         >
           <Feather
@@ -160,6 +182,15 @@ export default function ChatScreen() {
           <Text style={[styles.bannerText, { color: colors.foreground }]}>
             {alreadyRated ? "You rated this job" : "Job marked complete"}
           </Text>
+          {alreadyRated ? null : (
+            <Pressable onPress={goToReview} style={styles.bannerLink}>
+              <Text
+                style={[styles.bannerLinkText, { color: colors.primary }]}
+              >
+                Leave a review →
+              </Text>
+            </Pressable>
+          )}
         </View>
       )}
 
@@ -178,7 +209,9 @@ export default function ChatScreen() {
           ListHeaderComponent={isPartnerTyping ? <TypingIndicator /> : null}
           ListEmptyComponent={
             <View style={styles.empty}>
-              <Text style={[styles.emptyText, { color: colors.mutedForeground }]}>
+              <Text
+                style={[styles.emptyText, { color: colors.mutedForeground }]}
+              >
                 You matched. Say hello.
               </Text>
             </View>
@@ -205,7 +238,11 @@ export default function ChatScreen() {
                   <Text
                     style={[
                       styles.bubbleText,
-                      { color: mine ? colors.primaryForeground : colors.foreground },
+                      {
+                        color: mine
+                          ? colors.primaryForeground
+                          : colors.foreground,
+                      },
                     ]}
                   >
                     {item.text}
@@ -257,14 +294,6 @@ export default function ChatScreen() {
           </Pressable>
         </View>
       </KeyboardAvoidingView>
-
-      <RatingModal
-        visible={rateOpen}
-        partnerName={partner?.name ?? "this person"}
-        jobTitle={job?.title}
-        onClose={() => setRateOpen(false)}
-        onSubmit={onSubmitRating}
-      />
     </View>
   );
 }
@@ -361,5 +390,13 @@ const styles = StyleSheet.create({
   bannerText: {
     fontSize: 13,
     fontFamily: "Inter_500Medium",
+    flex: 1,
+  },
+  bannerLink: {
+    paddingVertical: 2,
+  },
+  bannerLinkText: {
+    fontSize: 13,
+    fontFamily: "Inter_600SemiBold",
   },
 });
