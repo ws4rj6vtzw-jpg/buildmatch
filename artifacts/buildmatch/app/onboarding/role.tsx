@@ -125,12 +125,12 @@ const styles = StyleSheet.create({
   content: { flex: 1, padding: 24, paddingTop: 36, gap: 14 },
   title: {
     fontSize: 28,
-    fontFamily: "SpaceGrotesk_700Bold",
+    fontFamily: "PlusJakartaSans_700Bold",
     letterSpacing: -0.6,
   },
   subtitle: {
     fontSize: 15,
-    fontFamily: "SpaceGrotesk_400Regular",
+    fontFamily: "PlusJakartaSans_400Regular",
     lineHeight: 22,
   },
   cards: { gap: 12, marginTop: 16 },
@@ -152,12 +152,12 @@ const styles = StyleSheet.create({
   cardText: { flex: 1, gap: 3 },
   cardTitle: {
     fontSize: 17,
-    fontFamily: "SpaceGrotesk_600SemiBold",
+    fontFamily: "PlusJakartaSans_600SemiBold",
     letterSpacing: -0.3,
   },
   cardDesc: {
     fontSize: 13,
-    fontFamily: "SpaceGrotesk_400Regular",
+    fontFamily: "PlusJakartaSans_400Regular",
     lineHeight: 18,
   },
   footer: {

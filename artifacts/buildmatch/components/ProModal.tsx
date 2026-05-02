@@ -119,21 +119,21 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 20,
-    fontFamily: "SpaceGrotesk_700Bold",
+    fontFamily: "PlusJakartaSans_700Bold",
     letterSpacing: -0.3,
   },
   subtitle: {
     fontSize: 13,
-    fontFamily: "SpaceGrotesk_400Regular",
+    fontFamily: "PlusJakartaSans_400Regular",
     marginTop: 2,
   },
   price: {
     fontSize: 24,
-    fontFamily: "SpaceGrotesk_700Bold",
+    fontFamily: "PlusJakartaSans_700Bold",
   },
   priceUnit: {
     fontSize: 12,
-    fontFamily: "SpaceGrotesk_400Regular",
+    fontFamily: "PlusJakartaSans_400Regular",
   },
   trialBanner: {
     flexDirection: "row",
@@ -145,7 +145,7 @@ const styles = StyleSheet.create({
   },
   trialText: {
     fontSize: 13,
-    fontFamily: "SpaceGrotesk_600SemiBold",
+    fontFamily: "PlusJakartaSans_600SemiBold",
   },
   benefits: {
     gap: 12,
@@ -164,7 +164,7 @@ const styles = StyleSheet.create({
   },
   benefitText: {
     fontSize: 14,
-    fontFamily: "SpaceGrotesk_500Medium",
+    fontFamily: "PlusJakartaSans_500Medium",
     flex: 1,
   },
   upgradeBtn: {
@@ -177,17 +177,17 @@ const styles = StyleSheet.create({
   },
   upgradeBtnText: {
     fontSize: 16,
-    fontFamily: "SpaceGrotesk_700Bold",
+    fontFamily: "PlusJakartaSans_700Bold",
     color: "#fff",
   },
   legal: {
     fontSize: 11,
-    fontFamily: "SpaceGrotesk_400Regular",
+    fontFamily: "PlusJakartaSans_400Regular",
     textAlign: "center",
     lineHeight: 16,
   },
   cancel: {
     fontSize: 14,
-    fontFamily: "SpaceGrotesk_500Medium",
+    fontFamily: "PlusJakartaSans_500Medium",
   },
 });

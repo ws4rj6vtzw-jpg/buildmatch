@@ -534,16 +534,16 @@ const styles = StyleSheet.create({
   },
   name: {
     fontSize: 22,
-    fontFamily: "SpaceGrotesk_700Bold",
+    fontFamily: "PlusJakartaSans_700Bold",
     letterSpacing: -0.5,
   },
   role: {
     fontSize: 14,
-    fontFamily: "SpaceGrotesk_600SemiBold",
+    fontFamily: "PlusJakartaSans_600SemiBold",
   },
   location: {
     fontSize: 13,
-    fontFamily: "SpaceGrotesk_500Medium",
+    fontFamily: "PlusJakartaSans_500Medium",
   },
   statsRow: {
     flexDirection: "row",
@@ -552,11 +552,11 @@ const styles = StyleSheet.create({
   stat: { alignItems: "center", gap: 2 },
   statValue: {
     fontSize: 22,
-    fontFamily: "SpaceGrotesk_700Bold",
+    fontFamily: "PlusJakartaSans_700Bold",
   },
   statLabel: {
     fontSize: 11,
-    fontFamily: "SpaceGrotesk_600SemiBold",
+    fontFamily: "PlusJakartaSans_600SemiBold",
     letterSpacing: 0.5,
     textTransform: "uppercase",
   },
@@ -568,13 +568,13 @@ const styles = StyleSheet.create({
   },
   sectionLabel: {
     fontSize: 11,
-    fontFamily: "SpaceGrotesk_600SemiBold",
+    fontFamily: "PlusJakartaSans_600SemiBold",
     letterSpacing: 0.5,
     textTransform: "uppercase",
   },
   bio: {
     fontSize: 14,
-    fontFamily: "SpaceGrotesk_400Regular",
+    fontFamily: "PlusJakartaSans_400Regular",
     lineHeight: 21,
   },
   pills: { flexDirection: "row", flexWrap: "wrap", gap: 6 },
@@ -596,11 +596,11 @@ const styles = StyleSheet.create({
   rowLabel: {
     flex: 1,
     fontSize: 15,
-    fontFamily: "SpaceGrotesk_500Medium",
+    fontFamily: "PlusJakartaSans_500Medium",
   },
   fineprint: {
     fontSize: 12,
-    fontFamily: "SpaceGrotesk_400Regular",
+    fontFamily: "PlusJakartaSans_400Regular",
     textAlign: "center",
     marginTop: 16,
   },
@@ -627,12 +627,12 @@ const styles = StyleSheet.create({
   },
   activityValue: {
     fontSize: 20,
-    fontFamily: "SpaceGrotesk_700Bold",
+    fontFamily: "PlusJakartaSans_700Bold",
     letterSpacing: -0.4,
   },
   activityLabel: {
     fontSize: 11,
-    fontFamily: "SpaceGrotesk_500Medium",
+    fontFamily: "PlusJakartaSans_500Medium",
     letterSpacing: 0.2,
   },
   snapRow: {
@@ -651,11 +651,11 @@ const styles = StyleSheet.create({
   },
   snapTitle: {
     fontSize: 13,
-    fontFamily: "SpaceGrotesk_600SemiBold",
+    fontFamily: "PlusJakartaSans_600SemiBold",
   },
   snapMeta: {
     fontSize: 11,
-    fontFamily: "SpaceGrotesk_500Medium",
+    fontFamily: "PlusJakartaSans_500Medium",
     marginTop: 2,
   },
   themeRow: {
@@ -673,7 +673,7 @@ const styles = StyleSheet.create({
   },
   themeLabel: {
     fontSize: 11,
-    fontFamily: "SpaceGrotesk_600SemiBold",
+    fontFamily: "PlusJakartaSans_600SemiBold",
     letterSpacing: 0.2,
   },
   inviteHeader: {
@@ -690,13 +690,13 @@ const styles = StyleSheet.create({
   },
   inviteTitle: {
     fontSize: 15,
-    fontFamily: "SpaceGrotesk_700Bold",
+    fontFamily: "PlusJakartaSans_700Bold",
     letterSpacing: -0.2,
     marginBottom: 2,
   },
   inviteBody: {
     fontSize: 12,
-    fontFamily: "SpaceGrotesk_400Regular",
+    fontFamily: "PlusJakartaSans_400Regular",
     lineHeight: 18,
   },
   refCodeRow: {
@@ -711,13 +711,13 @@ const styles = StyleSheet.create({
   },
   refCodeLabel: {
     fontSize: 11,
-    fontFamily: "SpaceGrotesk_600SemiBold",
+    fontFamily: "PlusJakartaSans_600SemiBold",
     letterSpacing: 0.5,
     textTransform: "uppercase",
   },
   refCode: {
     fontSize: 16,
-    fontFamily: "SpaceGrotesk_700Bold",
+    fontFamily: "PlusJakartaSans_700Bold",
     letterSpacing: 2,
   },
   shareActions: {
@@ -735,11 +735,11 @@ const styles = StyleSheet.create({
   },
   shareBtnText: {
     fontSize: 13,
-    fontFamily: "SpaceGrotesk_600SemiBold",
+    fontFamily: "PlusJakartaSans_600SemiBold",
   },
   profileUrlText: {
     fontSize: 11,
-    fontFamily: "SpaceGrotesk_400Regular",
+    fontFamily: "PlusJakartaSans_400Regular",
     textAlign: "center",
     marginTop: 8,
   },
@@ -755,7 +755,7 @@ const styles = StyleSheet.create({
   },
   proBadgeText: {
     fontSize: 11,
-    fontFamily: "SpaceGrotesk_700Bold",
+    fontFamily: "PlusJakartaSans_700Bold",
     letterSpacing: 0.3,
   },
   proCard: {
@@ -775,11 +775,11 @@ const styles = StyleSheet.create({
   },
   proCardTitle: {
     fontSize: 15,
-    fontFamily: "SpaceGrotesk_700Bold",
+    fontFamily: "PlusJakartaSans_700Bold",
   },
   proCardSub: {
     fontSize: 12,
-    fontFamily: "SpaceGrotesk_400Regular",
+    fontFamily: "PlusJakartaSans_400Regular",
     marginTop: 2,
   },
 });

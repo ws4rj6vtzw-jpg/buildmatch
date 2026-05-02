@@ -49,7 +49,7 @@ function ClassicTabLayout() {
         tabBarInactiveTintColor: colors.mutedForeground,
         tabBarShowLabel: true,
         tabBarLabelStyle: {
-          fontFamily: "SpaceGrotesk_600SemiBold",
+          fontFamily: "PlusJakartaSans_600SemiBold",
           fontSize: 11,
         },
         headerShown: false,
@@ -102,7 +102,7 @@ function ClassicTabLayout() {
             backgroundColor: colors.primary,
             color: colors.primaryForeground,
             fontSize: 10,
-            fontFamily: "SpaceGrotesk_700Bold",
+            fontFamily: "PlusJakartaSans_700Bold",
             minWidth: 18,
             height: 18,
             lineHeight: 14,

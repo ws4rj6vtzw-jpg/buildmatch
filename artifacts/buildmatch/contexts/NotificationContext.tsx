@@ -224,12 +224,12 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 14,
-    fontFamily: "SpaceGrotesk_700Bold",
+    fontFamily: "PlusJakartaSans_700Bold",
     letterSpacing: -0.2,
   },
   body: {
     fontSize: 12,
-    fontFamily: "SpaceGrotesk_500Medium",
+    fontFamily: "PlusJakartaSans_500Medium",
     marginTop: 2,
   },
   close: {

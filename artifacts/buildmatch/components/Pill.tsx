@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 13,
-    fontFamily: "SpaceGrotesk_500Medium",
+    fontFamily: "PlusJakartaSans_500Medium",
     lineHeight: 18,
     includeFontPadding: false,
     textAlignVertical: "center",

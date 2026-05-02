@@ -261,16 +261,16 @@ const styles = StyleSheet.create({
   },
   name: {
     fontSize: 24,
-    fontFamily: "SpaceGrotesk_700Bold",
+    fontFamily: "PlusJakartaSans_700Bold",
     letterSpacing: -0.5,
   },
   trade: {
     fontSize: 14,
-    fontFamily: "SpaceGrotesk_600SemiBold",
+    fontFamily: "PlusJakartaSans_600SemiBold",
   },
   location: {
     fontSize: 13,
-    fontFamily: "SpaceGrotesk_500Medium",
+    fontFamily: "PlusJakartaSans_500Medium",
     textAlign: "center",
   },
   stats: {
@@ -285,12 +285,12 @@ const styles = StyleSheet.create({
   },
   statValue: {
     fontSize: 16,
-    fontFamily: "SpaceGrotesk_700Bold",
+    fontFamily: "PlusJakartaSans_700Bold",
     marginTop: 2,
   },
   statLabel: {
     fontSize: 10,
-    fontFamily: "SpaceGrotesk_600SemiBold",
+    fontFamily: "PlusJakartaSans_600SemiBold",
     letterSpacing: 0.5,
     textTransform: "uppercase",
   },
@@ -309,18 +309,18 @@ const styles = StyleSheet.create({
   },
   availText: {
     fontSize: 12,
-    fontFamily: "SpaceGrotesk_600SemiBold",
+    fontFamily: "PlusJakartaSans_600SemiBold",
     letterSpacing: 0.3,
   },
   sectionLabel: {
     fontSize: 11,
-    fontFamily: "SpaceGrotesk_600SemiBold",
+    fontFamily: "PlusJakartaSans_600SemiBold",
     letterSpacing: 0.5,
     textTransform: "uppercase",
   },
   body: {
     fontSize: 15,
-    fontFamily: "SpaceGrotesk_400Regular",
+    fontFamily: "PlusJakartaSans_400Regular",
     lineHeight: 22,
   },
   pills: { flexDirection: "row", flexWrap: "wrap", gap: 6 },
@@ -334,7 +334,7 @@ const styles = StyleSheet.create({
   },
   reviewBtnText: {
     fontSize: 15,
-    fontFamily: "SpaceGrotesk_600SemiBold",
+    fontFamily: "PlusJakartaSans_600SemiBold",
   },
   reviewedBadge: {
     flexDirection: "row",
@@ -346,7 +346,7 @@ const styles = StyleSheet.create({
   },
   reviewedText: {
     fontSize: 13,
-    fontFamily: "SpaceGrotesk_500Medium",
+    fontFamily: "PlusJakartaSans_500Medium",
   },
   actionRow: {
     flexDirection: "row",
@@ -363,6 +363,6 @@ const styles = StyleSheet.create({
   },
   actionText: {
     fontSize: 14,
-    fontFamily: "SpaceGrotesk_600SemiBold",
+    fontFamily: "PlusJakartaSans_600SemiBold",
   },
 });

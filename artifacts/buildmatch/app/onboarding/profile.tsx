@@ -292,17 +292,17 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 28,
-    fontFamily: "SpaceGrotesk_700Bold",
+    fontFamily: "PlusJakartaSans_700Bold",
     letterSpacing: -0.6,
   },
   subtitle: {
     fontSize: 14,
-    fontFamily: "SpaceGrotesk_400Regular",
+    fontFamily: "PlusJakartaSans_400Regular",
     lineHeight: 20,
   },
   label: {
     fontSize: 12,
-    fontFamily: "SpaceGrotesk_600SemiBold",
+    fontFamily: "PlusJakartaSans_600SemiBold",
     letterSpacing: 0.5,
     textTransform: "uppercase",
   },
@@ -312,7 +312,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 14,
     fontSize: 15,
-    fontFamily: "SpaceGrotesk_500Medium",
+    fontFamily: "PlusJakartaSans_500Medium",
   },
   multiline: { minHeight: 92, textAlignVertical: "top" },
   pillsWrap: {
@@ -330,11 +330,11 @@ const styles = StyleSheet.create({
   },
   insuranceTitle: {
     fontSize: 14,
-    fontFamily: "SpaceGrotesk_600SemiBold",
+    fontFamily: "PlusJakartaSans_600SemiBold",
   },
   insuranceSub: {
     fontSize: 12,
-    fontFamily: "SpaceGrotesk_400Regular",
+    fontFamily: "PlusJakartaSans_400Regular",
     marginTop: 2,
   },
 });

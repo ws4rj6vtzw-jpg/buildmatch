@@ -235,12 +235,12 @@ const styles = StyleSheet.create({
   },
   tradeText: {
     fontSize: 12,
-    fontFamily: "SpaceGrotesk_600SemiBold",
+    fontFamily: "PlusJakartaSans_600SemiBold",
     letterSpacing: 0.4,
   },
   title: {
     fontSize: 24,
-    fontFamily: "SpaceGrotesk_700Bold",
+    fontFamily: "PlusJakartaSans_700Bold",
     letterSpacing: -0.5,
     lineHeight: 30,
   },
@@ -261,13 +261,13 @@ const styles = StyleSheet.create({
   },
   metaLabel: {
     fontSize: 11,
-    fontFamily: "SpaceGrotesk_600SemiBold",
+    fontFamily: "PlusJakartaSans_600SemiBold",
     letterSpacing: 0.4,
     textTransform: "uppercase",
   },
   metaValue: {
     fontSize: 14,
-    fontFamily: "SpaceGrotesk_600SemiBold",
+    fontFamily: "PlusJakartaSans_600SemiBold",
   },
   builderCard: {
     flexDirection: "row",
@@ -279,27 +279,27 @@ const styles = StyleSheet.create({
   },
   builderName: {
     fontSize: 15,
-    fontFamily: "SpaceGrotesk_600SemiBold",
+    fontFamily: "PlusJakartaSans_600SemiBold",
   },
   builderMeta: {
     fontSize: 12,
-    fontFamily: "SpaceGrotesk_500Medium",
+    fontFamily: "PlusJakartaSans_500Medium",
   },
   sectionLabel: {
     fontSize: 11,
-    fontFamily: "SpaceGrotesk_600SemiBold",
+    fontFamily: "PlusJakartaSans_600SemiBold",
     letterSpacing: 0.5,
     textTransform: "uppercase",
   },
   body: {
     fontSize: 15,
-    fontFamily: "SpaceGrotesk_400Regular",
+    fontFamily: "PlusJakartaSans_400Regular",
     lineHeight: 22,
   },
   pills: { flexDirection: "row", flexWrap: "wrap", gap: 6 },
   muted: {
     fontSize: 14,
-    fontFamily: "SpaceGrotesk_400Regular",
+    fontFamily: "PlusJakartaSans_400Regular",
     fontStyle: "italic",
   },
   applicant: {

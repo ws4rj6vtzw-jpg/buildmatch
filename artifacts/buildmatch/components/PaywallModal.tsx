@@ -152,13 +152,13 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 22,
-    fontFamily: "SpaceGrotesk_700Bold",
+    fontFamily: "PlusJakartaSans_700Bold",
     letterSpacing: -0.4,
     textAlign: "center",
   },
   sub: {
     fontSize: 14,
-    fontFamily: "SpaceGrotesk_400Regular",
+    fontFamily: "PlusJakartaSans_400Regular",
     textAlign: "center",
     lineHeight: 20,
   },
@@ -175,20 +175,20 @@ const styles = StyleSheet.create({
   },
   optTitle: {
     fontSize: 15,
-    fontFamily: "SpaceGrotesk_600SemiBold",
+    fontFamily: "PlusJakartaSans_600SemiBold",
   },
   optDesc: {
     fontSize: 12,
-    fontFamily: "SpaceGrotesk_400Regular",
+    fontFamily: "PlusJakartaSans_400Regular",
     marginTop: 2,
   },
   price: {
     fontSize: 22,
-    fontFamily: "SpaceGrotesk_700Bold",
+    fontFamily: "PlusJakartaSans_700Bold",
   },
   priceUnit: {
     fontSize: 12,
-    fontFamily: "SpaceGrotesk_400Regular",
+    fontFamily: "PlusJakartaSans_400Regular",
   },
   badge: {
     paddingHorizontal: 7,
@@ -197,7 +197,7 @@ const styles = StyleSheet.create({
   },
   badgeText: {
     fontSize: 10,
-    fontFamily: "SpaceGrotesk_700Bold",
+    fontFamily: "PlusJakartaSans_700Bold",
     letterSpacing: 0.3,
   },
   features: {
@@ -210,7 +210,7 @@ const styles = StyleSheet.create({
   },
   featureText: {
     fontSize: 13,
-    fontFamily: "SpaceGrotesk_400Regular",
+    fontFamily: "PlusJakartaSans_400Regular",
   },
   btn: {
     height: 48,
@@ -222,7 +222,7 @@ const styles = StyleSheet.create({
   },
   btnText: {
     fontSize: 15,
-    fontFamily: "SpaceGrotesk_600SemiBold",
+    fontFamily: "PlusJakartaSans_600SemiBold",
   },
   orRow: {
     flexDirection: "row",
@@ -235,10 +235,10 @@ const styles = StyleSheet.create({
   },
   orText: {
     fontSize: 12,
-    fontFamily: "SpaceGrotesk_500Medium",
+    fontFamily: "PlusJakartaSans_500Medium",
   },
   cancel: {
     fontSize: 14,
-    fontFamily: "SpaceGrotesk_500Medium",
+    fontFamily: "PlusJakartaSans_500Medium",
   },
 });

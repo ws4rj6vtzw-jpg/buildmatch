@@ -145,26 +145,26 @@ const styles = StyleSheet.create({
   },
   tradeText: {
     fontSize: 11,
-    fontFamily: "SpaceGrotesk_600SemiBold",
+    fontFamily: "PlusJakartaSans_600SemiBold",
     letterSpacing: 0.3,
   },
   rate: {
     fontSize: 18,
-    fontFamily: "SpaceGrotesk_700Bold",
+    fontFamily: "PlusJakartaSans_700Bold",
   },
   rateUnit: {
     fontSize: 13,
-    fontFamily: "SpaceGrotesk_500Medium",
+    fontFamily: "PlusJakartaSans_500Medium",
   },
   title: {
     fontSize: 16,
-    fontFamily: "SpaceGrotesk_600SemiBold",
+    fontFamily: "PlusJakartaSans_600SemiBold",
     letterSpacing: -0.2,
     lineHeight: 22,
   },
   builder: {
     fontSize: 13,
-    fontFamily: "SpaceGrotesk_500Medium",
+    fontFamily: "PlusJakartaSans_500Medium",
   },
   metaRow: {
     flexDirection: "row",
@@ -179,7 +179,7 @@ const styles = StyleSheet.create({
   },
   metaText: {
     fontSize: 12,
-    fontFamily: "SpaceGrotesk_500Medium",
+    fontFamily: "PlusJakartaSans_500Medium",
   },
   ticketsRow: {
     flexDirection: "row",
@@ -194,6 +194,6 @@ const styles = StyleSheet.create({
   },
   ticketText: {
     fontSize: 11,
-    fontFamily: "SpaceGrotesk_500Medium",
+    fontFamily: "PlusJakartaSans_500Medium",
   },
 });

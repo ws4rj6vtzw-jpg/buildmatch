@@ -110,12 +110,12 @@ const styles = StyleSheet.create({
   content: { flex: 1, padding: 24, paddingTop: 36, gap: 16 },
   title: {
     fontSize: 28,
-    fontFamily: "SpaceGrotesk_700Bold",
+    fontFamily: "PlusJakartaSans_700Bold",
     letterSpacing: -0.6,
   },
   subtitle: {
     fontSize: 15,
-    fontFamily: "SpaceGrotesk_400Regular",
+    fontFamily: "PlusJakartaSans_400Regular",
     lineHeight: 22,
   },
   cellRow: {
@@ -135,7 +135,7 @@ const styles = StyleSheet.create({
   },
   cellText: {
     fontSize: 26,
-    fontFamily: "SpaceGrotesk_700Bold",
+    fontFamily: "PlusJakartaSans_700Bold",
   },
   hiddenInput: {
     position: "absolute",
@@ -145,7 +145,7 @@ const styles = StyleSheet.create({
   },
   link: {
     fontSize: 14,
-    fontFamily: "SpaceGrotesk_500Medium",
+    fontFamily: "PlusJakartaSans_500Medium",
     marginTop: 12,
   },
   footer: {
