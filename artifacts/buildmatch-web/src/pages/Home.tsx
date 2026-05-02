@@ -258,7 +258,7 @@ export default function Home() {
               <div className="bg-card border border-border p-8 text-center h-full hover:bg-secondary/50 transition-colors group">
                 <div className="w-20 h-20 mx-auto bg-background border border-border flex items-center justify-center mb-8 transform group-hover:scale-110 transition-transform duration-500 shadow-[0_4px_20px_rgba(0,0,0,0.08)]">
                   <span className="text-4xl font-black text-foreground/15">03</span>
-                  <Hammer className="w-8 h-8 text-foreground absolute" />
+                  <CheckCircle className="w-8 h-8 text-foreground absolute" />
                 </div>
                 <h3 className="text-2xl font-black uppercase tracking-tight mb-4">Chat & Hire</h3>
                 <p className="text-muted-foreground font-medium leading-relaxed">When both sides swipe right, it's a match. Instant messaging opens up. Agree on start times, share site inductions, get to work.</p>
@@ -443,7 +443,7 @@ export default function Home() {
                       <div className="bg-white/90 backdrop-blur border border-accent/40 p-4 flex justify-between items-center transform scale-105 shadow-[0_4px_20px_rgba(8,145,178,0.15)] relative">
                         <div className="absolute -left-1 top-0 bottom-0 w-1 bg-accent"></div>
                         <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 bg-accent/20 flex items-center justify-center"><Hammer className="w-4 h-4 text-accent" /></div>
+                          <div className="w-8 h-8 bg-accent/20 flex items-center justify-center"><Users className="w-4 h-4 text-accent" /></div>
                           <div>
                             <div className="font-bold text-foreground text-sm uppercase">Dryliners</div>
                             <div className="text-xs text-muted-foreground">2 needed • 0 filled</div>
@@ -623,9 +623,6 @@ export default function Home() {
         <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-10 mb-16">
           <div className="col-span-2 md:col-span-1">
             <div className="flex items-center gap-2 mb-6">
-              <div className="w-8 h-8 bg-primary flex items-center justify-center transform -skew-x-12">
-                <Hammer className="w-4 h-4 text-white" />
-              </div>
               <span className="font-black text-xl tracking-tighter uppercase">BUILDMATCH</span>
             </div>
             <p className="text-sm text-muted-foreground font-medium mb-6">The swipe-to-hire network for the UK construction industry. Built by trades, for trades.</p>
