@@ -98,6 +98,22 @@ export default function ChatScreen() {
           headerShown: true,
           headerStyle: { backgroundColor: colors.background },
           headerTintColor: colors.foreground,
+            headerLeft: () => (
+            <Pressable
+              onPress={() => router.canGoBack() ? router.back() : router.replace("/(tabs)/matches")}
+              style={({ pressed }) => ({
+                opacity: pressed ? 0.5 : 1,
+                paddingRight: 12,
+                paddingVertical: 4,
+                flexDirection: "row",
+                alignItems: "center",
+                gap: 2,
+              })}
+              hitSlop={8}
+            >
+              <Feather name="chevron-left" size={26} color={colors.primary} />
+            </Pressable>
+          ),
           headerTitle: () => (
             <Pressable
               onPress={goToWorkerProfile}
