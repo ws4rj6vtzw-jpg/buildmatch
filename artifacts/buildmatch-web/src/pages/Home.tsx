@@ -3,7 +3,7 @@ import { motion, useAnimation, useInView, AnimatePresence } from "framer-motion"
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { HardHat, Smartphone, Zap, MapPin, CheckCircle, ShieldCheck, ArrowRight, Star, Clock, Hammer, Building2, Apple, Play, ChevronRight, ChevronLeft, Menu, X, Users, ThumbsUp } from "lucide-react";
+import { HardHat, Smartphone, Zap, MapPin, CheckCircle, ShieldCheck, ArrowRight, Star, Clock, Building2, Apple, Play, ChevronRight, ChevronLeft, Menu, X, Users, ThumbsUp } from "lucide-react";
 
 const FadeIn = ({ children, delay = 0, className = "", direction = "up" }: { children: React.ReactNode, delay?: number, className?: string, direction?: "up" | "left" | "right" }) => {
   const ref = React.useRef(null);
@@ -44,9 +44,6 @@ export default function Home() {
       <nav className="fixed top-0 left-0 right-0 z-50 bg-background/90 backdrop-blur-md border-b border-border">
         <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-primary flex items-center justify-center transform -skew-x-12 shadow-[0_0_20px_rgba(37,99,235,0.3)]">
-              <Hammer className="w-5 h-5 text-white" />
-            </div>
             <span className="font-black text-2xl tracking-tighter uppercase">BUILDMATCH</span>
           </div>
           
@@ -93,18 +90,10 @@ export default function Home() {
           <img src="/images/hero-bg.png" alt="Construction worker" className="w-full h-full object-cover opacity-15 mix-blend-multiply" />
           <div className="absolute inset-0 bg-gradient-to-r from-background via-background/90 to-background/30"></div>
           <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent"></div>
-          {/* Blueprint grid overlay */}
-          <div className="absolute inset-0 opacity-[0.06]" style={{ backgroundImage: 'linear-gradient(to right, #2563EB 1px, transparent 1px), linear-gradient(to bottom, #2563EB 1px, transparent 1px)', backgroundSize: '40px 40px' }}></div>
         </div>
 
         <div className="max-w-7xl mx-auto relative z-10 grid lg:grid-cols-2 gap-12 items-center w-full">
           <div>
-            <FadeIn>
-              <div className="inline-flex items-center gap-2 border border-accent/30 bg-accent/10 px-4 py-2 mb-8 transform -skew-x-6">
-                <div className="w-2 h-2 rounded-full bg-accent animate-pulse"></div>
-                <span className="text-accent text-sm font-bold uppercase tracking-widest">Live: 482 Sites Hiring Today</span>
-              </div>
-            </FadeIn>
             <FadeIn delay={0.1}>
               <h1 className="text-6xl sm:text-7xl lg:text-8xl font-black leading-[0.95] mb-6 uppercase tracking-tighter">
                 Hire Smarter, <br />
