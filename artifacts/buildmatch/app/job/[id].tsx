@@ -76,7 +76,7 @@ export default function JobDetail() {
         <Text style={[styles.title, { color: colors.foreground }]}>{job.title}</Text>
 
         <View style={styles.metaGrid}>
-          <Meta icon="pound-sign" label="Pay" value={`£${job.payRate} / ${job.payType === "hour" ? "hr" : "day"}`} />
+          <Meta icon="tag" label="Pay" value={`£${job.payRate} / ${job.payType === "hour" ? "hr" : "day"}`} />
           <Meta icon="map-pin" label="Location" value={`${job.suburb} ${job.postcode}`} />
           <Meta icon="calendar" label="Start" value={job.startDate} />
           <Meta icon="clock" label="Duration" value={`${job.durationDays} ${job.durationDays === 1 ? "day" : "days"}`} />

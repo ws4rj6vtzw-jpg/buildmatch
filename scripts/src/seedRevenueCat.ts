@@ -47,7 +47,7 @@ const APP_STORE_BUNDLE_ID = "com.buildmatch.app";
 const PLAY_STORE_APP_NAME = "BuildMatch Android";
 const PLAY_STORE_PACKAGE_NAME = "com.buildmatch.app";
 
-const ENTITLEMENT_IDENTIFIER = "pro";
+const ENTITLEMENT_IDENTIFIER = "BuildMatch Pro";
 const ENTITLEMENT_DISPLAY_NAME = "BuildMatch Pro";
 
 const OFFERING_IDENTIFIER = "default";
@@ -209,7 +209,10 @@ async function seedRevenueCat() {
   });
   if (listEntitlementsError) throw new Error("Failed to list entitlements");
 
-  const existingEnt = existingEntitlements.items?.find((e) => e.lookup_key === ENTITLEMENT_IDENTIFIER);
+  console.log("Existing entitlements:", JSON.stringify(existingEntitlements.items?.map(e => ({ id: e.id, lookup_key: e.lookup_key }))));
+  const existingEnt = existingEntitlements.items?.find(
+    (e) => e.lookup_key === ENTITLEMENT_IDENTIFIER || (e as any).identifier === ENTITLEMENT_IDENTIFIER,
+  );
   if (existingEnt) {
     console.log("Entitlement already exists:", existingEnt.id);
     entitlement = existingEnt;
@@ -219,9 +222,24 @@ async function seedRevenueCat() {
       path: { project_id: project.id },
       body: { lookup_key: ENTITLEMENT_IDENTIFIER, display_name: ENTITLEMENT_DISPLAY_NAME },
     });
-    if (error) throw new Error("Failed to create entitlement");
-    console.log("Created entitlement:", data.id);
-    entitlement = data;
+    if (error) {
+      // Might already exist under a different field name — try to find it
+      if (typeof error === "object" && "type" in error && (error as any).type === "resource_already_exists") {
+        console.log("Entitlement already exists remotely, re-fetching...");
+        const { data: refetch } = await listEntitlements({ client, path: { project_id: project.id }, query: { limit: 100 } });
+        console.log("Re-fetched entitlements:", JSON.stringify(refetch?.items));
+        const found = refetch?.items?.find((e: any) => e.lookup_key === ENTITLEMENT_IDENTIFIER || e.identifier === ENTITLEMENT_IDENTIFIER);
+        if (!found) throw new Error("Could not find existing entitlement after resource_already_exists error");
+        entitlement = found;
+        console.log("Found existing entitlement:", entitlement.id);
+      } else {
+        console.error("Entitlement creation error:", JSON.stringify(error));
+        throw new Error("Failed to create entitlement");
+      }
+    } else {
+      console.log("Created entitlement:", data.id);
+      entitlement = data;
+    }
   }
 
   const { error: attachEntErr } = await attachProductsToEntitlement({

@@ -20,12 +20,14 @@ import { useColors } from "@/hooks/useColors";
 import { useAuth } from "@/contexts/AuthContext";
 import { useData } from "@/contexts/DataContext";
 import { useTheme } from "@/contexts/ThemeContext";
+import { useSubscription } from "@/lib/revenuecat";
 
 export default function ProfileScreen() {
   const colors = useColors();
   const { mode: themeMode, setMode: setThemeMode } = useTheme();
   const { user, signOut, setRole, updateProfile } = useAuth();
   const { matches, swipes, jobs, ratings, completedSnaps } = useData();
+  const { purchaseWorkerPro, restorePurchases } = useSubscription();
   const [copied, setCopied] = useState(false);
   const [proModalVisible, setProModalVisible] = useState(false);
 
@@ -466,6 +468,11 @@ export default function ProfileScreen() {
           label={isWorker ? "Switch to builder" : "Switch to worker"}
           onPress={onSwitchRole}
         />
+        <Row
+          icon="refresh-cw"
+          label="Restore purchases"
+          onPress={restorePurchases}
+        />
         <Row icon="log-out" label="Sign out" onPress={onSignOut} destructive />
 
         <Text style={[styles.fineprint, { color: colors.mutedForeground }]}>
@@ -475,9 +482,9 @@ export default function ProfileScreen() {
 
       <ProModal
         visible={proModalVisible}
-        onUpgrade={() => {
-          updateProfile({ isPro: true });
+        onUpgrade={async () => {
           setProModalVisible(false);
+          await purchaseWorkerPro();
         }}
         onClose={() => setProModalVisible(false)}
       />

@@ -17,6 +17,7 @@ import { SwipeCard, type SwipeCardData } from "@/components/SwipeCard";
 import { useColors } from "@/hooks/useColors";
 import { useAuth } from "@/contexts/AuthContext";
 import { useData } from "@/contexts/DataContext";
+import { useSubscription } from "@/lib/revenuecat";
 
 const RADIUS_OPTIONS = [5, 15, 30, 50, 100, 0] as const;
 const DEFAULT_RADIUS = 25;
@@ -40,6 +41,8 @@ export default function DiscoverScreen() {
   const [radiusOpen, setRadiusOpen] = useState(false);
   const [paywallVisible, setPaywallVisible] = useState(false);
   const [pendingSwipe, setPendingSwipe] = useState<{ id: string } | null>(null);
+
+  const { purchaseBuilderPro } = useSubscription();
 
   const isWorker = user?.role === "worker";
   const radius = user?.travelRadiusKm ?? DEFAULT_RADIUS;
@@ -147,14 +150,13 @@ export default function DiscoverScreen() {
     }
   };
 
-  const handleGoPro = () => {
+  const handleGoPro = async () => {
     setPaywallVisible(false);
-    updateProfile({ isPro: true }).then(() => {
-      if (pendingSwipe) {
-        completeSwipe(pendingSwipe.id);
-        setPendingSwipe(null);
-      }
-    });
+    await purchaseBuilderPro();
+    if (pendingSwipe) {
+      completeSwipe(pendingSwipe.id);
+      setPendingSwipe(null);
+    }
   };
 
   const top = deck[0];

@@ -20,8 +20,10 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { DataProvider } from "@/contexts/DataContext";
 import { NotificationProvider } from "@/contexts/NotificationContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
+import { initializeRevenueCat, SubscriptionProvider } from "@/lib/revenuecat";
 
 SplashScreen.preventAutoHideAsync();
+initializeRevenueCat();
 
 const queryClient = new QueryClient();
 
@@ -64,11 +66,13 @@ export default function RootLayout() {
               <ThemeProvider>
                 <AuthProvider>
                   <DataProvider>
-                    <NotificationProvider>
-                      <StatusBar style="auto" />
-                      <RootLayoutNav />
-                      <Notifier />
-                    </NotificationProvider>
+                    <SubscriptionProvider>
+                      <NotificationProvider>
+                        <StatusBar style="auto" />
+                        <RootLayoutNav />
+                        <Notifier />
+                      </NotificationProvider>
+                    </SubscriptionProvider>
                   </DataProvider>
                 </AuthProvider>
               </ThemeProvider>
