@@ -254,19 +254,19 @@ const styles = StyleSheet.create({
   },
   badgeText: {
     fontSize: 11,
-    fontFamily: "Inter_600SemiBold",
+    fontFamily: "SpaceGrotesk_600SemiBold",
     letterSpacing: 0.3,
   },
   title: {
     color: "#fff",
     fontSize: 26,
-    fontFamily: "Inter_700Bold",
+    fontFamily: "SpaceGrotesk_700Bold",
     letterSpacing: -0.4,
   },
   subtitle: {
     color: "rgba(255,255,255,0.85)",
     fontSize: 15,
-    fontFamily: "Inter_500Medium",
+    fontFamily: "SpaceGrotesk_500Medium",
   },
   metaRow: {
     flexDirection: "row",
@@ -286,12 +286,12 @@ const styles = StyleSheet.create({
   metaText: {
     color: "#fff",
     fontSize: 12,
-    fontFamily: "Inter_500Medium",
+    fontFamily: "SpaceGrotesk_500Medium",
   },
   description: {
     color: "rgba(255,255,255,0.7)",
     fontSize: 13,
-    fontFamily: "Inter_400Regular",
+    fontFamily: "SpaceGrotesk_400Regular",
     marginTop: 6,
     lineHeight: 18,
   },
@@ -313,7 +313,7 @@ const styles = StyleSheet.create({
   },
   stampText: {
     fontSize: 28,
-    fontFamily: "Inter_700Bold",
+    fontFamily: "SpaceGrotesk_700Bold",
     letterSpacing: 2,
   },
 });

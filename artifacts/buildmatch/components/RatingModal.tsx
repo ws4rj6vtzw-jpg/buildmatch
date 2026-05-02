@@ -165,17 +165,17 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 24,
-    fontFamily: "Inter_700Bold",
+    fontFamily: "SpaceGrotesk_700Bold",
     letterSpacing: -0.5,
   },
   subtitle: {
     fontSize: 14,
-    fontFamily: "Inter_400Regular",
+    fontFamily: "SpaceGrotesk_400Regular",
     textAlign: "center",
   },
   job: {
     fontSize: 13,
-    fontFamily: "Inter_600SemiBold",
+    fontFamily: "SpaceGrotesk_600SemiBold",
     marginTop: 4,
   },
   starsRow: {
@@ -198,12 +198,12 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 12,
     fontSize: 14,
-    fontFamily: "Inter_400Regular",
+    fontFamily: "SpaceGrotesk_400Regular",
     textAlignVertical: "top",
     marginTop: 4,
   },
   skip: {
     fontSize: 14,
-    fontFamily: "Inter_500Medium",
+    fontFamily: "SpaceGrotesk_500Medium",
   },
 });

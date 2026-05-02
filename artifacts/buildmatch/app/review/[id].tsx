@@ -385,13 +385,13 @@ const styles = StyleSheet.create({
   },
   name: {
     fontSize: 22,
-    fontFamily: "Inter_700Bold",
+    fontFamily: "SpaceGrotesk_700Bold",
     letterSpacing: -0.5,
     textAlign: "center",
   },
   trade: {
     fontSize: 14,
-    fontFamily: "Inter_600SemiBold",
+    fontFamily: "SpaceGrotesk_600SemiBold",
   },
   jobChip: {
     flexDirection: "row",
@@ -404,7 +404,7 @@ const styles = StyleSheet.create({
   },
   jobChipText: {
     fontSize: 12,
-    fontFamily: "Inter_500Medium",
+    fontFamily: "SpaceGrotesk_500Medium",
   },
   statsRow: {
     flexDirection: "row",
@@ -420,12 +420,12 @@ const styles = StyleSheet.create({
   },
   statValue: {
     fontSize: 16,
-    fontFamily: "Inter_700Bold",
+    fontFamily: "SpaceGrotesk_700Bold",
     marginTop: 2,
   },
   statLabel: {
     fontSize: 10,
-    fontFamily: "Inter_600SemiBold",
+    fontFamily: "SpaceGrotesk_600SemiBold",
     letterSpacing: 0.4,
     textTransform: "uppercase",
   },
@@ -442,12 +442,12 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 16,
-    fontFamily: "Inter_700Bold",
+    fontFamily: "SpaceGrotesk_700Bold",
     letterSpacing: -0.2,
   },
   sectionSub: {
     fontSize: 13,
-    fontFamily: "Inter_400Regular",
+    fontFamily: "SpaceGrotesk_400Regular",
     lineHeight: 18,
   },
   starsRow: {
@@ -461,13 +461,13 @@ const styles = StyleSheet.create({
   },
   starLabel: {
     fontSize: 15,
-    fontFamily: "Inter_700Bold",
+    fontFamily: "SpaceGrotesk_700Bold",
     textAlign: "center",
     marginTop: 6,
   },
   starHint: {
     fontSize: 13,
-    fontFamily: "Inter_400Regular",
+    fontFamily: "SpaceGrotesk_400Regular",
     textAlign: "center",
     marginTop: 6,
   },
@@ -477,13 +477,13 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 12,
     fontSize: 14,
-    fontFamily: "Inter_400Regular",
+    fontFamily: "SpaceGrotesk_400Regular",
     textAlignVertical: "top",
     marginTop: 6,
   },
   charCount: {
     fontSize: 11,
-    fontFamily: "Inter_500Medium",
+    fontFamily: "SpaceGrotesk_500Medium",
     textAlign: "right",
   },
   actions: {
@@ -497,7 +497,7 @@ const styles = StyleSheet.create({
   },
   skipText: {
     fontSize: 14,
-    fontFamily: "Inter_500Medium",
+    fontFamily: "SpaceGrotesk_500Medium",
   },
   doneCard: {
     borderRadius: 18,
@@ -516,12 +516,12 @@ const styles = StyleSheet.create({
   },
   doneTitle: {
     fontSize: 22,
-    fontFamily: "Inter_700Bold",
+    fontFamily: "SpaceGrotesk_700Bold",
     letterSpacing: -0.4,
   },
   doneSub: {
     fontSize: 14,
-    fontFamily: "Inter_400Regular",
+    fontFamily: "SpaceGrotesk_400Regular",
     textAlign: "center",
     lineHeight: 20,
   },
@@ -533,6 +533,6 @@ const styles = StyleSheet.create({
   },
   doneBtnText: {
     fontSize: 15,
-    fontFamily: "Inter_600SemiBold",
+    fontFamily: "SpaceGrotesk_600SemiBold",
   },
 });

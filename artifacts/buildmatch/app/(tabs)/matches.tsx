@@ -105,7 +105,7 @@ export default function MatchesScreen() {
                     {
                       color: item.unread > 0 ? colors.foreground : colors.mutedForeground,
                       fontFamily:
-                        item.unread > 0 ? "Inter_600SemiBold" : "Inter_400Regular",
+                        item.unread > 0 ? "SpaceGrotesk_600SemiBold" : "SpaceGrotesk_400Regular",
                     },
                   ]}
                   numberOfLines={1}
@@ -164,17 +164,17 @@ const styles = StyleSheet.create({
   },
   name: {
     fontSize: 16,
-    fontFamily: "Inter_600SemiBold",
+    fontFamily: "SpaceGrotesk_600SemiBold",
     flex: 1,
     marginRight: 8,
   },
   time: {
     fontSize: 12,
-    fontFamily: "Inter_500Medium",
+    fontFamily: "SpaceGrotesk_500Medium",
   },
   subtitle: {
     fontSize: 12,
-    fontFamily: "Inter_600SemiBold",
+    fontFamily: "SpaceGrotesk_600SemiBold",
   },
   previewRow: {
     flexDirection: "row",
@@ -196,7 +196,7 @@ const styles = StyleSheet.create({
   },
   unreadText: {
     fontSize: 11,
-    fontFamily: "Inter_700Bold",
+    fontFamily: "SpaceGrotesk_700Bold",
   },
   empty: {
     flex: 1,
@@ -214,11 +214,11 @@ const styles = StyleSheet.create({
   },
   emptyTitle: {
     fontSize: 17,
-    fontFamily: "Inter_600SemiBold",
+    fontFamily: "SpaceGrotesk_600SemiBold",
   },
   emptyText: {
     fontSize: 13,
-    fontFamily: "Inter_400Regular",
+    fontFamily: "SpaceGrotesk_400Regular",
     textAlign: "center",
     maxWidth: 260,
   },

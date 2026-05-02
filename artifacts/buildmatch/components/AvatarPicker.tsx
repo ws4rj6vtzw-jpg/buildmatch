@@ -204,7 +204,7 @@ const styles = StyleSheet.create({
   },
   sheetLabel: {
     fontSize: 15,
-    fontFamily: "Inter_500Medium",
+    fontFamily: "SpaceGrotesk_500Medium",
   },
   divider: {
     height: 1,

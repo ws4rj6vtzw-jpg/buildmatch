@@ -85,13 +85,13 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 30,
-    fontFamily: "Inter_700Bold",
+    fontFamily: "SpaceGrotesk_700Bold",
     letterSpacing: -0.8,
     lineHeight: 36,
   },
   subtitle: {
     fontSize: 15,
-    fontFamily: "Inter_400Regular",
+    fontFamily: "SpaceGrotesk_400Regular",
     lineHeight: 22,
   },
   inputWrap: {
@@ -105,18 +105,18 @@ const styles = StyleSheet.create({
   },
   prefix: {
     fontSize: 17,
-    fontFamily: "Inter_500Medium",
+    fontFamily: "SpaceGrotesk_500Medium",
     marginRight: 10,
   },
   input: {
     flex: 1,
     fontSize: 17,
-    fontFamily: "Inter_500Medium",
+    fontFamily: "SpaceGrotesk_500Medium",
     paddingVertical: 0,
   },
   fineprint: {
     fontSize: 12,
-    fontFamily: "Inter_400Regular",
+    fontFamily: "SpaceGrotesk_400Regular",
     lineHeight: 17,
   },
   footer: {

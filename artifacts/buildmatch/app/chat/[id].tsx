@@ -300,8 +300,8 @@ export default function ChatScreen() {
 
 const styles = StyleSheet.create({
   headerTitle: { flexDirection: "row", alignItems: "center", gap: 10 },
-  partnerName: { fontSize: 15, fontFamily: "Inter_600SemiBold" },
-  partnerJob: { fontSize: 11, fontFamily: "Inter_500Medium" },
+  partnerName: { fontSize: 15, fontFamily: "SpaceGrotesk_600SemiBold" },
+  partnerJob: { fontSize: 11, fontFamily: "SpaceGrotesk_500Medium" },
   thread: {
     padding: 16,
     paddingBottom: 20,
@@ -317,7 +317,7 @@ const styles = StyleSheet.create({
   },
   bubbleText: {
     fontSize: 15,
-    fontFamily: "Inter_400Regular",
+    fontFamily: "SpaceGrotesk_400Regular",
     lineHeight: 21,
   },
   empty: {
@@ -327,7 +327,7 @@ const styles = StyleSheet.create({
     paddingVertical: 80,
     transform: [{ scaleY: -1 }],
   },
-  emptyText: { fontSize: 14, fontFamily: "Inter_500Medium" },
+  emptyText: { fontSize: 14, fontFamily: "SpaceGrotesk_500Medium" },
   inputBar: {
     flexDirection: "row",
     alignItems: "flex-end",
@@ -347,7 +347,7 @@ const styles = StyleSheet.create({
   },
   input: {
     fontSize: 15,
-    fontFamily: "Inter_400Regular",
+    fontFamily: "SpaceGrotesk_400Regular",
     paddingVertical: 4,
   },
   sendBtn: {
@@ -368,7 +368,7 @@ const styles = StyleSheet.create({
   },
   headerBtnText: {
     fontSize: 12,
-    fontFamily: "Inter_600SemiBold",
+    fontFamily: "SpaceGrotesk_600SemiBold",
     letterSpacing: 0.2,
   },
   headerBadge: {
@@ -389,7 +389,7 @@ const styles = StyleSheet.create({
   },
   bannerText: {
     fontSize: 13,
-    fontFamily: "Inter_500Medium",
+    fontFamily: "SpaceGrotesk_500Medium",
     flex: 1,
   },
   bannerLink: {
@@ -397,6 +397,6 @@ const styles = StyleSheet.create({
   },
   bannerLinkText: {
     fontSize: 13,
-    fontFamily: "Inter_600SemiBold",
+    fontFamily: "SpaceGrotesk_600SemiBold",
   },
 });

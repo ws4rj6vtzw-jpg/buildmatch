@@ -180,13 +180,13 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 26,
-    fontFamily: "Inter_700Bold",
+    fontFamily: "SpaceGrotesk_700Bold",
     letterSpacing: -0.5,
     textAlign: "center",
   },
   subtitle: {
     fontSize: 14,
-    fontFamily: "Inter_400Regular",
+    fontFamily: "SpaceGrotesk_400Regular",
     lineHeight: 20,
     textAlign: "center",
     maxWidth: 300,
@@ -211,12 +211,12 @@ const styles = StyleSheet.create({
   clauseText: { flex: 1, gap: 3 },
   clauseHeading: {
     fontSize: 13,
-    fontFamily: "Inter_600SemiBold",
+    fontFamily: "SpaceGrotesk_600SemiBold",
     letterSpacing: -0.1,
   },
   clauseBody: {
     fontSize: 12,
-    fontFamily: "Inter_400Regular",
+    fontFamily: "SpaceGrotesk_400Regular",
     lineHeight: 17,
   },
   checkboxSection: {
@@ -242,7 +242,7 @@ const styles = StyleSheet.create({
   checkboxLabel: {
     flex: 1,
     fontSize: 13,
-    fontFamily: "Inter_400Regular",
+    fontFamily: "SpaceGrotesk_400Regular",
     lineHeight: 19,
   },
 });

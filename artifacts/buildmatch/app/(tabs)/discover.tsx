@@ -429,11 +429,11 @@ const styles = StyleSheet.create({
   freeText: {
     flex: 1,
     fontSize: 12,
-    fontFamily: "Inter_500Medium",
+    fontFamily: "SpaceGrotesk_500Medium",
   },
   upgradeLink: {
     fontSize: 12,
-    fontFamily: "Inter_700Bold",
+    fontFamily: "SpaceGrotesk_700Bold",
   },
   deckWrap: {
     flex: 1,
@@ -466,12 +466,12 @@ const styles = StyleSheet.create({
   },
   emptyTitle: {
     fontSize: 20,
-    fontFamily: "Inter_700Bold",
+    fontFamily: "SpaceGrotesk_700Bold",
     letterSpacing: -0.4,
   },
   emptyText: {
     fontSize: 14,
-    fontFamily: "Inter_400Regular",
+    fontFamily: "SpaceGrotesk_400Regular",
     textAlign: "center",
     lineHeight: 20,
     maxWidth: 280,
@@ -500,13 +500,13 @@ const styles = StyleSheet.create({
   },
   modalTitle: {
     fontSize: 26,
-    fontFamily: "Inter_700Bold",
+    fontFamily: "SpaceGrotesk_700Bold",
     letterSpacing: -0.6,
     marginBottom: 6,
   },
   modalText: {
     fontSize: 15,
-    fontFamily: "Inter_400Regular",
+    fontFamily: "SpaceGrotesk_400Regular",
     textAlign: "center",
     marginBottom: 22,
   },
@@ -519,11 +519,11 @@ const styles = StyleSheet.create({
   },
   modalBtnText: {
     fontSize: 16,
-    fontFamily: "Inter_600SemiBold",
+    fontFamily: "SpaceGrotesk_600SemiBold",
   },
   modalLink: {
     fontSize: 14,
-    fontFamily: "Inter_500Medium",
+    fontFamily: "SpaceGrotesk_500Medium",
   },
   radiusBtn: {
     flexDirection: "row",
@@ -536,7 +536,7 @@ const styles = StyleSheet.create({
   },
   radiusBtnText: {
     fontSize: 13,
-    fontFamily: "Inter_600SemiBold",
+    fontFamily: "SpaceGrotesk_600SemiBold",
   },
   radiusCard: {
     width: "100%",
@@ -562,6 +562,6 @@ const styles = StyleSheet.create({
   },
   radiusOptText: {
     fontSize: 14,
-    fontFamily: "Inter_700Bold",
+    fontFamily: "SpaceGrotesk_700Bold",
   },
 });

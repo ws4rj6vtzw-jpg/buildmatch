@@ -393,7 +393,7 @@ const styles = StyleSheet.create({
   },
   toggleText: {
     fontSize: 13,
-    fontFamily: "Inter_600SemiBold",
+    fontFamily: "SpaceGrotesk_600SemiBold",
     letterSpacing: 0.2,
   },
   filters: {
@@ -417,7 +417,7 @@ const styles = StyleSheet.create({
   searchInput: {
     flex: 1,
     fontSize: 14,
-    fontFamily: "Inter_500Medium",
+    fontFamily: "SpaceGrotesk_500Medium",
     paddingVertical: 0,
   },
   list: {
@@ -439,17 +439,17 @@ const styles = StyleSheet.create({
   },
   emptyTitle: {
     fontSize: 17,
-    fontFamily: "Inter_600SemiBold",
+    fontFamily: "SpaceGrotesk_600SemiBold",
   },
   emptyText: {
     fontSize: 13,
-    fontFamily: "Inter_400Regular",
+    fontFamily: "SpaceGrotesk_400Regular",
     textAlign: "center",
     maxWidth: 260,
   },
   sectionLabel: {
     fontSize: 12,
-    fontFamily: "Inter_600SemiBold",
+    fontFamily: "SpaceGrotesk_600SemiBold",
     letterSpacing: 0.5,
     textTransform: "uppercase",
   },
@@ -463,11 +463,11 @@ const styles = StyleSheet.create({
   },
   myJobTitle: {
     fontSize: 15,
-    fontFamily: "Inter_600SemiBold",
+    fontFamily: "SpaceGrotesk_600SemiBold",
   },
   myJobMeta: {
     fontSize: 12,
-    fontFamily: "Inter_500Medium",
+    fontFamily: "SpaceGrotesk_500Medium",
   },
   applicantBadge: {
     minWidth: 28,
@@ -479,7 +479,7 @@ const styles = StyleSheet.create({
   },
   applicantBadgeText: {
     fontSize: 13,
-    fontFamily: "Inter_700Bold",
+    fontFamily: "SpaceGrotesk_700Bold",
   },
   boostBtn: {
     width: 32,
@@ -499,7 +499,7 @@ const styles = StyleSheet.create({
   },
   boostedChipText: {
     fontSize: 10,
-    fontFamily: "Inter_700Bold",
+    fontFamily: "SpaceGrotesk_700Bold",
   },
   boostModalBg: {
     flex: 1,
@@ -525,12 +525,12 @@ const styles = StyleSheet.create({
   },
   boostModalTitle: {
     fontSize: 20,
-    fontFamily: "Inter_700Bold",
+    fontFamily: "SpaceGrotesk_700Bold",
     letterSpacing: -0.3,
   },
   boostModalSub: {
     fontSize: 13,
-    fontFamily: "Inter_400Regular",
+    fontFamily: "SpaceGrotesk_400Regular",
     textAlign: "center",
     lineHeight: 19,
   },
@@ -546,11 +546,11 @@ const styles = StyleSheet.create({
   },
   boostPriceAmount: {
     fontSize: 26,
-    fontFamily: "Inter_700Bold",
+    fontFamily: "SpaceGrotesk_700Bold",
   },
   boostPriceLabel: {
     fontSize: 13,
-    fontFamily: "Inter_400Regular",
+    fontFamily: "SpaceGrotesk_400Regular",
   },
   boostConfirmBtn: {
     alignSelf: "stretch",
@@ -563,11 +563,11 @@ const styles = StyleSheet.create({
   },
   boostConfirmBtnText: {
     fontSize: 15,
-    fontFamily: "Inter_700Bold",
+    fontFamily: "SpaceGrotesk_700Bold",
     color: "#fff",
   },
   boostCancel: {
     fontSize: 14,
-    fontFamily: "Inter_500Medium",
+    fontFamily: "SpaceGrotesk_500Medium",
   },
 });

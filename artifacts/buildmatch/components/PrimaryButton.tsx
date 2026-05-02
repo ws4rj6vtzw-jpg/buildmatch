@@ -91,7 +91,7 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 16,
-    fontFamily: "Inter_600SemiBold",
+    fontFamily: "SpaceGrotesk_600SemiBold",
     letterSpacing: -0.2,
   },
 });

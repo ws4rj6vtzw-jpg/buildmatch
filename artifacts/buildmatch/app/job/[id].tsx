@@ -235,12 +235,12 @@ const styles = StyleSheet.create({
   },
   tradeText: {
     fontSize: 12,
-    fontFamily: "Inter_600SemiBold",
+    fontFamily: "SpaceGrotesk_600SemiBold",
     letterSpacing: 0.4,
   },
   title: {
     fontSize: 24,
-    fontFamily: "Inter_700Bold",
+    fontFamily: "SpaceGrotesk_700Bold",
     letterSpacing: -0.5,
     lineHeight: 30,
   },
@@ -261,13 +261,13 @@ const styles = StyleSheet.create({
   },
   metaLabel: {
     fontSize: 11,
-    fontFamily: "Inter_600SemiBold",
+    fontFamily: "SpaceGrotesk_600SemiBold",
     letterSpacing: 0.4,
     textTransform: "uppercase",
   },
   metaValue: {
     fontSize: 14,
-    fontFamily: "Inter_600SemiBold",
+    fontFamily: "SpaceGrotesk_600SemiBold",
   },
   builderCard: {
     flexDirection: "row",
@@ -279,27 +279,27 @@ const styles = StyleSheet.create({
   },
   builderName: {
     fontSize: 15,
-    fontFamily: "Inter_600SemiBold",
+    fontFamily: "SpaceGrotesk_600SemiBold",
   },
   builderMeta: {
     fontSize: 12,
-    fontFamily: "Inter_500Medium",
+    fontFamily: "SpaceGrotesk_500Medium",
   },
   sectionLabel: {
     fontSize: 11,
-    fontFamily: "Inter_600SemiBold",
+    fontFamily: "SpaceGrotesk_600SemiBold",
     letterSpacing: 0.5,
     textTransform: "uppercase",
   },
   body: {
     fontSize: 15,
-    fontFamily: "Inter_400Regular",
+    fontFamily: "SpaceGrotesk_400Regular",
     lineHeight: 22,
   },
   pills: { flexDirection: "row", flexWrap: "wrap", gap: 6 },
   muted: {
     fontSize: 14,
-    fontFamily: "Inter_400Regular",
+    fontFamily: "SpaceGrotesk_400Regular",
     fontStyle: "italic",
   },
   applicant: {

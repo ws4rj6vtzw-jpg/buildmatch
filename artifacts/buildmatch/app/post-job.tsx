@@ -213,7 +213,7 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 11,
-    fontFamily: "Inter_600SemiBold",
+    fontFamily: "SpaceGrotesk_600SemiBold",
     letterSpacing: 0.5,
     textTransform: "uppercase",
   },
@@ -223,7 +223,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 14,
     fontSize: 15,
-    fontFamily: "Inter_500Medium",
+    fontFamily: "SpaceGrotesk_500Medium",
   },
   multiline: { minHeight: 110, textAlignVertical: "top" },
   pills: { flexDirection: "row", flexWrap: "wrap", gap: 8 },

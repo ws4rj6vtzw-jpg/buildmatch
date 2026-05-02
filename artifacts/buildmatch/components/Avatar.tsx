@@ -61,6 +61,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   text: {
-    fontFamily: "Inter_600SemiBold",
+    fontFamily: "SpaceGrotesk_600SemiBold",
   },
 });

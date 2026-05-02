@@ -99,12 +99,12 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   title: {
-    fontFamily: "Inter_700Bold",
+    fontFamily: "SpaceGrotesk_700Bold",
     letterSpacing: -0.6,
   },
   subtitle: {
     fontSize: 13,
-    fontFamily: "Inter_500Medium",
+    fontFamily: "SpaceGrotesk_500Medium",
     marginTop: 2,
   },
 });

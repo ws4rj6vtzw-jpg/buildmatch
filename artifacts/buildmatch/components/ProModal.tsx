@@ -119,21 +119,21 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 20,
-    fontFamily: "Inter_700Bold",
+    fontFamily: "SpaceGrotesk_700Bold",
     letterSpacing: -0.3,
   },
   subtitle: {
     fontSize: 13,
-    fontFamily: "Inter_400Regular",
+    fontFamily: "SpaceGrotesk_400Regular",
     marginTop: 2,
   },
   price: {
     fontSize: 24,
-    fontFamily: "Inter_700Bold",
+    fontFamily: "SpaceGrotesk_700Bold",
   },
   priceUnit: {
     fontSize: 12,
-    fontFamily: "Inter_400Regular",
+    fontFamily: "SpaceGrotesk_400Regular",
   },
   trialBanner: {
     flexDirection: "row",
@@ -145,7 +145,7 @@ const styles = StyleSheet.create({
   },
   trialText: {
     fontSize: 13,
-    fontFamily: "Inter_600SemiBold",
+    fontFamily: "SpaceGrotesk_600SemiBold",
   },
   benefits: {
     gap: 12,
@@ -164,7 +164,7 @@ const styles = StyleSheet.create({
   },
   benefitText: {
     fontSize: 14,
-    fontFamily: "Inter_500Medium",
+    fontFamily: "SpaceGrotesk_500Medium",
     flex: 1,
   },
   upgradeBtn: {
@@ -177,17 +177,17 @@ const styles = StyleSheet.create({
   },
   upgradeBtnText: {
     fontSize: 16,
-    fontFamily: "Inter_700Bold",
+    fontFamily: "SpaceGrotesk_700Bold",
     color: "#fff",
   },
   legal: {
     fontSize: 11,
-    fontFamily: "Inter_400Regular",
+    fontFamily: "SpaceGrotesk_400Regular",
     textAlign: "center",
     lineHeight: 16,
   },
   cancel: {
     fontSize: 14,
-    fontFamily: "Inter_500Medium",
+    fontFamily: "SpaceGrotesk_500Medium",
   },
 });
