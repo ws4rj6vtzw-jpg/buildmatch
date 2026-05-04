@@ -42,7 +42,7 @@ export default function AboutUs() {
                   Finding reliable tradespeople in the UK has always been slow, expensive, and opaque. Contractors spend hours chasing referrals. Skilled workers miss out on good jobs because they're not in the right person's phone book.
                 </p>
                 <p>
-                  BuildMatch changes that. We built a simple, fast platform — like a matchmaking app, but for the construction site — where builders post what they need and workers showcase what they do. Both sides swipe, connect, and get to work.
+                  BuildMatch changes that. We built a simple, fast platform where builders post what they need and workers showcase what they do. Both sides swipe, connect, and get to work.
                 </p>
                 <p>
                   No agencies. No fees per hire. No gatekeepers. Just direct connections between the people who build Britain.
