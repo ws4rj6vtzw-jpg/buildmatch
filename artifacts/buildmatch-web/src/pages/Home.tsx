@@ -112,7 +112,7 @@ export default function Home() {
             <FadeIn delay={0.3} className="flex flex-col sm:flex-row gap-4">
               <Button size="lg" className="bg-primary hover:bg-primary/90 text-white rounded-none h-16 px-8 text-lg font-black uppercase tracking-wider w-full sm:w-auto shadow-[0_0_20px_rgba(59,130,246,0.3)] hover:shadow-[0_0_30px_rgba(59,130,246,0.5)] transition-all">
                 <Apple className="w-6 h-6 mr-3 mb-1" />
-                iOS App
+                Apple iOS
               </Button>
               <Button size="lg" variant="outline" className="border-border hover:bg-foreground/5 hover:border-foreground/40 text-foreground rounded-none h-16 px-8 text-lg font-black uppercase tracking-wider w-full sm:w-auto transition-all">
                 <Play className="w-6 h-6 mr-3 mb-1" />
@@ -592,7 +592,7 @@ export default function Home() {
             <div className="flex flex-col sm:flex-row gap-6 justify-center">
               <Button size="lg" className="bg-foreground hover:bg-foreground/90 text-background rounded-none h-16 px-10 text-xl font-black uppercase tracking-wider shadow-xl transition-transform hover:scale-105">
                 <Apple className="w-6 h-6 mr-3 mb-1" />
-                App Store
+                Apple iOS
               </Button>
               <Button size="lg" className="bg-white hover:bg-white/90 text-foreground rounded-none h-16 px-10 text-xl font-black uppercase tracking-wider shadow-xl transition-transform hover:scale-105">
                 <Play className="w-6 h-6 mr-3 mb-1" />
