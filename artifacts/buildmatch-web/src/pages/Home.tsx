@@ -114,7 +114,7 @@ export default function Home() {
                 <Apple className="w-6 h-6 mr-3 mb-1" />
                 iOS App
               </Button>
-              <Button size="lg" variant="outline" className="border-white/20 hover:bg-white/5 hover:border-white/40 text-white rounded-none h-16 px-8 text-lg font-black uppercase tracking-wider w-full sm:w-auto transition-all">
+              <Button size="lg" variant="outline" className="border-border hover:bg-foreground/5 hover:border-foreground/40 text-foreground rounded-none h-16 px-8 text-lg font-black uppercase tracking-wider w-full sm:w-auto transition-all">
                 <Play className="w-6 h-6 mr-3 mb-1" />
                 Android
               </Button>
