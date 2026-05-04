@@ -546,7 +546,7 @@ export default function Home() {
               <ul className="space-y-5 mb-10 flex-1 text-foreground/80 font-medium">
                 <li className="flex items-center gap-4"><CheckCircle className="w-6 h-6 text-primary flex-shrink-0" /> <span>Unlimited job matching</span></li>
                 <li className="flex items-center gap-4"><CheckCircle className="w-6 h-6 text-primary flex-shrink-0" /> <span>Digital ticket storage (CSCS, etc)</span></li>
-                <li className="flex items-center gap-4"><CheckCircle className="w-6 h-6 text-primary flex-shrink-0" /> <span>Direct messaging with builders</span></li>
+                <li className="flex items-center gap-4"><CheckCircle className="w-6 h-6 text-primary flex-shrink-0" /> <span>Direct messaging with connections</span></li>
                 <li className="flex items-center gap-4"><CheckCircle className="w-6 h-6 text-primary flex-shrink-0" /> <span>Keep 100% of your agreed rate</span></li>
               </ul>
               
