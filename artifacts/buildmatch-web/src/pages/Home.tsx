@@ -598,7 +598,7 @@ export default function Home() {
                 <Apple className="w-6 h-6 mr-3 mb-1" />
                 App Store
               </Button>
-              <Button size="lg" className="bg-white hover:bg-white/90 text-background rounded-none h-16 px-10 text-xl font-black uppercase tracking-wider shadow-xl transition-transform hover:scale-105">
+              <Button size="lg" className="bg-white hover:bg-white/90 text-foreground rounded-none h-16 px-10 text-xl font-black uppercase tracking-wider shadow-xl transition-transform hover:scale-105">
                 <Play className="w-6 h-6 mr-3 mb-1" />
                 Google Play
               </Button>
