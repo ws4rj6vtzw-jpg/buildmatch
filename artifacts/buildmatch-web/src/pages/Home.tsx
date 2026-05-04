@@ -207,18 +207,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Stats ticker marquee */}
-      <div className="border-y border-border bg-secondary/50 py-4 flex overflow-hidden whitespace-nowrap">
-        <div className="animate-[marquee_20s_linear_infinite] flex items-center gap-12 text-sm font-bold uppercase tracking-widest text-muted-foreground">
-          <span className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-accent"></div> Islington: 42 Jobs Posted</span>
-          <span className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-primary"></div> Camden: Electricians needed</span>
-          <span className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-accent"></div> Kensington: High-end refurb</span>
-          <span className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-primary"></div> Canary Wharf: Commercial fit out</span>
-          <span className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-accent"></div> Stratford: 5 Groundworkers matched</span>
-          <span className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-primary"></div> Croydon: 3 Carpenters needed</span>
-        </div>
-      </div>
-
       {/* How it Works Section */}
       <section id="how-it-works" className="py-24 md:py-32 px-6 relative">
         <div className="max-w-7xl mx-auto">
