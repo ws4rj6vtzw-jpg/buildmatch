@@ -87,22 +87,68 @@ export default function TermsOfService() {
           </section>
 
           <section>
-            <h2 className="text-xl font-black mb-3">9. Termination</h2>
+            <h2 className="text-xl font-black mb-3">9. Right to Work</h2>
+            <p className="text-muted-foreground leading-relaxed mb-3">
+              BuildMatch does not verify, and accepts no responsibility for verifying, any user's right to work in the United Kingdom. It is the sole responsibility of each Builder (as the engaging party) to carry out all legally required right-to-work checks before allowing any Worker to commence work, in full compliance with the Immigration, Asylum and Nationality Act 2006 and any applicable Home Office guidance.
+            </p>
+            <p className="text-muted-foreground leading-relaxed">
+              BuildMatch explicitly disclaims all liability for any penalties, fines, or legal consequences arising from a failure to conduct such checks. By using the platform, Builders confirm they understand and accept this obligation. Workers represent that they have the legal right to work in the UK for any engagement arranged through the platform.
+            </p>
+          </section>
+
+          <section>
+            <h2 className="text-xl font-black mb-3">10. Insurance</h2>
+            <p className="text-muted-foreground leading-relaxed mb-3">
+              BuildMatch is not an insurer and provides no insurance of any kind to any party. Each user is solely responsible for obtaining and maintaining all insurance cover appropriate to their activities, including but not limited to:
+            </p>
+            <ul className="list-disc pl-6 space-y-2 text-muted-foreground mb-3">
+              <li><strong className="text-foreground">Public liability insurance</strong> — covering injury to third parties or damage to third-party property arising from their work</li>
+              <li><strong className="text-foreground">Employers' liability insurance</strong> — where legally required for any workers engaged</li>
+              <li><strong className="text-foreground">Professional indemnity insurance</strong> — where applicable to the nature of the work undertaken</li>
+              <li><strong className="text-foreground">Plant, tools, and equipment insurance</strong> — covering any machinery, tools, or materials brought on to a site</li>
+              <li><strong className="text-foreground">Property or site insurance</strong> — Builders are responsible for ensuring adequate cover for works carried out at their premises or sites</li>
+            </ul>
+            <p className="text-muted-foreground leading-relaxed">
+              BuildMatch accepts no liability for any loss, damage, injury, or claim arising from uninsured or underinsured activities. Users are strongly advised to confirm appropriate cover is in place before any work commences.
+            </p>
+          </section>
+
+          <section>
+            <h2 className="text-xl font-black mb-3">11. Tax, Self-Employment & IR35</h2>
+            <p className="text-muted-foreground leading-relaxed mb-3">
+              BuildMatch is a technology platform that facilitates introductions only. It does not employ Workers, operate a payroll, or act as an agency within the meaning of the Employment Agencies Act 1973. Each user is solely responsible for their own tax affairs, including but not limited to:
+            </p>
+            <ul className="list-disc pl-6 space-y-2 text-muted-foreground mb-3">
+              <li>Registration with HM Revenue & Customs (HMRC) as self-employed or via a limited company, as appropriate</li>
+              <li>Submission of Self Assessment tax returns and payment of Income Tax and National Insurance contributions</li>
+              <li>VAT registration and returns where applicable</li>
+              <li>Corporation Tax obligations for limited company contractors</li>
+            </ul>
+            <p className="text-muted-foreground leading-relaxed mb-3">
+              <strong className="text-foreground">IR35 / Off-Payroll Working Rules:</strong> Where the off-payroll working rules (commonly known as IR35, governed by Chapter 10, ITEPA 2003, as amended by the Finance Act 2021) may apply to an engagement arranged through BuildMatch, it is the sole responsibility of the Builder (as the client/end-user of services) to carry out a Status Determination Statement (SDS) assessment and, where required, to operate PAYE and account for National Insurance. BuildMatch takes no responsibility for any IR35 determination or any resulting tax liability, penalties, or interest.
+            </p>
+            <p className="text-muted-foreground leading-relaxed">
+              BuildMatch strongly recommends that both Workers and Builders seek independent professional tax and legal advice before entering into any engagement where employment status or IR35 may be a consideration.
+            </p>
+          </section>
+
+          <section>
+            <h2 className="text-xl font-black mb-3">12. Termination</h2>
             <p className="text-muted-foreground leading-relaxed">You may delete your account at any time within the app. We may suspend or terminate your account if you breach these Terms, with or without notice depending on the severity of the breach. Upon termination, your right to use the platform ceases immediately.</p>
           </section>
 
           <section>
-            <h2 className="text-xl font-black mb-3">10. Governing Law</h2>
+            <h2 className="text-xl font-black mb-3">13. Governing Law</h2>
             <p className="text-muted-foreground leading-relaxed">These Terms are governed by the laws of England and Wales. Any disputes shall be subject to the exclusive jurisdiction of the courts of England and Wales.</p>
           </section>
 
           <section>
-            <h2 className="text-xl font-black mb-3">11. Changes to These Terms</h2>
+            <h2 className="text-xl font-black mb-3">14. Changes to These Terms</h2>
             <p className="text-muted-foreground leading-relaxed">We may update these Terms from time to time. We will notify you of material changes via the app or email at least 14 days before they take effect. Continued use of BuildMatch after that date constitutes acceptance of the revised Terms.</p>
           </section>
 
           <section>
-            <h2 className="text-xl font-black mb-3">12. Contact Us</h2>
+            <h2 className="text-xl font-black mb-3">15. Contact Us</h2>
             <p className="text-muted-foreground leading-relaxed">For questions about these Terms, please contact us at <a href="mailto:legal@buildmatch.app" className="text-primary font-semibold hover:underline">legal@buildmatch.app</a>.</p>
           </section>
         </div>
