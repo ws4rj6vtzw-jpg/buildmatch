@@ -26,7 +26,7 @@ export default function TermsOfService() {
 
           <section>
             <h2 className="text-xl font-black mb-3">1. About BuildMatch</h2>
-            <p className="text-muted-foreground leading-relaxed">BuildMatch is operated by <strong className="text-foreground">BuildMatch UK Ltd</strong>, a company registered in England and Wales. Our platform connects construction businesses ("Builders") with skilled tradespeople ("Workers") across the United Kingdom. By accessing or using BuildMatch, you agree to be bound by these Terms of Service.</p>
+            <p className="text-muted-foreground leading-relaxed">BuildMatch is operated by <strong className="text-foreground">BuildMatch Limited</strong> (Company No. 17191553), a company registered in England and Wales. Our platform connects construction businesses ("Builders") with skilled tradespeople ("Workers") across the United Kingdom. By accessing or using BuildMatch, you agree to be bound by these Terms of Service.</p>
           </section>
 
           <section>
@@ -78,12 +78,12 @@ export default function TermsOfService() {
 
           <section>
             <h2 className="text-xl font-black mb-3">7. Content and Intellectual Property</h2>
-            <p className="text-muted-foreground leading-relaxed">You retain ownership of content you post (profile information, photos, messages). By posting content, you grant BuildMatch a non-exclusive, royalty-free licence to use, display, and distribute that content solely for the purpose of operating the platform. BuildMatch's brand, design, and underlying technology remain the exclusive property of BuildMatch UK Ltd.</p>
+            <p className="text-muted-foreground leading-relaxed">You retain ownership of content you post (profile information, photos, messages). By posting content, you grant BuildMatch a non-exclusive, royalty-free licence to use, display, and distribute that content solely for the purpose of operating the platform. BuildMatch's brand, design, and underlying technology remain the exclusive property of BuildMatch Limited.</p>
           </section>
 
           <section>
             <h2 className="text-xl font-black mb-3">8. Limitation of Liability</h2>
-            <p className="text-muted-foreground leading-relaxed">To the fullest extent permitted by English law, BuildMatch UK Ltd shall not be liable for any indirect, incidental, or consequential loss arising from your use of the platform, including disputes between Builders and Workers, loss of earnings, or reliance on information provided by other users. Our total aggregate liability shall not exceed the fees you paid to us in the 12 months preceding the claim.</p>
+            <p className="text-muted-foreground leading-relaxed">To the fullest extent permitted by English law, BuildMatch Limited shall not be liable for any indirect, incidental, or consequential loss arising from your use of the platform, including disputes between Builders and Workers, loss of earnings, or reliance on information provided by other users. Our total aggregate liability shall not exceed the fees you paid to us in the 12 months preceding the claim.</p>
           </section>
 
           <section>
@@ -115,7 +115,7 @@ export default function TermsOfService() {
       </main>
 
       <footer className="border-t border-border mt-8 py-8">
-        <p className="text-center text-sm text-muted-foreground">© {new Date().getFullYear()} BuildMatch UK Ltd. Registered in England & Wales.</p>
+        <p className="text-center text-sm text-muted-foreground">© {new Date().getFullYear()} BuildMatch Limited. Registered in England & Wales · Company No. 17191553</p>
       </footer>
     </div>
   );

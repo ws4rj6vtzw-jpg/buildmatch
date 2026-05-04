@@ -26,7 +26,7 @@ export default function PrivacyPolicy() {
 
           <section>
             <h2 className="text-xl font-black mb-3">1. Who We Are</h2>
-            <p className="text-muted-foreground leading-relaxed"><strong className="text-foreground">BuildMatch UK Ltd</strong> ("BuildMatch", "we", "us", "our") is the data controller for personal information collected through the BuildMatch app and website. We are registered in England and Wales and are committed to protecting your privacy in accordance with the UK General Data Protection Regulation (UK GDPR) and the Data Protection Act 2018.</p>
+            <p className="text-muted-foreground leading-relaxed"><strong className="text-foreground">BuildMatch Limited</strong> (Company No. 17191553) ("BuildMatch", "we", "us", "our") is the data controller for personal information collected through the BuildMatch app and website. We are registered in England and Wales and are committed to protecting your privacy in accordance with the UK General Data Protection Regulation (UK GDPR) and the Data Protection Act 2018.</p>
             <p className="text-muted-foreground leading-relaxed mt-3">Contact our Data Protection team at: <a href="mailto:privacy@buildmatch.app" className="text-primary font-semibold hover:underline">privacy@buildmatch.app</a></p>
           </section>
 
@@ -136,7 +136,7 @@ export default function PrivacyPolicy() {
       </main>
 
       <footer className="border-t border-border mt-8 py-8">
-        <p className="text-center text-sm text-muted-foreground">© {new Date().getFullYear()} BuildMatch UK Ltd. Registered in England & Wales.</p>
+        <p className="text-center text-sm text-muted-foreground">© {new Date().getFullYear()} BuildMatch Limited. Registered in England & Wales · Company No. 17191553</p>
       </footer>
     </div>
   );

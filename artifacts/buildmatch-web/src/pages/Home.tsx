@@ -658,7 +658,7 @@ export default function Home() {
         </div>
         
         <div className="max-w-7xl mx-auto pt-8 border-t border-border text-center md:text-left flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-sm text-muted-foreground font-medium">© {new Date().getFullYear()} BuildMatch UK Ltd. Registered in England & Wales.</p>
+          <p className="text-sm text-muted-foreground font-medium">© {new Date().getFullYear()} BuildMatch Limited. Registered in England & Wales · Company No. 17191553</p>
           <div className="flex gap-4">
             {/* Social mock links */}
             <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center hover:bg-primary hover:text-white transition-colors cursor-pointer border border-border text-muted-foreground">

@@ -147,7 +147,7 @@ export default function CookiePolicy() {
       </main>
 
       <footer className="border-t border-border mt-8 py-8">
-        <p className="text-center text-sm text-muted-foreground">© {new Date().getFullYear()} BuildMatch UK Ltd. Registered in England & Wales.</p>
+        <p className="text-center text-sm text-muted-foreground">© {new Date().getFullYear()} BuildMatch Limited. Registered in England & Wales · Company No. 17191553</p>
       </footer>
     </div>
   );

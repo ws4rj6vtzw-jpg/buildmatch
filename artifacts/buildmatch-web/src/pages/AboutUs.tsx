@@ -154,7 +154,7 @@ export default function AboutUs() {
 
       <footer className="border-t border-border py-8">
         <div className="max-w-5xl mx-auto px-6 flex flex-wrap justify-between items-center gap-4">
-          <p className="text-sm text-muted-foreground">© {new Date().getFullYear()} BuildMatch UK Ltd. Registered in England & Wales.</p>
+          <p className="text-sm text-muted-foreground">© {new Date().getFullYear()} BuildMatch Limited. Registered in England & Wales · Company No. 17191553</p>
           <div className="flex gap-6 text-sm text-muted-foreground">
             <Link href="/terms" className="hover:text-primary font-medium transition-colors">Terms</Link>
             <Link href="/privacy" className="hover:text-primary font-medium transition-colors">Privacy</Link>
