@@ -580,10 +580,6 @@ export default function Home() {
 
       {/* Final CTA */}
       <section className="py-32 px-6 relative overflow-hidden bg-accent border-y border-white/10">
-        <div className="absolute inset-0 z-0">
-          <div className="absolute inset-0" style={{ backgroundImage: 'linear-gradient(rgba(0, 0, 0, 0.1) 2px, transparent 2px), linear-gradient(90deg, rgba(0, 0, 0, 0.1) 2px, transparent 2px)', backgroundSize: '60px 60px' }}></div>
-        </div>
-        
         <div className="max-w-5xl mx-auto text-center relative z-10">
           <FadeIn>
             <h2 className="text-5xl sm:text-7xl lg:text-8xl font-black uppercase tracking-tighter mb-8 text-background drop-shadow-sm">
