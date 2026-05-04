@@ -88,7 +88,7 @@ export default function Home() {
       {/* Hero Section */}
       <section className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 px-6 min-h-screen flex items-center">
         <div className="absolute inset-0 z-0">
-          <img src="/images/hero-bg.png" alt="Construction worker" className="w-full h-full object-cover opacity-15 mix-blend-multiply" />
+          <img src={`${import.meta.env.BASE_URL}images/hero-bg.png`} alt="Construction worker" className="w-full h-full object-cover opacity-15 mix-blend-multiply" />
           <div className="absolute inset-0 bg-gradient-to-r from-background via-background/90 to-background/30"></div>
           <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent"></div>
         </div>
@@ -143,7 +143,7 @@ export default function Home() {
                 </div>
                 
                 <div className="relative rounded-2xl overflow-hidden flex-1 bg-[#1E293B] shadow-lg border border-white/10">
-                  <img src="/images/worker-1.png" alt="Worker profile" className="w-full h-full object-cover" />
+                  <img src={`${import.meta.env.BASE_URL}images/worker-1.png`} alt="Worker profile" className="w-full h-full object-cover" />
                   
                   <div className="absolute top-4 right-4 bg-[#060D1F]/80 backdrop-blur border border-white/10 rounded px-2 py-1 flex items-center gap-1">
                     <MapPin className="w-3 h-3 text-accent" />
@@ -382,7 +382,7 @@ export default function Home() {
                   </div>
                   <div className="pt-2 pb-6">
                     <h4 className="font-black text-xl uppercase tracking-tight mb-2">Post requirement</h4>
-                    <p className="text-muted-foreground font-medium bg-secondary border border-border p-4 font-mono text-sm">
+                    <p className="text-muted-foreground font-medium bg-secondary border border-border p-4 text-sm">
                       &gt; Need 2 Carpenters<br/>
                       &gt; Location: Kensington W8<br/>
                       &gt; Duration: 4 weeks<br/>
@@ -417,7 +417,7 @@ export default function Home() {
           <div className="relative">
             <FadeIn direction="left">
               <div className="relative aspect-[4/5] bg-secondary border border-border p-6 overflow-hidden">
-                <img src="/images/manager-1.png" alt="Site Manager" className="absolute inset-0 w-full h-full object-cover opacity-40 mix-blend-multiply" />
+                <img src={`${import.meta.env.BASE_URL}images/manager-1.png`} alt="Site Manager" className="absolute inset-0 w-full h-full object-cover opacity-40 mix-blend-multiply" />
                 <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent"></div>
                 
                 <div className="relative z-10 h-full flex flex-col justify-between">
