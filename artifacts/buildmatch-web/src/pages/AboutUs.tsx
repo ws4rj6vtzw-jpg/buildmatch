@@ -51,8 +51,8 @@ export default function AboutUs() {
             </div>
             <div className="grid grid-cols-2 gap-4">
               {[
-                { icon: Building2, label: "For contractors", desc: "Post jobs, browse verified workers, and build your trusted crew." },
-                { icon: HardHat, label: "For tradespeople", desc: "Showcase your skills, set your availability, and find work near you." },
+                { icon: Building2, label: "For Hirers", desc: "Post jobs, browse verified workers, and build your trusted crew." },
+                { icon: HardHat, label: "For Workers", desc: "Showcase your skills, set your availability, and find work near you." },
                 { icon: MapPin, label: "Location-first", desc: "Radius-based matching puts you in front of the right local opportunities." },
                 { icon: Zap, label: "Instant connections", desc: "When both sides swipe right, you're connected instantly — no waiting." },
               ].map(({ icon: Icon, label, desc }) => (

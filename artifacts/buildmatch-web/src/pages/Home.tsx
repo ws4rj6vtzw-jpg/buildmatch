@@ -50,8 +50,8 @@ export default function Home() {
           
           <div className="hidden md:flex items-center gap-8 text-sm font-bold tracking-wide uppercase text-muted-foreground">
             <a href="#how-it-works" className="hover:text-foreground transition-colors">How it works</a>
-            <a href="#trades" className="hover:text-foreground transition-colors">For Trades</a>
-            <a href="#builders" className="hover:text-foreground transition-colors">For Builders</a>
+            <a href="#trades" className="hover:text-foreground transition-colors">For Workers</a>
+            <a href="#builders" className="hover:text-foreground transition-colors">For Hirers</a>
             <a href="#pricing" className="hover:text-foreground transition-colors">Pricing</a>
           </div>
           
@@ -76,8 +76,8 @@ export default function Home() {
           >
             <div className="flex flex-col gap-6 text-xl font-black uppercase tracking-wider">
               <a href="#how-it-works" onClick={() => setIsMobileMenuOpen(false)} className="border-b border-border pb-4">How it works</a>
-              <a href="#trades" onClick={() => setIsMobileMenuOpen(false)} className="border-b border-border pb-4">For Trades</a>
-              <a href="#builders" onClick={() => setIsMobileMenuOpen(false)} className="border-b border-border pb-4">For Builders</a>
+              <a href="#trades" onClick={() => setIsMobileMenuOpen(false)} className="border-b border-border pb-4">For Workers</a>
+              <a href="#builders" onClick={() => setIsMobileMenuOpen(false)} className="border-b border-border pb-4">For Hirers</a>
               <a href="#pricing" onClick={() => setIsMobileMenuOpen(false)} className="border-b border-border pb-4">Pricing</a>
               <Button className="bg-accent text-white rounded-none h-14 mt-4 text-lg font-black uppercase shadow-[0_0_20px_rgba(6,182,212,0.3)]">Get the App</Button>
             </div>
@@ -310,7 +310,7 @@ export default function Home() {
             
             <div className="order-1 md:order-2">
               <FadeIn>
-                <div className="inline-block bg-primary text-white text-xs font-bold uppercase tracking-widest px-3 py-1 mb-6">For The Workers</div>
+                <div className="inline-block bg-primary text-white text-xs font-bold uppercase tracking-widest px-3 py-1 mb-6">For Workers</div>
                 <h2 className="text-4xl lg:text-6xl font-black uppercase tracking-tighter mb-6">
                   The jobs come <span className="text-primary">to you.</span>
                 </h2>
@@ -354,7 +354,7 @@ export default function Home() {
         <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-16 items-center">
           <div>
             <FadeIn>
-              <div className="inline-block bg-accent text-background text-xs font-bold uppercase tracking-widest px-3 py-1 mb-6">For Contractors</div>
+              <div className="inline-block bg-accent text-background text-xs font-bold uppercase tracking-widest px-3 py-1 mb-6">For Hirers</div>
               <h2 className="text-4xl lg:text-6xl font-black uppercase tracking-tighter mb-6">
                 Never Stop <span className="text-accent">Building.</span>
               </h2>
@@ -536,7 +536,7 @@ export default function Home() {
         <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-0 relative z-10">
           <FadeIn direction="right" delay={0.1}>
             <div className="bg-card border border-border p-10 h-full flex flex-col relative z-0 md:pr-16 shadow-sm">
-              <h3 className="text-2xl font-black uppercase tracking-tight mb-2">For Trades</h3>
+              <h3 className="text-2xl font-black uppercase tracking-tight mb-2">For Workers</h3>
               <div className="flex items-baseline gap-2 mb-6">
                 <span className="text-6xl font-black text-foreground">Free</span>
                 <span className="text-muted-foreground uppercase tracking-widest text-sm font-bold">forever</span>
@@ -558,7 +558,7 @@ export default function Home() {
             <div className="bg-primary p-10 h-full flex flex-col relative z-10 shadow-[0_0_50px_rgba(59,130,246,0.3)] md:-ml-8 md:my-[-20px]">
               <div className="absolute top-0 right-0 bg-foreground text-background text-xs font-black uppercase tracking-widest px-4 py-2 border-b border-l border-white/10">Industry Standard</div>
               
-              <h3 className="text-2xl font-black uppercase tracking-tight mb-2 text-white mt-4">For Builders</h3>
+              <h3 className="text-2xl font-black uppercase tracking-tight mb-2 text-white mt-4">For Hirers</h3>
               <div className="flex items-baseline gap-2 mb-6">
                 <span className="text-6xl font-black text-white">£49</span>
                 <span className="text-white/70 uppercase tracking-widest text-sm font-bold">/month</span>
@@ -616,8 +616,8 @@ export default function Home() {
           <div>
             <h4 className="font-black text-foreground uppercase tracking-wider mb-6">Platform</h4>
             <ul className="space-y-4 text-sm font-medium text-muted-foreground">
-              <li><a href="#" className="hover:text-primary transition-colors">For Trades</a></li>
-              <li><a href="#" className="hover:text-primary transition-colors">For Builders</a></li>
+              <li><a href="#" className="hover:text-primary transition-colors">For Workers</a></li>
+              <li><a href="#" className="hover:text-primary transition-colors">For Hirers</a></li>
               <li><a href="#" className="hover:text-primary transition-colors">Pricing</a></li>
               <li><a href="#" className="hover:text-primary transition-colors">Safety & Verification</a></li>
             </ul>
