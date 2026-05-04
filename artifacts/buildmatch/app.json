@@ -14,9 +14,12 @@
     },
     "userInterfaceStyle": "dark",
     "ios": {
-      "supportsTablet": false
+      "supportsTablet": false,
+      "bundleIdentifier": "app.buildmatch.ios"
     },
-    "android": {},
+    "android": {
+      "package": "app.buildmatch.android"
+    },
     "web": {
       "favicon": "./assets/images/icon.png"
     },
