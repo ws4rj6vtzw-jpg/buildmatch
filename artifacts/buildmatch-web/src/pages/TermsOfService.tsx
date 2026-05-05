@@ -149,7 +149,7 @@ export default function TermsOfService() {
 
           <section>
             <h2 className="text-xl font-black mb-3">15. Contact Us</h2>
-            <p className="text-muted-foreground leading-relaxed">For questions about these Terms, please contact us at <a href="mailto:legal@buildmatch.app" className="text-primary font-semibold hover:underline">legal@buildmatch.app</a>.</p>
+            <p className="text-muted-foreground leading-relaxed">For questions about these Terms, please contact us at <a href="mailto:accounts@buildmatch.online" className="text-primary font-semibold hover:underline">accounts@buildmatch.online</a>.</p>
           </section>
         </div>
 

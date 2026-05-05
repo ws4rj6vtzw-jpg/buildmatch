@@ -117,7 +117,7 @@ export default function CookiePolicy() {
             <p className="text-muted-foreground leading-relaxed mb-3">You have several options for controlling cookies:</p>
             <ul className="list-disc pl-6 space-y-2 text-muted-foreground">
               <li><strong className="text-foreground">Browser settings</strong> — most browsers allow you to view, block, or delete cookies via their settings menu. Blocking strictly necessary cookies may affect how the site functions.</li>
-              <li><strong className="text-foreground">Our preference centre</strong> — you can opt out of analytics cookies at any time by contacting us at <a href="mailto:privacy@buildmatch.app" className="text-primary font-semibold hover:underline">privacy@buildmatch.app</a>.</li>
+              <li><strong className="text-foreground">Our preference centre</strong> — you can opt out of analytics cookies at any time by contacting us at <a href="mailto:accounts@buildmatch.online" className="text-primary font-semibold hover:underline">accounts@buildmatch.online</a>.</li>
               <li><strong className="text-foreground">Mobile app</strong> — you can reset or clear local app storage via your device's app settings.</li>
             </ul>
           </section>
@@ -134,7 +134,7 @@ export default function CookiePolicy() {
 
           <section>
             <h2 className="text-xl font-black mb-3">7. Contact</h2>
-            <p className="text-muted-foreground leading-relaxed">For any questions about our use of cookies, please contact <a href="mailto:privacy@buildmatch.app" className="text-primary font-semibold hover:underline">privacy@buildmatch.app</a>.</p>
+            <p className="text-muted-foreground leading-relaxed">For any questions about our use of cookies, please contact <a href="mailto:accounts@buildmatch.online" className="text-primary font-semibold hover:underline">accounts@buildmatch.online</a>.</p>
           </section>
 
         </div>

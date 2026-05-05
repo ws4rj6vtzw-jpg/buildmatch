@@ -27,7 +27,7 @@ export default function PrivacyPolicy() {
           <section>
             <h2 className="text-xl font-black mb-3">1. Who We Are</h2>
             <p className="text-muted-foreground leading-relaxed"><strong className="text-foreground">BuildMatch Limited</strong> (Company No. 17191553) ("BuildMatch", "we", "us", "our") is the data controller for personal information collected through the BuildMatch app and website. We are registered in England and Wales and are committed to protecting your privacy in accordance with the UK General Data Protection Regulation (UK GDPR) and the Data Protection Act 2018.</p>
-            <p className="text-muted-foreground leading-relaxed mt-3">Contact our Data Protection team at: <a href="mailto:privacy@buildmatch.app" className="text-primary font-semibold hover:underline">privacy@buildmatch.app</a></p>
+            <p className="text-muted-foreground leading-relaxed mt-3">Contact our Data Protection team at: <a href="mailto:accounts@buildmatch.online" className="text-primary font-semibold hover:underline">accounts@buildmatch.online</a></p>
           </section>
 
           <section>
@@ -108,7 +108,7 @@ export default function PrivacyPolicy() {
               <li><strong className="text-foreground">Objection</strong> — object to processing based on legitimate interests</li>
               <li><strong className="text-foreground">Withdraw consent</strong> — at any time for consent-based processing</li>
             </ul>
-            <p className="text-muted-foreground leading-relaxed mt-3">To exercise any of these rights, contact us at <a href="mailto:privacy@buildmatch.app" className="text-primary font-semibold hover:underline">privacy@buildmatch.app</a>. You also have the right to lodge a complaint with the <strong className="text-foreground">Information Commissioner's Office (ICO)</strong> at <a href="https://ico.org.uk" target="_blank" rel="noopener noreferrer" className="text-primary font-semibold hover:underline">ico.org.uk</a>.</p>
+            <p className="text-muted-foreground leading-relaxed mt-3">To exercise any of these rights, contact us at <a href="mailto:accounts@buildmatch.online" className="text-primary font-semibold hover:underline">accounts@buildmatch.online</a>. You also have the right to lodge a complaint with the <strong className="text-foreground">Information Commissioner's Office (ICO)</strong> at <a href="https://ico.org.uk" target="_blank" rel="noopener noreferrer" className="text-primary font-semibold hover:underline">ico.org.uk</a>.</p>
           </section>
 
           <section>
