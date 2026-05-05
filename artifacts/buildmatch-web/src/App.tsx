@@ -8,6 +8,7 @@ import AboutUs from "@/pages/AboutUs";
 import TermsOfService from "@/pages/TermsOfService";
 import PrivacyPolicy from "@/pages/PrivacyPolicy";
 import CookiePolicy from "@/pages/CookiePolicy";
+import PrintAdverts from "@/pages/PrintAdverts";
 
 const queryClient = new QueryClient();
 
@@ -19,6 +20,7 @@ function Router() {
       <Route path="/terms" component={TermsOfService} />
       <Route path="/privacy" component={PrivacyPolicy} />
       <Route path="/cookies" component={CookiePolicy} />
+      <Route path="/print" component={PrintAdverts} />
       <Route component={NotFound} />
     </Switch>
   );
