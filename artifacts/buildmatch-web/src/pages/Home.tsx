@@ -237,8 +237,7 @@ export default function Home() {
             <FadeIn delay={0.1}>
               <div className="bg-card border border-border p-8 text-center h-full hover:bg-secondary/50 transition-colors group">
                 <div className="w-20 h-20 mx-auto bg-background border border-border flex items-center justify-center mb-8 transform group-hover:scale-110 transition-transform duration-500 shadow-[0_4px_20px_rgba(0,0,0,0.08)]">
-                  <span className="text-4xl font-black text-foreground/15">01</span>
-                  <Smartphone className="w-8 h-8 text-primary absolute" />
+                  <Smartphone className="w-8 h-8 text-primary" />
                 </div>
                 <h3 className="text-2xl font-black uppercase tracking-tight mb-4">Set Your Terms</h3>
                 <p className="text-muted-foreground font-medium leading-relaxed">Trades set their day rate, skills, and travel radius. Builders post site needs, duration, and budget. The algorithm filters the noise.</p>
@@ -248,8 +247,7 @@ export default function Home() {
             <FadeIn delay={0.2}>
               <div className="bg-card border border-border p-8 text-center h-full hover:bg-secondary/50 transition-colors group relative">
                 <div className="w-20 h-20 mx-auto bg-background border border-border flex items-center justify-center mb-8 transform group-hover:scale-110 transition-transform duration-500 shadow-[0_4px_20px_rgba(0,0,0,0.08)]">
-                  <span className="text-4xl font-black text-foreground/15">02</span>
-                  <Zap className="w-8 h-8 text-accent absolute" />
+                  <Zap className="w-8 h-8 text-accent" />
                 </div>
                 <h3 className="text-2xl font-black uppercase tracking-tight mb-4">Swipe to Match</h3>
                 <p className="text-muted-foreground font-medium leading-relaxed">Review anonymous profiles highlighting only what matters: tickets, distance, rate, and past ratings. Right swipe if they fit.</p>
@@ -259,8 +257,7 @@ export default function Home() {
             <FadeIn delay={0.3}>
               <div className="bg-card border border-border p-8 text-center h-full hover:bg-secondary/50 transition-colors group">
                 <div className="w-20 h-20 mx-auto bg-background border border-border flex items-center justify-center mb-8 transform group-hover:scale-110 transition-transform duration-500 shadow-[0_4px_20px_rgba(0,0,0,0.08)]">
-                  <span className="text-4xl font-black text-foreground/15">03</span>
-                  <CheckCircle className="w-8 h-8 text-foreground absolute" />
+                  <CheckCircle className="w-8 h-8 text-foreground" />
                 </div>
                 <h3 className="text-2xl font-black uppercase tracking-tight mb-4">Chat & Hire</h3>
                 <p className="text-muted-foreground font-medium leading-relaxed">When both sides swipe right, it's a match. Instant messaging opens up. Agree on start times, share site inductions, get to work.</p>
