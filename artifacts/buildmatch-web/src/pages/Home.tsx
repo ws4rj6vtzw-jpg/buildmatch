@@ -549,7 +549,6 @@ export default function Home() {
               <h3 className="text-2xl font-black uppercase tracking-tight mb-2">For Workers</h3>
               <div className="flex items-baseline gap-2 mb-6">
                 <span className="text-6xl font-black text-foreground">Free</span>
-                <span className="text-muted-foreground uppercase tracking-widest text-sm font-bold">forever</span>
               </div>
               <p className="text-muted-foreground font-medium mb-10 text-lg">You do the hard work. We don't take a cut.</p>
               
