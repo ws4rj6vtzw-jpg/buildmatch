@@ -1,8 +1,8 @@
 import { QRCodeSVG } from "qrcode.react";
 
-const SITE_URL = "https://buildmatch.online/web/";
-const WORKER_URL = "https://buildmatch.online/web/";
-const HIRER_URL = "https://buildmatch.online/web/";
+const SITE_URL = "https://buildmatch.online/";
+const WORKER_URL = "https://buildmatch.online/";
+const HIRER_URL = "https://buildmatch.online/";
 
 const AppleLogo = () => (
   <svg viewBox="0 0 814 1000" fill="currentColor" style={{ width: 16, height: 16, display: "inline-block", verticalAlign: "middle" }}>

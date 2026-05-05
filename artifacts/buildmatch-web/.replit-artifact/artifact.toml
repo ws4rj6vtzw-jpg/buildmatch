@@ -1,5 +1,5 @@
 kind = "web"
-previewPath = "/web"
+previewPath = "/"
 title = "BuildMatch — Marketing Site"
 version = "1.0.0"
 id = "artifacts/buildmatch-web"
@@ -10,7 +10,7 @@ version = "1.0.0"
 
 [[services]]
 name = "web"
-paths = [ "/web" ]
+paths = [ "/" ]
 localPort = 8082
 
 [services.development]
@@ -27,4 +27,4 @@ to = "/index.html"
 
 [services.env]
 PORT = "8082"
-BASE_PATH = "/web"
+BASE_PATH = "/"
