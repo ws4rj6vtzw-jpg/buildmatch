@@ -18,7 +18,13 @@
       "bundleIdentifier": "app.buildmatch.ios"
     },
     "android": {
-      "package": "app.buildmatch.android"
+      "package": "app.buildmatch.android",
+      "versionCode": 1,
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/icon.png",
+        "backgroundColor": "#0E0F12"
+      },
+      "permissions": []
     },
     "web": {
       "favicon": "./assets/images/icon.png"
