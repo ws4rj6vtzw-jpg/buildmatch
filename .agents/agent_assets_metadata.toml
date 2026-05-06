@@ -53,3 +53,9 @@ id = "CCfvaRaMo-gd8bAQPdM2N"
 uri = "file://artifacts/buildmatch/assets/images/google-play-icon-512.png"
 type = "image"
 title = "BuildMatch — Google Play Icon (512×512)"
+
+[[outputs]]
+id = "EipsfjDaQPiUIfpqwERtg"
+uri = "file://artifacts/buildmatch/assets/images/buildmatch-wordmark-1024x500.png"
+type = "image"
+title = "BuildMatch Wordmark (1024×500)"
