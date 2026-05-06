@@ -42,6 +42,12 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "c675e172-afb6-48f4-b860-d1026e5ad61a"
+      }
+    },
+    "owner": "gordonwilson"
   }
 }
