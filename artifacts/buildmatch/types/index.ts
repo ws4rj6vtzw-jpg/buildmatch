@@ -99,7 +99,7 @@ export type CompletedSnap = {
 export type UploadedDocument = {
   id: string;
   category: string;   // e.g. "CSCS Card", "Public Liability Insurance"
-  section: "ticket" | "insurance";
+  section: "ticket" | "insurance" | "business";
   uri: string;        // local image URI
   uploadedAt: number;
   verified: false;    // always false in MVP — backend review pending

@@ -65,8 +65,9 @@ export default function DocumentsScreen() {
   const docs: UploadedDocument[] = user.documents ?? [];
   const ticketDocs = docs.filter((d) => d.section === "ticket");
   const insuranceDocs = docs.filter((d) => d.section === "insurance");
+  const businessDocs = docs.filter((d) => d.section === "business");
 
-  const uploadDoc = async (category: string, section: "ticket" | "insurance") => {
+  const uploadDoc = async (category: string, section: "ticket" | "insurance" | "business") => {
     const existing = docs.find((d) => d.category === category);
     if (existing) {
       Alert.alert(
@@ -84,7 +85,7 @@ export default function DocumentsScreen() {
 
   const pickAndSave = async (
     category: string,
-    section: "ticket" | "insurance",
+    section: "ticket" | "insurance" | "business",
     replaceId: string | null,
   ) => {
     if (Platform.OS !== "web") {
@@ -318,6 +319,93 @@ export default function DocumentsScreen() {
               );
             })}
           </View>
+        </Section>
+
+        {/* Business Verification */}
+        <Section label="Business Verification" icon="briefcase" colors={colors}>
+          <View style={styles.categoryList}>
+            {/* Sole Trader proof */}
+            {(!user.businessType || user.businessType === "sole_trader") && (
+              <>
+                <View style={[styles.catRow, { borderColor: colors.border }]}>
+                  <View style={[styles.catStatus, { backgroundColor: colors.elevated, borderColor: colors.border }]}>
+                    <Feather name="user" size={13} color={colors.mutedForeground} />
+                  </View>
+                  <View style={{ flex: 1 }}>
+                    <Text style={[styles.catLabel, { color: colors.foreground }]}>Sole Trader</Text>
+                    <Text style={[{ fontSize: 11, fontFamily: "PlusJakartaSans_400Regular", color: colors.mutedForeground }]}>
+                      {user.businessType ? "How you work — set in your profile" : "Not set — tap Edit profile to set"}
+                    </Text>
+                  </View>
+                  {user.businessType === "sole_trader" && (
+                    <View style={[styles.pendingBadge, { backgroundColor: colors.primary + "22", borderColor: colors.primary + "44" }]}>
+                      <Feather name="check" size={10} color={colors.primary} />
+                      <Text style={[styles.pendingText, { color: colors.primary }]}>Set</Text>
+                    </View>
+                  )}
+                </View>
+                {user.businessType === "sole_trader" && (
+                  <>
+                    {(() => {
+                      const uploaded = docs.find((d) => d.category === "UTR / HMRC Letter");
+                      return (
+                        <CategoryRow
+                          key="UTR / HMRC Letter"
+                          label="UTR / HMRC Letter (optional)"
+                          uploaded={!!uploaded}
+                          onPress={() => uploadDoc("UTR / HMRC Letter", "business")}
+                          colors={colors}
+                        />
+                      );
+                    })()}
+                  </>
+                )}
+              </>
+            )}
+
+            {/* Ltd Company proof */}
+            {(!user.businessType || user.businessType === "limited_company") && (
+              <>
+                <View style={[styles.catRow, { borderColor: colors.border }]}>
+                  <View style={[styles.catStatus, { backgroundColor: colors.elevated, borderColor: colors.border }]}>
+                    <Feather name="layers" size={13} color={colors.mutedForeground} />
+                  </View>
+                  <View style={{ flex: 1 }}>
+                    <Text style={[styles.catLabel, { color: colors.foreground }]}>Limited Company</Text>
+                    <Text style={[{ fontSize: 11, fontFamily: "PlusJakartaSans_400Regular", color: colors.mutedForeground }]}>
+                      {user.businessType ? "How you work — set in your profile" : "Not set — tap Edit profile to set"}
+                    </Text>
+                  </View>
+                  {user.businessType === "limited_company" && (
+                    <View style={[styles.pendingBadge, { backgroundColor: colors.primary + "22", borderColor: colors.primary + "44" }]}>
+                      <Feather name="check" size={10} color={colors.primary} />
+                      <Text style={[styles.pendingText, { color: colors.primary }]}>Set</Text>
+                    </View>
+                  )}
+                </View>
+                {user.businessType === "limited_company" && (
+                  <>
+                    {(() => {
+                      const uploaded = docs.find((d) => d.category === "Certificate of Incorporation");
+                      return (
+                        <CategoryRow
+                          key="Certificate of Incorporation"
+                          label="Certificate of Incorporation (optional)"
+                          uploaded={!!uploaded}
+                          onPress={() => uploadDoc("Certificate of Incorporation", "business")}
+                          colors={colors}
+                        />
+                      );
+                    })()}
+                  </>
+                )}
+              </>
+            )}
+          </View>
+
+          <Text style={[{ fontSize: 12, fontFamily: "PlusJakartaSans_400Regular", color: colors.mutedForeground, lineHeight: 17 }]}>
+            Builders use this to understand how to pay you. Documents are optional — they just add a verified badge to your profile.
+          </Text>
         </Section>
 
         {/* Summary */}

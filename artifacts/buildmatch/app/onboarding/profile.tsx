@@ -2,6 +2,7 @@ import { router } from "expo-router";
 import React, { useState } from "react";
 import {
   Platform,
+  Pressable,
   ScrollView,
   StyleSheet,
   Switch,
@@ -63,6 +64,7 @@ export default function ProfileSetupScreen() {
         availableNow: true,
         publicLiabilityInsured,
         insurerName: publicLiabilityInsured ? insurerName : "",
+        businessType,
       });
     } else {
       await updateProfile({
@@ -92,6 +94,40 @@ export default function ProfileSetupScreen() {
             ? "Builders see this when they swipe. Be honest, be specific."
             : "Workers see this when you post or browse. Keep it real."}
         </Text>
+
+        {isWorker && (
+          <Field label="How do you work?">
+            <View style={styles.workTypeRow}>
+              {(
+                [
+                  { value: "sole_trader", title: "Sole Trader", sub: "I work for myself" },
+                  { value: "limited_company", title: "Limited Company", sub: "I have my own Ltd" },
+                ] as const
+              ).map((opt) => (
+                <Pressable
+                  key={opt.value}
+                  onPress={() => setBusinessType(opt.value)}
+                  style={[
+                    styles.workTypeCard,
+                    {
+                      backgroundColor: colors.card,
+                      borderColor:
+                        businessType === opt.value ? colors.primary : colors.border,
+                      borderWidth: businessType === opt.value ? 2 : 1,
+                    },
+                  ]}
+                >
+                  <Text style={[styles.workTypeTitle, { color: colors.foreground }]}>
+                    {opt.title}
+                  </Text>
+                  <Text style={[styles.workTypeSub, { color: colors.mutedForeground }]}>
+                    {opt.sub}
+                  </Text>
+                </Pressable>
+              ))}
+            </View>
+          </Field>
+        )}
 
         {isWorker ? (
           <Field label="Full name">
@@ -337,5 +373,23 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontFamily: "PlusJakartaSans_400Regular",
     marginTop: 2,
+  },
+  workTypeRow: {
+    flexDirection: "row",
+    gap: 10,
+  },
+  workTypeCard: {
+    flex: 1,
+    borderRadius: 14,
+    padding: 14,
+    gap: 4,
+  },
+  workTypeTitle: {
+    fontSize: 14,
+    fontFamily: "PlusJakartaSans_700Bold",
+  },
+  workTypeSub: {
+    fontSize: 12,
+    fontFamily: "PlusJakartaSans_400Regular",
   },
 });
