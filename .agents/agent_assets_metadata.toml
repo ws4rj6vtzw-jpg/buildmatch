@@ -47,3 +47,9 @@ id = "Apk46cQFoc-s2LXpiLi2f"
 uri = "file://exports/buildmatch-wordmark-light.png"
 type = "image"
 title = "BUILDMATCH Wordmark — Light"
+
+[[outputs]]
+id = "CCfvaRaMo-gd8bAQPdM2N"
+uri = "file://artifacts/buildmatch/assets/images/google-play-icon-512.png"
+type = "image"
+title = "BuildMatch — Google Play Icon (512×512)"
