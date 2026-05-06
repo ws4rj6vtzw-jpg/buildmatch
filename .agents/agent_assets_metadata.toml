@@ -1,5 +1,4 @@
 uploads = []
-outputs = []
 
 [[generated]]
 id = "HyVHFOQV9TlV-Fyv1oArs"
@@ -24,3 +23,15 @@ id = "nwiH3PKc_5EMXoJWr3gcP"
 uri = "file://artifacts/buildmatch-web/public/images/manager-1.png"
 type = "image"
 title = "Site manager portrait"
+
+[[outputs]]
+id = "-_U-f2TYCRQmTWrz9fv-S"
+uri = "file://exports/buildmatch-logo-dark.png"
+type = "image"
+title = "BuildMatch Logo — Dark (for dark backgrounds & social ads)"
+
+[[outputs]]
+id = "R9s9BGNVNZ43xTAmzN5oH"
+uri = "file://exports/buildmatch-logo-light.png"
+type = "image"
+title = "BuildMatch Logo — Light (for white/light backgrounds)"

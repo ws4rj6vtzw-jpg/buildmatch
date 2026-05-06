@@ -20,6 +20,7 @@ export const modules: ModuleMap = {
   "./components/mockups/buildmatch-palettes/LightTheme.tsx": () => import("../components/mockups/buildmatch-palettes/LightTheme.tsx"),
   "./components/mockups/buildmatch-palettes/Original.tsx": () => import("../components/mockups/buildmatch-palettes/Original.tsx"),
   "./components/mockups/buildmatch-palettes/SteelBlue.tsx": () => import("../components/mockups/buildmatch-palettes/SteelBlue.tsx"),
+  "./components/mockups/brand/LogoExport.tsx": () => import("../components/mockups/brand/LogoExport.tsx"),
   "./components/mockups/font-options/BarlowSemiCondensed.tsx": () => import("../components/mockups/font-options/BarlowSemiCondensed.tsx"),
   "./components/mockups/font-options/PlusJakartaSans.tsx": () => import("../components/mockups/font-options/PlusJakartaSans.tsx"),
   "./components/mockups/font-options/Syne.tsx": () => import("../components/mockups/font-options/Syne.tsx"),
