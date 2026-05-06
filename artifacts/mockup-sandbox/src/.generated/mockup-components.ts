@@ -6,6 +6,7 @@ export const modules: ModuleMap = {
   "./components/mockups/app-icons/Crane.tsx": () => import("../components/mockups/app-icons/Crane.tsx"),
   "./components/mockups/app-icons/GeometricMark.tsx": () => import("../components/mockups/app-icons/GeometricMark.tsx"),
   "./components/mockups/app-icons/HardHatBolt.tsx": () => import("../components/mockups/app-icons/HardHatBolt.tsx"),
+  "./components/mockups/app-icons/HardHatBranded.tsx": () => import("../components/mockups/app-icons/HardHatBranded.tsx"),
   "./components/mockups/app-icons/Monogram.tsx": () => import("../components/mockups/app-icons/Monogram.tsx"),
   "./components/mockups/app-icons/ShieldCraft.tsx": () => import("../components/mockups/app-icons/ShieldCraft.tsx"),
   "./components/mockups/app-icons/SwipeMatch.tsx": () => import("../components/mockups/app-icons/SwipeMatch.tsx"),
