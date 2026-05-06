@@ -45,11 +45,6 @@ export default function Home() {
       <nav className="fixed top-0 left-0 right-0 z-50 bg-background/90 backdrop-blur-md border-b border-border">
         <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <img
-              src={`${import.meta.env.BASE_URL}images/app-icon.png`}
-              alt="BuildMatch"
-              className="w-9 h-9 rounded-xl object-cover shadow-[0_0_12px_rgba(79,115,214,0.4)]"
-            />
             <span className="font-black text-2xl tracking-tighter uppercase">BUILDMATCH</span>
           </div>
           
@@ -156,14 +151,7 @@ export default function Home() {
               {/* App UI */}
               <div className="absolute inset-0 flex flex-col p-4 pt-10">
                 <div className="flex justify-between items-center mb-4">
-                  <div className="flex items-center gap-2">
-                  <img
-                    src={`${import.meta.env.BASE_URL}images/app-icon.png`}
-                    alt="BuildMatch"
-                    className="w-7 h-7 rounded-lg object-cover"
-                  />
-                  <span className="text-sm font-black tracking-tighter text-white uppercase">BuildMatch</span>
-                </div>
+                  <div className="text-xl font-black tracking-tighter text-white">BM.</div>
                   <Badge variant="outline" className="border-accent text-accent bg-accent/10 px-2 py-0.5 rounded-sm uppercase text-[10px] tracking-widest font-bold">Matching</Badge>
                 </div>
                 
