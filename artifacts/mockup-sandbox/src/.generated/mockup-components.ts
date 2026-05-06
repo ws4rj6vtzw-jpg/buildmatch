@@ -15,6 +15,7 @@ export const modules: ModuleMap = {
   "./components/mockups/app-icons/SwipeMatch.tsx": () => import("../components/mockups/app-icons/SwipeMatch.tsx"),
   "./components/mockups/app-icons/TwoWorkers.tsx": () => import("../components/mockups/app-icons/TwoWorkers.tsx"),
   "./components/mockups/app-icons/WeldSpark.tsx": () => import("../components/mockups/app-icons/WeldSpark.tsx"),
+  "./components/mockups/app-icons/Wordmark.tsx": () => import("../components/mockups/app-icons/Wordmark.tsx"),
   "./components/mockups/brand/LogoExport.tsx": () => import("../components/mockups/brand/LogoExport.tsx"),
   "./components/mockups/buildmatch-palettes/Cinnabar.tsx": () => import("../components/mockups/buildmatch-palettes/Cinnabar.tsx"),
   "./components/mockups/buildmatch-palettes/Forest.tsx": () => import("../components/mockups/buildmatch-palettes/Forest.tsx"),
