@@ -13,6 +13,7 @@ import {
 } from "react-native";
 
 import { useColors } from "@/hooks/useColors";
+import { matchColor } from "@/lib/matchScore";
 
 const { width: SCREEN_W } = Dimensions.get("window");
 const SWIPE_THRESHOLD = 120;
@@ -28,6 +29,8 @@ export type SwipeCardData = {
   jobCount?: number;
   description?: string;
   rightChips?: string[];
+  matchScore?: number;
+  matchTag?: string | null;
 };
 
 type Props = {
@@ -142,6 +145,15 @@ export function SwipeCard({ data, isTop, onSwipe, onTap, stackOffset = 0, rightL
         >
           <Text style={[styles.stampText, { color: colors.mutedForeground }]}>PASS</Text>
         </Animated.View>
+
+        {typeof data.matchScore === "number" && (
+          <View style={[styles.matchBadge, { backgroundColor: "rgba(0,0,0,0.55)" }]}>
+            <View style={[styles.matchDot, { backgroundColor: matchColor(data.matchScore) }]} />
+            <Text style={[styles.matchText, { color: matchColor(data.matchScore) }]}>
+              {data.matchTag ?? `${data.matchScore}% match`}
+            </Text>
+          </View>
+        )}
 
         <View style={styles.content}>
           {data.badges && data.badges.length > 0 && (
@@ -294,6 +306,27 @@ const styles = StyleSheet.create({
     fontFamily: "PlusJakartaSans_400Regular",
     marginTop: 6,
     lineHeight: 18,
+  },
+  matchBadge: {
+    position: "absolute",
+    top: 18,
+    right: 18,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 99,
+  },
+  matchDot: {
+    width: 7,
+    height: 7,
+    borderRadius: 99,
+  },
+  matchText: {
+    fontSize: 12,
+    fontFamily: "PlusJakartaSans_700Bold",
+    letterSpacing: 0.2,
   },
   stamp: {
     position: "absolute",

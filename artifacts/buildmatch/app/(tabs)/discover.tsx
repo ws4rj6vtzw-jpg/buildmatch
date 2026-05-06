@@ -19,6 +19,12 @@ import { useColors } from "@/hooks/useColors";
 import { useAuth } from "@/contexts/AuthContext";
 import { useData } from "@/contexts/DataContext";
 import { useSubscription } from "@/lib/revenuecat";
+import {
+  scoreJobForWorker,
+  scoreWorkerForBuilder,
+  scoreBuilderForWorker,
+  matchLabel,
+} from "@/lib/matchScore";
 
 const DEFAULT_RADIUS = 25;
 const FREE_LIMIT = 5;
@@ -78,6 +84,7 @@ export default function DiscoverScreen() {
     if (!isWorker) return [];
     const swipedIds = new Set(swipes.map((s) => s.toId));
     const within = (mi: number) => mi <= radius;
+    const boostedSet = new Set(boostedJobs);
     const cards: SwipeCardData[] = jobs
       .filter((j) => !swipedIds.has(j.id))
       .map((j) => ({ j, mi: jobDistanceMiles(j.id) }))
@@ -85,6 +92,7 @@ export default function DiscoverScreen() {
       .map(({ j, mi }) => {
         const builder = builders.find((b) => b.id === j.builderId);
         const boosted = boostedJobs.includes(j.id);
+        const score = user ? scoreJobForWorker(j, user, mi, radius) : 0;
         return {
           id: j.id,
           title: j.title,
@@ -99,10 +107,16 @@ export default function DiscoverScreen() {
           rating: builder?.rating,
           jobCount: builder?.completedJobs,
           description: j.description,
+          matchScore: score,
+          matchTag: matchLabel(score),
         };
       });
-    const boostedSet = new Set(boostedJobs);
-    return cards.sort((a, b) => (boostedSet.has(b.id) ? 1 : 0) - (boostedSet.has(a.id) ? 1 : 0));
+    return cards.sort((a, b) => {
+      const aBoosted = boostedSet.has(a.id) ? 1 : 0;
+      const bBoosted = boostedSet.has(b.id) ? 1 : 0;
+      if (bBoosted !== aBoosted) return bBoosted - aBoosted;
+      return (b.matchScore ?? 0) - (a.matchScore ?? 0);
+    });
   }, [isWorker, jobs, builders, swipes, radius, boostedJobs]);
 
   // Employers deck — workers swiping on builder company profiles
@@ -114,17 +128,23 @@ export default function DiscoverScreen() {
       .filter((b) => !swipedIds.has(b.id))
       .map((b) => ({ b, mi: builderDistanceMiles(b.id) }))
       .filter(({ mi }) => within(mi))
-      .map(({ b, mi }) => ({
-        id: b.id,
-        title: b.name,
-        subtitle: `Contact: ${b.contactName}  ·  ${b.suburb}`,
-        meta: `${b.suburb}  ·  ${mi} miles away`,
-        photo: b.photo,
-        badges: b.tradesNeeded.slice(0, 3).map((t) => ({ label: t, tone: "primary" as const })),
-        rating: b.rating,
-        jobCount: b.completedJobs,
-        description: b.bio,
-      }));
+      .map(({ b, mi }) => {
+        const score = user ? scoreBuilderForWorker(b, user, mi, radius) : 0;
+        return {
+          id: b.id,
+          title: b.name,
+          subtitle: `Contact: ${b.contactName}  ·  ${b.suburb}`,
+          meta: `${b.suburb}  ·  ${mi} miles away`,
+          photo: b.photo,
+          badges: b.tradesNeeded.slice(0, 3).map((t) => ({ label: t, tone: "primary" as const })),
+          rating: b.rating,
+          jobCount: b.completedJobs,
+          description: b.bio,
+          matchScore: score,
+          matchTag: matchLabel(score),
+        };
+      })
+      .sort((a, b) => (b.matchScore ?? 0) - (a.matchScore ?? 0));
   }, [isWorker, builders, swipes, radius]);
 
   // Builders swiping on workers deck
@@ -135,24 +155,30 @@ export default function DiscoverScreen() {
     return workers
       .filter((w) => !swipedIds.has(w.id))
       .filter((w) => within(w.distanceMiles))
-      .map((w) => ({
-        id: w.id,
-        title: w.name,
-        subtitle: `${w.primaryTrade}  ·  ${w.yearsExperience} yrs experience`,
-        meta: `${w.suburb}  ·  ${w.distanceMiles} miles away`,
-        photo: w.photo,
-        badges: [
-          {
-            label: w.availableNow ? "Available now" : `Avail. ${w.availableFrom ?? "soon"}`,
-            tone: w.availableNow ? "primary" : "default",
-          },
-          ...(w.publicLiabilityInsured ? [{ label: "Insured", tone: "accent" as const }] : []),
-          ...w.skills.slice(0, 2).map((s) => ({ label: s })),
-        ],
-        rating: w.rating,
-        jobCount: w.completedJobs,
-        description: w.bio,
-      }));
+      .map((w) => {
+        const score = user ? scoreWorkerForBuilder(w, user, radius) : 0;
+        return {
+          id: w.id,
+          title: w.name,
+          subtitle: `${w.primaryTrade}  ·  ${w.yearsExperience} yrs experience`,
+          meta: `${w.suburb}  ·  ${w.distanceMiles} miles away`,
+          photo: w.photo,
+          badges: [
+            {
+              label: w.availableNow ? "Available now" : `Avail. ${w.availableFrom ?? "soon"}`,
+              tone: w.availableNow ? "primary" : "default",
+            },
+            ...(w.publicLiabilityInsured ? [{ label: "Insured", tone: "accent" as const }] : []),
+            ...w.skills.slice(0, 2).map((s) => ({ label: s })),
+          ],
+          rating: w.rating,
+          jobCount: w.completedJobs,
+          description: w.bio,
+          matchScore: score,
+          matchTag: matchLabel(score),
+        };
+      })
+      .sort((a, b) => (b.matchScore ?? 0) - (a.matchScore ?? 0));
   }, [isWorker, workers, swipes, radius]);
 
   // The active deck based on role + workerView toggle
