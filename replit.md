@@ -37,6 +37,22 @@ artifacts/buildmatch/
 └── types/index.ts
 ```
 
+## Deploying to Google Play
+
+**First release (or after native changes):**
+```bash
+cd artifacts/buildmatch && eas login
+eas build --platform android --profile production   # ~15 min → .aab
+eas submit --platform android                        # needs google-service-account.json
+```
+
+**Subsequent JS-only changes (OTA — no Play Store review needed):**
+```bash
+cd artifacts/buildmatch && eas login
+eas update --branch production --message "describe change"
+```
+`expo-updates` is configured (added May 2026). OTA requires the installed app to have been built with the production profile. Users receive updates silently on next launch.
+
 ## Notes
 
 - Document verification: workers can upload photos of trade tickets (CSCS, IPAF, PASMA, First Aid, etc.) and insurance docs (PLI, Employers Liability). Stored in AsyncStorage via `user.documents: UploadedDocument[]`. All marked "Pending" in MVP. Accessible via "Documents & Verification" row in Profile tab (worker only). Screen at `app/documents.tsx`.
