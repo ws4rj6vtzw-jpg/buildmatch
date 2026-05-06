@@ -1,6 +1,7 @@
 import { Feather } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import { router } from "expo-router";
+import Slider from "@react-native-community/slider";
 import React, { useMemo, useState } from "react";
 import {
   Modal,
@@ -19,7 +20,6 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useData } from "@/contexts/DataContext";
 import { useSubscription } from "@/lib/revenuecat";
 
-const RADIUS_OPTIONS = [5, 15, 30, 50, 100, 0] as const;
 const DEFAULT_RADIUS = 25;
 const FREE_LIMIT = 5;
 
@@ -29,11 +29,11 @@ function hashId(id: string) {
   return Math.abs(h);
 }
 
-function jobDistanceKm(id: string) {
+function jobDistanceMiles(id: string) {
   return (hashId(id) % 80) + 1;
 }
 
-function builderDistanceKm(id: string) {
+function builderDistanceMiles(id: string) {
   return (hashId(id) % 60) + 2;
 }
 
@@ -62,8 +62,9 @@ export default function DiscoverScreen() {
   const { purchaseBuilderPro } = useSubscription();
 
   const isWorker = user?.role === "worker";
-  const radius = user?.travelRadiusKm ?? DEFAULT_RADIUS;
-  const radiusLabel = radius === 0 ? "Any distance" : `${radius}km`;
+  const radius = user?.travelRadiusMiles ?? DEFAULT_RADIUS;
+  const radiusLabel = `${radius} mi`;
+  const [radiusDraft, setRadiusDraft] = useState(radius);
 
   const builderMatchCount = useMemo(
     () => matches.filter((m) => m.builderId === user?.id).length,

@@ -92,7 +92,7 @@ export default function WorkerProfile() {
             <Text style={[styles.name, { color: colors.foreground }]}>{worker.name}</Text>
             <Text style={[styles.trade, { color: colors.primary }]}>{worker.primaryTrade}</Text>
             <Text style={[styles.location, { color: colors.mutedForeground }]}>
-              {worker.suburb}{worker.postcode ? `, ${worker.postcode}` : ""}  ·  {worker.distanceKm}km away
+              {worker.suburb}{worker.postcode ? `, ${worker.postcode}` : ""}  ·  {worker.distanceMiles} miles away
             </Text>
           </View>
 

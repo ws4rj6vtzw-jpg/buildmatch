@@ -11,7 +11,7 @@ export type Worker = {
   availableFrom?: string;
   suburb: string;
   postcode: string;
-  distanceKm: number;
+  distanceMiles: number;
   rating: number;
   completedJobs: number;
   bio: string;
@@ -122,7 +122,7 @@ export type AuthUser = {
   availableFrom?: string;
   suburb?: string;
   postcode?: string;
-  travelRadiusKm?: number;
+  travelRadiusMiles?: number;
   bio?: string;
   tickets?: string[];
   hourlyRate?: number;

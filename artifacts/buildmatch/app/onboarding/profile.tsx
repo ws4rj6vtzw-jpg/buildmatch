@@ -1,4 +1,5 @@
 import { router } from "expo-router";
+import Slider from "@react-native-community/slider";
 import React, { useState } from "react";
 import {
   Platform,
@@ -33,7 +34,7 @@ export default function ProfileSetupScreen() {
   const [years, setYears] = useState<string>(user?.yearsExperience?.toString() ?? "");
   const [suburb, setSuburb] = useState(user?.suburb ?? "");
   const [postcode, setPostcode] = useState(user?.postcode ?? "");
-  const [radius, setRadius] = useState<number>(user?.travelRadiusKm ?? 25);
+  const [radius, setRadius] = useState<number>(user?.travelRadiusMiles ?? 25);
   const [bio, setBio] = useState(user?.bio ?? "");
   const [publicLiabilityInsured, setPublicLiabilityInsured] = useState(user?.publicLiabilityInsured ?? false);
   const [insurerName, setInsurerName] = useState(user?.insurerName ?? "");

@@ -218,11 +218,11 @@ export default function ProfileScreen() {
               <Text style={[styles.location, { color: colors.mutedForeground }]}>
                 {user.suburb}{user.postcode ? `, ${user.postcode}` : ""}
               </Text>
-              {user.travelRadiusKm !== undefined && (
+              {user.travelRadiusMiles !== undefined && (
                 <Text style={[styles.location, { color: colors.mutedForeground }]}>
-                  {user.travelRadiusKm === 0
+                  {user.travelRadiusMiles === 0
                     ? "Any distance"
-                    : `Within ${user.travelRadiusKm}km`}
+                    : `Within ${user.travelRadiusMiles} miles`}
                 </Text>
               )}
               {user.isPro && (
