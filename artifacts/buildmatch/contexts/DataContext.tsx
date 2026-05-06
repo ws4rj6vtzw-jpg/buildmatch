@@ -44,6 +44,10 @@ type DataContextValue = Persisted & {
     jobId: string,
     direction: "right" | "left",
   ) => { matched: boolean; matchId?: string };
+  swipeBuilder: (
+    builderId: string,
+    direction: "right" | "left",
+  ) => { matched: boolean; matchId?: string };
   applyToJob: (jobId: string) => void;
   acceptApplicant: (jobId: string, workerId: string) => string;
   declineApplicant: (jobId: string, workerId: string) => void;
@@ -180,6 +184,28 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
           ];
         }
         return { ...prev, swipes: [...prev.swipes, swipe], matches, jobs };
+      });
+      return { matched, matchId };
+    },
+    [meId],
+  );
+
+  const swipeBuilder = useCallback<DataContextValue["swipeBuilder"]>(
+    (builderId, direction) => {
+      let matched = false;
+      let matchId: string | undefined;
+      setData((prev) => {
+        const swipe: Swipe = { fromId: meId, toId: builderId, direction, ts: Date.now() };
+        let matches = prev.matches;
+        if (direction === "right") {
+          matchId = newId("m");
+          matched = true;
+          matches = [
+            ...matches,
+            { id: matchId, builderId, workerId: meId, createdAt: Date.now() },
+          ];
+        }
+        return { ...prev, swipes: [...prev.swipes, swipe], matches };
       });
       return { matched, matchId };
     },
@@ -401,6 +427,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
       let messages = prev.messages;
       if (last.direction === "right") {
         const isJob = prev.jobs.some((j) => j.id === last.toId);
+        const isBuilder = prev.builders.some((b) => b.id === last.toId);
         if (isJob) {
           matches = matches.filter(
             (m) => !(m.jobId === last.toId && m.workerId === meId),
@@ -410,7 +437,13 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
               ? { ...j, applicants: j.applicants.filter((a) => a !== meId) }
               : j,
           );
+        } else if (isBuilder) {
+          // Worker swiped right on a builder
+          matches = matches.filter(
+            (m) => !(m.builderId === last.toId && m.workerId === meId && !m.jobId),
+          );
         } else {
+          // Builder swiped right on a worker
           matches = matches.filter(
             (m) => !(m.workerId === last.toId && m.builderId === meId && !m.jobId),
           );
@@ -471,6 +504,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
       ...data,
       swipeWorker,
       swipeJob,
+      swipeBuilder,
       applyToJob,
       acceptApplicant,
       declineApplicant,
@@ -493,6 +527,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
       typingMatches,
       swipeWorker,
       swipeJob,
+      swipeBuilder,
       applyToJob,
       acceptApplicant,
       declineApplicant,
