@@ -35,3 +35,15 @@ id = "R9s9BGNVNZ43xTAmzN5oH"
 uri = "file://exports/buildmatch-logo-light.png"
 type = "image"
 title = "BuildMatch Logo — Light (for white/light backgrounds)"
+
+[[outputs]]
+id = "IHOgeF0k1HDIR8SY9Rr90"
+uri = "file://exports/buildmatch-wordmark-dark.png"
+type = "image"
+title = "BUILDMATCH Wordmark — Dark"
+
+[[outputs]]
+id = "Apk46cQFoc-s2LXpiLi2f"
+uri = "file://exports/buildmatch-wordmark-light.png"
+type = "image"
+title = "BUILDMATCH Wordmark — Light"
