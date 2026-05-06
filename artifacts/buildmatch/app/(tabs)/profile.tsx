@@ -218,6 +218,13 @@ export default function ProfileScreen() {
               <Text style={[styles.location, { color: colors.mutedForeground }]}>
                 {user.suburb}{user.postcode ? `, ${user.postcode}` : ""}
               </Text>
+              {user.travelRadiusKm !== undefined && (
+                <Text style={[styles.location, { color: colors.mutedForeground }]}>
+                  {user.travelRadiusKm === 0
+                    ? "Any distance"
+                    : `Within ${user.travelRadiusKm}km`}
+                </Text>
+              )}
               {user.isPro && (
                 <View style={[styles.proBadge, { backgroundColor: colors.accent + "22", borderColor: colors.accent + "55" }]}>
                   <Feather name="award" size={11} color={colors.accent} />

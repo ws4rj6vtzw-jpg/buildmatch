@@ -33,6 +33,7 @@ export default function ProfileSetupScreen() {
   const [years, setYears] = useState<string>(user?.yearsExperience?.toString() ?? "");
   const [suburb, setSuburb] = useState(user?.suburb ?? "");
   const [postcode, setPostcode] = useState(user?.postcode ?? "");
+  const [radius, setRadius] = useState<number>(user?.travelRadiusKm ?? 25);
   const [bio, setBio] = useState(user?.bio ?? "");
   const [publicLiabilityInsured, setPublicLiabilityInsured] = useState(user?.publicLiabilityInsured ?? false);
   const [insurerName, setInsurerName] = useState(user?.insurerName ?? "");
@@ -60,6 +61,7 @@ export default function ProfileSetupScreen() {
         yearsExperience: Number(years) || 0,
         suburb,
         postcode,
+        travelRadiusKm: radius,
         bio,
         availableNow: true,
         publicLiabilityInsured,
@@ -72,6 +74,7 @@ export default function ProfileSetupScreen() {
         contactName,
         suburb,
         postcode,
+        travelRadiusKm: radius,
         bio,
         skills: tradesNeeded,
       });
@@ -285,6 +288,33 @@ export default function ProfileSetupScreen() {
           </View>
         </View>
 
+        <Field label={isWorker ? "How far will you travel?" : "Search radius for workers"}>
+          <View style={styles.radiusGrid}>
+            {([5, 15, 30, 50, 100, 0] as const).map((km) => {
+              const selected = radius === km;
+              const label = km === 0 ? "Any" : `${km}km`;
+              return (
+                <Pressable
+                  key={km}
+                  onPress={() => setRadius(km)}
+                  style={({ pressed }) => [
+                    styles.radiusOpt,
+                    {
+                      backgroundColor: selected ? colors.primary : colors.card,
+                      borderColor: selected ? colors.primary : colors.border,
+                      opacity: pressed ? 0.85 : 1,
+                    },
+                  ]}
+                >
+                  <Text style={[styles.radiusOptText, { color: selected ? colors.primaryForeground : colors.foreground }]}>
+                    {label}
+                  </Text>
+                </Pressable>
+              );
+            })}
+          </View>
+        </Field>
+
         <Field label="Short bio">
           <TextInput
             value={bio}
@@ -373,6 +403,23 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontFamily: "PlusJakartaSans_400Regular",
     marginTop: 2,
+  },
+  radiusGrid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 8,
+  },
+  radiusOpt: {
+    flexBasis: "30%",
+    flexGrow: 1,
+    paddingVertical: 12,
+    borderRadius: 12,
+    borderWidth: 1.5,
+    alignItems: "center",
+  },
+  radiusOptText: {
+    fontSize: 14,
+    fontFamily: "PlusJakartaSans_700Bold",
   },
   workTypeRow: {
     flexDirection: "row",
