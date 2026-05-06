@@ -62,7 +62,7 @@ export default function ProfileSetupScreen() {
         yearsExperience: Number(years) || 0,
         suburb,
         postcode,
-        travelRadiusKm: radius,
+        travelRadiusMiles: radius,
         bio,
         availableNow: true,
         publicLiabilityInsured,
@@ -75,7 +75,7 @@ export default function ProfileSetupScreen() {
         contactName,
         suburb,
         postcode,
-        travelRadiusKm: radius,
+        travelRadiusMiles: radius,
         bio,
         skills: tradesNeeded,
       });
@@ -290,29 +290,25 @@ export default function ProfileSetupScreen() {
         </View>
 
         <Field label={isWorker ? "How far will you travel?" : "Search radius for workers"}>
-          <View style={styles.radiusGrid}>
-            {([5, 15, 30, 50, 100, 0] as const).map((km) => {
-              const selected = radius === km;
-              const label = km === 0 ? "Any" : `${km}km`;
-              return (
-                <Pressable
-                  key={km}
-                  onPress={() => setRadius(km)}
-                  style={({ pressed }) => [
-                    styles.radiusOpt,
-                    {
-                      backgroundColor: selected ? colors.primary : colors.card,
-                      borderColor: selected ? colors.primary : colors.border,
-                      opacity: pressed ? 0.85 : 1,
-                    },
-                  ]}
-                >
-                  <Text style={[styles.radiusOptText, { color: selected ? colors.primaryForeground : colors.foreground }]}>
-                    {label}
-                  </Text>
-                </Pressable>
-              );
-            })}
+          <View style={styles.sliderContainer}>
+            <Text style={[styles.sliderValue, { color: colors.primary }]}>
+              {radius} miles
+            </Text>
+            <Slider
+              style={{ width: "100%", height: 40 }}
+              minimumValue={1}
+              maximumValue={100}
+              step={1}
+              value={radius}
+              onValueChange={(v) => setRadius(Math.round(v))}
+              minimumTrackTintColor={colors.primary}
+              maximumTrackTintColor={colors.border}
+              thumbTintColor={colors.primary}
+            />
+            <View style={styles.sliderLabels}>
+              <Text style={[styles.sliderEndLabel, { color: colors.mutedForeground }]}>1 mi</Text>
+              <Text style={[styles.sliderEndLabel, { color: colors.mutedForeground }]}>100 mi</Text>
+            </View>
           </View>
         </Field>
 
@@ -405,22 +401,24 @@ const styles = StyleSheet.create({
     fontFamily: "PlusJakartaSans_400Regular",
     marginTop: 2,
   },
-  radiusGrid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 8,
+  sliderContainer: {
+    width: "100%",
+    paddingHorizontal: 2,
   },
-  radiusOpt: {
-    flexBasis: "30%",
-    flexGrow: 1,
-    paddingVertical: 12,
-    borderRadius: 12,
-    borderWidth: 1.5,
-    alignItems: "center",
-  },
-  radiusOptText: {
-    fontSize: 14,
+  sliderValue: {
+    fontSize: 22,
     fontFamily: "PlusJakartaSans_700Bold",
+    textAlign: "center",
+    marginBottom: 4,
+  },
+  sliderLabels: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: -4,
+  },
+  sliderEndLabel: {
+    fontSize: 12,
+    fontFamily: "PlusJakartaSans_400Regular",
   },
   workTypeRow: {
     flexDirection: "row",

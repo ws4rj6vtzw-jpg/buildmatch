@@ -77,19 +77,19 @@ export default function DiscoverScreen() {
   const jobsDeck: SwipeCardData[] = useMemo(() => {
     if (!isWorker) return [];
     const swipedIds = new Set(swipes.map((s) => s.toId));
-    const within = (km: number) => radius === 0 || km <= radius;
+    const within = (mi: number) => mi <= radius;
     const cards: SwipeCardData[] = jobs
       .filter((j) => !swipedIds.has(j.id))
-      .map((j) => ({ j, km: jobDistanceKm(j.id) }))
-      .filter(({ km }) => within(km))
-      .map(({ j, km }) => {
+      .map((j) => ({ j, mi: jobDistanceMiles(j.id) }))
+      .filter(({ mi }) => within(mi))
+      .map(({ j, mi }) => {
         const builder = builders.find((b) => b.id === j.builderId);
         const boosted = boostedJobs.includes(j.id);
         return {
           id: j.id,
           title: j.title,
           subtitle: `${j.trade}  ·  ${builder?.name ?? "Builder"}`,
-          meta: `${j.suburb}  ·  ${km}km away  ·  £${j.payRate}/${j.payType === "hour" ? "hr" : "day"}`,
+          meta: `${j.suburb}  ·  ${mi} miles away  ·  £${j.payRate}/${j.payType === "hour" ? "hr" : "day"}`,
           photo: builder?.photo,
           badges: [
             ...(boosted ? [{ label: "Sponsored", tone: "accent" as const }] : []),
@@ -109,16 +109,16 @@ export default function DiscoverScreen() {
   const employersDeck: SwipeCardData[] = useMemo(() => {
     if (!isWorker) return [];
     const swipedIds = new Set(swipes.map((s) => s.toId));
-    const within = (km: number) => radius === 0 || km <= radius;
+    const within = (mi: number) => mi <= radius;
     return builders
       .filter((b) => !swipedIds.has(b.id))
-      .map((b) => ({ b, km: builderDistanceKm(b.id) }))
-      .filter(({ km }) => within(km))
-      .map(({ b, km }) => ({
+      .map((b) => ({ b, mi: builderDistanceMiles(b.id) }))
+      .filter(({ mi }) => within(mi))
+      .map(({ b, mi }) => ({
         id: b.id,
         title: b.name,
         subtitle: `Contact: ${b.contactName}  ·  ${b.suburb}`,
-        meta: `${b.suburb}  ·  ${km}km away`,
+        meta: `${b.suburb}  ·  ${mi} miles away`,
         photo: b.photo,
         badges: b.tradesNeeded.slice(0, 3).map((t) => ({ label: t, tone: "primary" as const })),
         rating: b.rating,
@@ -131,15 +131,15 @@ export default function DiscoverScreen() {
   const workersDeck: SwipeCardData[] = useMemo(() => {
     if (isWorker) return [];
     const swipedIds = new Set(swipes.map((s) => s.toId));
-    const within = (km: number) => radius === 0 || km <= radius;
+    const within = (mi: number) => mi <= radius;
     return workers
       .filter((w) => !swipedIds.has(w.id))
-      .filter((w) => within(w.distanceKm))
+      .filter((w) => within(w.distanceMiles))
       .map((w) => ({
         id: w.id,
         title: w.name,
         subtitle: `${w.primaryTrade}  ·  ${w.yearsExperience} yrs experience`,
-        meta: `${w.suburb}  ·  ${w.distanceKm}km away`,
+        meta: `${w.suburb}  ·  ${w.distanceMiles} miles away`,
         photo: w.photo,
         badges: [
           {
@@ -240,7 +240,7 @@ export default function DiscoverScreen() {
         subtitle={headerSubtitle}
         right={
           <Pressable
-            onPress={() => setRadiusOpen(true)}
+            onPress={() => { setRadiusDraft(radius); setRadiusOpen(true); }}
             style={({ pressed }) => [
               styles.radiusBtn,
               { backgroundColor: colors.card, borderColor: colors.border, opacity: pressed ? 0.85 : 1 },
@@ -449,28 +449,29 @@ export default function DiscoverScreen() {
             <Text style={[styles.modalText, { color: colors.mutedForeground }]}>
               Only show {isWorker ? (workerView === "employers" ? "employers" : "jobs") : "workers"} within this distance.
             </Text>
-            <View style={styles.radiusGrid}>
-              {RADIUS_OPTIONS.map((km) => {
-                const selected = radius === km;
-                const label = km === 0 ? "Any" : `${km}km`;
-                return (
-                  <Pressable
-                    key={km}
-                    onPress={() => updateProfile({ travelRadiusKm: km })}
-                    style={({ pressed }) => [
-                      styles.radiusOpt,
-                      { backgroundColor: selected ? colors.primary : colors.elevated, opacity: pressed ? 0.85 : 1 },
-                    ]}
-                  >
-                    <Text style={[styles.radiusOptText, { color: selected ? colors.primaryForeground : colors.foreground }]}>
-                      {label}
-                    </Text>
-                  </Pressable>
-                );
-              })}
+            <Text style={[styles.radiusValue, { color: colors.primary }]}>
+              {radiusDraft} miles
+            </Text>
+            <Slider
+              style={{ width: "100%", height: 40 }}
+              minimumValue={1}
+              maximumValue={100}
+              step={1}
+              value={radiusDraft}
+              onValueChange={(v) => setRadiusDraft(Math.round(v))}
+              minimumTrackTintColor={colors.primary}
+              maximumTrackTintColor={colors.border}
+              thumbTintColor={colors.primary}
+            />
+            <View style={styles.radiusSliderLabels}>
+              <Text style={[styles.radiusSliderEnd, { color: colors.mutedForeground }]}>1 mi</Text>
+              <Text style={[styles.radiusSliderEnd, { color: colors.mutedForeground }]}>100 mi</Text>
             </View>
             <Pressable
-              onPress={() => setRadiusOpen(false)}
+              onPress={() => {
+                updateProfile({ travelRadiusMiles: radiusDraft });
+                setRadiusOpen(false);
+              }}
               style={({ pressed }) => [
                 styles.modalBtn,
                 { backgroundColor: colors.primary, opacity: pressed ? 0.85 : 1, marginTop: 18 },
@@ -693,23 +694,21 @@ const styles = StyleSheet.create({
     padding: 26,
     alignItems: "center",
   },
-  radiusGrid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    justifyContent: "center",
-    gap: 10,
-    marginTop: 18,
-    alignSelf: "stretch",
-  },
-  radiusOpt: {
-    flexBasis: "30%",
-    flexGrow: 1,
-    paddingVertical: 14,
-    borderRadius: 12,
-    alignItems: "center",
-  },
-  radiusOptText: {
-    fontSize: 14,
+  radiusValue: {
+    fontSize: 24,
     fontFamily: "PlusJakartaSans_700Bold",
+    textAlign: "center",
+    marginTop: 12,
+    marginBottom: 2,
+  },
+  radiusSliderLabels: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignSelf: "stretch",
+    marginTop: -4,
+  },
+  radiusSliderEnd: {
+    fontSize: 12,
+    fontFamily: "PlusJakartaSans_400Regular",
   },
 });
