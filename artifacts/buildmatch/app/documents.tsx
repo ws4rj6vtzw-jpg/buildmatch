@@ -18,6 +18,17 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useColors } from "@/hooks/useColors";
 import type { UploadedDocument } from "@/types";
 
+// CSCS card colours and their levels
+const CSCS_LEVELS: { colour: string; hex: string; level: string }[] = [
+  { colour: "Green",    hex: "#16a34a", level: "Labourer" },
+  { colour: "Red",      hex: "#dc2626", level: "Trainee / Experienced Worker" },
+  { colour: "Blue",     hex: "#2563eb", level: "Skilled Worker" },
+  { colour: "Gold",     hex: "#ca8a04", level: "Advanced Craft / Supervisor" },
+  { colour: "Black",    hex: "#1c1917", level: "Manager" },
+  { colour: "White",    hex: "#94a3b8", level: "Professionally Qualified" },
+  { colour: "Platinum", hex: "#7c3aed", level: "Senior Manager" },
+];
+
 const TICKET_CATEGORIES = [
   "CSCS Card",
   "CPCS (Plant Operator)",
@@ -47,6 +58,7 @@ export default function DocumentsScreen() {
   const colors = useColors();
   const { user, updateProfile } = useAuth();
   const [deleting, setDeleting] = useState<string | null>(null);
+  const [cscsOpen, setCscsOpen] = useState(false);
 
   if (!user) return null;
 
@@ -106,6 +118,8 @@ export default function DocumentsScreen() {
       : [...docs, newDoc];
 
     await updateProfile({ documents: updated });
+    // Close the CSCS picker after upload
+    if (category.startsWith("CSCS Card")) setCscsOpen(false);
   };
 
   const deleteDoc = (doc: UploadedDocument) => {
@@ -127,6 +141,9 @@ export default function DocumentsScreen() {
     );
   };
 
+  // Check if any CSCS variant has been uploaded
+  const uploadedCscs = ticketDocs.filter((d) => d.category.startsWith("CSCS Card —"));
+
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <ScreenHeader title="Documents & Verification" showBack />
@@ -144,11 +161,7 @@ export default function DocumentsScreen() {
         </View>
 
         {/* Trade Tickets & Certifications */}
-        <Section
-          label="Trade Tickets & Certifications"
-          icon="award"
-          colors={colors}
-        >
+        <Section label="Trade Tickets & Certifications" icon="award" colors={colors}>
           {/* Uploaded docs */}
           {ticketDocs.length > 0 && (
             <View style={styles.docGrid}>
@@ -168,6 +181,98 @@ export default function DocumentsScreen() {
           {/* Category buttons */}
           <View style={styles.categoryList}>
             {TICKET_CATEGORIES.map((cat) => {
+              if (cat === "CSCS Card") {
+                // Special CSCS row with expandable level picker
+                const hasAny = uploadedCscs.length > 0;
+                return (
+                  <View key="CSCS Card">
+                    <Pressable
+                      onPress={() => setCscsOpen((o) => !o)}
+                      style={({ pressed }) => [
+                        styles.catRow,
+                        { borderColor: colors.border, opacity: pressed ? 0.75 : 1 },
+                      ]}
+                    >
+                      <View
+                        style={[
+                          styles.catStatus,
+                          {
+                            backgroundColor: hasAny ? colors.primary + "22" : colors.elevated,
+                            borderColor: hasAny ? colors.primary + "55" : colors.border,
+                          },
+                        ]}
+                      >
+                        <Feather
+                          name={hasAny ? "check" : "upload"}
+                          size={13}
+                          color={hasAny ? colors.primary : colors.mutedForeground}
+                        />
+                      </View>
+                      <Text style={[styles.catLabel, { color: hasAny ? colors.foreground : colors.mutedForeground }]}>
+                        CSCS Card
+                      </Text>
+                      {hasAny ? (
+                        <View style={[styles.pendingBadge, { backgroundColor: colors.accent + "22", borderColor: colors.accent + "44" }]}>
+                          <Text style={[styles.pendingText, { color: colors.accent }]}>
+                            {uploadedCscs.length} uploaded
+                          </Text>
+                        </View>
+                      ) : null}
+                      <Feather
+                        name={cscsOpen ? "chevron-up" : "chevron-down"}
+                        size={16}
+                        color={colors.mutedForeground}
+                      />
+                    </Pressable>
+
+                    {/* CSCS Level picker — expands inline */}
+                    {cscsOpen && (
+                      <View style={[styles.cscsPanel, { backgroundColor: colors.elevated, borderColor: colors.border }]}>
+                        <Text style={[styles.cscsPanelTitle, { color: colors.mutedForeground }]}>
+                          Select your card colour
+                        </Text>
+                        {CSCS_LEVELS.map((lvl) => {
+                          const fullCat = `CSCS Card — ${lvl.colour} (${lvl.level})`;
+                          const alreadyUploaded = docs.find((d) => d.category === fullCat);
+                          return (
+                            <Pressable
+                              key={lvl.colour}
+                              onPress={() => uploadDoc(fullCat, "ticket")}
+                              style={({ pressed }) => [
+                                styles.cscsRow,
+                                {
+                                  borderColor: colors.border,
+                                  opacity: pressed ? 0.7 : 1,
+                                },
+                              ]}
+                            >
+                              {/* Colour dot */}
+                              <View style={[styles.cscsDot, { backgroundColor: lvl.hex, borderColor: lvl.hex + "88" }]} />
+                              <View style={{ flex: 1 }}>
+                                <Text style={[styles.cscsColour, { color: colors.foreground }]}>
+                                  {lvl.colour} Card
+                                </Text>
+                                <Text style={[styles.cscsLevel, { color: colors.mutedForeground }]}>
+                                  {lvl.level}
+                                </Text>
+                              </View>
+                              {alreadyUploaded ? (
+                                <View style={[styles.pendingBadge, { backgroundColor: colors.accent + "22", borderColor: colors.accent + "44" }]}>
+                                  <Feather name="clock" size={10} color={colors.accent} />
+                                  <Text style={[styles.pendingText, { color: colors.accent }]}>Pending</Text>
+                                </View>
+                              ) : (
+                                <Feather name="upload" size={14} color={colors.mutedForeground} />
+                              )}
+                            </Pressable>
+                          );
+                        })}
+                      </View>
+                    )}
+                  </View>
+                );
+              }
+
               const uploaded = ticketDocs.some((d) => d.category === cat);
               return (
                 <CategoryRow
@@ -183,11 +288,7 @@ export default function DocumentsScreen() {
         </Section>
 
         {/* Insurance */}
-        <Section
-          label="Insurance Documents"
-          icon="umbrella"
-          colors={colors}
-        >
+        <Section label="Insurance Documents" icon="umbrella" colors={colors}>
           {insuranceDocs.length > 0 && (
             <View style={styles.docGrid}>
               {insuranceDocs.map((doc) => (
@@ -296,12 +397,7 @@ function CategoryRow({
           color={uploaded ? colors.primary : colors.mutedForeground}
         />
       </View>
-      <Text
-        style={[
-          styles.catLabel,
-          { color: uploaded ? colors.foreground : colors.mutedForeground },
-        ]}
-      >
+      <Text style={[styles.catLabel, { color: uploaded ? colors.foreground : colors.mutedForeground }]}>
         {label}
       </Text>
       {uploaded ? (
@@ -449,6 +545,45 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontFamily: "PlusJakartaSans_600SemiBold",
   },
+  // CSCS level picker
+  cscsPanel: {
+    marginTop: 4,
+    marginBottom: 6,
+    borderRadius: 14,
+    borderWidth: 1,
+    padding: 12,
+    gap: 2,
+  },
+  cscsPanelTitle: {
+    fontSize: 11,
+    fontFamily: "PlusJakartaSans_600SemiBold",
+    letterSpacing: 0.5,
+    textTransform: "uppercase",
+    marginBottom: 6,
+  },
+  cscsRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+  },
+  cscsDot: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    borderWidth: 2,
+  },
+  cscsColour: {
+    fontSize: 14,
+    fontFamily: "PlusJakartaSans_600SemiBold",
+  },
+  cscsLevel: {
+    fontSize: 12,
+    fontFamily: "PlusJakartaSans_400Regular",
+    marginTop: 1,
+  },
+  // Doc cards
   docGrid: { gap: 8 },
   docCard: {
     flexDirection: "row",
