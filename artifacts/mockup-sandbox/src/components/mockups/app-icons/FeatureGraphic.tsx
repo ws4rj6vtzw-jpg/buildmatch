@@ -51,9 +51,6 @@ export function FeatureGraphic() {
         <rect x="538" y="355" width="150" height="40" rx="20" fill="#ECFEFF" stroke="#A5F3FC" strokeWidth="1"/>
         <text x="613" y="380" fontFamily="Arial, sans-serif" fontWeight="700" fontSize="16" fill="#0891B2" textAnchor="middle">For Hirers</text>
 
-        {/* Social proof */}
-        <text x="376" y="456" fontFamily="Arial, sans-serif" fontWeight="400" fontSize="18" fill="#94A3B8">Trusted by 4,000+ trades across London</text>
-        <circle cx="358" cy="448" r="3" fill="#2563EB"/>
       </svg>
     </div>
   );
