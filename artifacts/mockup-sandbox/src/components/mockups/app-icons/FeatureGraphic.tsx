@@ -1,49 +1,64 @@
 export function FeatureGraphic() {
   return (
     <div style={{ minHeight: "100vh", background: "#f0f0f0", display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800;900&display=swap');
+      `}</style>
       <svg width="1024" height="500" viewBox="0 0 1024 500" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <rect width="1024" height="500" fill="#0f172a"/>
+        {/* Background */}
+        <rect width="1024" height="500" fill="#060D1F"/>
 
-        {/* Subtle grid texture */}
+        {/* Subtle blue radial glow top-left */}
         <defs>
-          <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-            <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#ffffff" strokeWidth="0.3" opacity="0.06"/>
-          </pattern>
+          <radialGradient id="glow" cx="20%" cy="40%" r="60%">
+            <stop offset="0%" stopColor="#2563EB" stopOpacity="0.18"/>
+            <stop offset="100%" stopColor="#060D1F" stopOpacity="0"/>
+          </radialGradient>
+          <radialGradient id="glow2" cx="85%" cy="60%" r="40%">
+            <stop offset="0%" stopColor="#0891B2" stopOpacity="0.12"/>
+            <stop offset="100%" stopColor="#060D1F" stopOpacity="0"/>
+          </radialGradient>
         </defs>
-        <rect width="1024" height="500" fill="url(#grid)"/>
+        <rect width="1024" height="500" fill="url(#glow)"/>
+        <rect width="1024" height="500" fill="url(#glow2)"/>
 
-        {/* Amber accent — top bar */}
-        <rect x="0" y="0" width="6" height="500" fill="#f59e0b"/>
+        {/* Left accent bar */}
+        <rect x="0" y="0" width="5" height="500" fill="#2563EB"/>
 
-        {/* BM icon — left */}
-        <rect x="60" y="110" width="280" height="280" rx="64" fill="#1e293b"/>
-        <text x="84" y="312" fontFamily="'Arial Black', Arial, sans-serif" fontWeight="900" fontSize="148" fill="#ffffff" letterSpacing="-8">B</text>
-        <text x="172" y="312" fontFamily="'Arial Black', Arial, sans-serif" fontWeight="900" fontSize="148" fill="#3b82f6" letterSpacing="-8">M</text>
-        <rect x="84" y="325" width="236" height="12" rx="6" fill="#f59e0b"/>
+        {/* BM icon block */}
+        <rect x="56" y="108" width="264" height="264" rx="56" fill="#0A1628"/>
+        <rect x="56" y="108" width="264" height="264" rx="56" fill="none" stroke="#1E3A5F" strokeWidth="1.5"/>
+        <text x="78" y="298" fontFamily="Arial Black, Arial, sans-serif" fontWeight="900" fontSize="140" fill="#ffffff" letterSpacing="-6">B</text>
+        <text x="164" y="298" fontFamily="Arial Black, Arial, sans-serif" fontWeight="900" fontSize="140" fill="#2563EB" letterSpacing="-6">M</text>
+        <rect x="78" y="313" width="222" height="10" rx="5" fill="#0891B2"/>
 
-        {/* Right side text */}
-        {/* Build in white, Match in blue */}
-        <text x="400" y="230" fontFamily="'Arial Black', Arial, sans-serif" fontWeight="900" fontSize="96" fill="#ffffff" letterSpacing="-4">Build</text>
-        <text x="608" y="230" fontFamily="'Arial Black', Arial, sans-serif" fontWeight="900" fontSize="96" fill="#3b82f6" letterSpacing="-4">Match</text>
+        {/* BUILDMATCH wordmark */}
+        <text x="376" y="196" fontFamily="Arial Black, Arial, sans-serif" fontWeight="900" fontSize="76" fill="#ffffff" letterSpacing="-2">BUILDMATCH</text>
 
-        {/* Amber underline under wordmark */}
-        <rect x="400" y="248" width="574" height="6" rx="3" fill="#f59e0b"/>
+        {/* Blue underline — skewed style */}
+        <rect x="376" y="210" width="604" height="5" rx="2" fill="#2563EB"/>
 
         {/* Tagline */}
-        <text x="400" y="320" fontFamily="Arial, sans-serif" fontWeight="400" fontSize="32" fill="#94a3b8" letterSpacing="0">Find your next job. Or your next worker.</text>
+        <text x="376" y="274" fontFamily="Arial, sans-serif" fontWeight="700" fontSize="28" fill="#0891B2" letterSpacing="0">Hire Smarter. Build Faster.</text>
 
-        {/* Pill badges */}
-        <rect x="400" y="360" width="168" height="44" rx="22" fill="#1e293b"/>
-        <text x="484" y="388" fontFamily="Arial, sans-serif" fontWeight="700" fontSize="18" fill="#f59e0b" textAnchor="middle">Workers</text>
+        {/* Description */}
+        <text x="376" y="320" fontFamily="Arial, sans-serif" fontWeight="400" fontSize="20" fill="#64748B">The UK's first swipe-to-hire platform for construction.</text>
 
-        <rect x="580" y="360" width="168" height="44" rx="22" fill="#1e293b"/>
-        <text x="664" y="388" fontFamily="Arial, sans-serif" fontWeight="700" fontSize="18" fill="#3b82f6" textAnchor="middle">Builders</text>
+        {/* Pills */}
+        <rect x="376" y="355" width="150" height="40" rx="20" fill="#0A1628" stroke="#1E3A5F" strokeWidth="1"/>
+        <text x="451" y="380" fontFamily="Arial, sans-serif" fontWeight="700" fontSize="16" fill="#2563EB" textAnchor="middle">For Workers</text>
 
-        <rect x="760" y="360" width="168" height="44" rx="22" fill="#1e293b"/>
-        <text x="844" y="388" fontFamily="Arial, sans-serif" fontWeight="700" fontSize="18" fill="#94a3b8" textAnchor="middle">UK Only</text>
+        <rect x="538" y="355" width="150" height="40" rx="20" fill="#0A1628" stroke="#1E3A5F" strokeWidth="1"/>
+        <text x="613" y="380" fontFamily="Arial, sans-serif" fontWeight="700" fontSize="16" fill="#0891B2" textAnchor="middle">For Hirers</text>
 
-        {/* Bottom label */}
-        <text x="400" y="460" fontFamily="Arial, sans-serif" fontWeight="400" fontSize="20" fill="#475569">Construction hiring. Simplified.</text>
+        <rect x="700" y="355" width="130" height="40" rx="20" fill="#0A1628" stroke="#1E3A5F" strokeWidth="1"/>
+        <text x="765" y="380" fontFamily="Arial, sans-serif" fontWeight="700" fontSize="16" fill="#64748B" textAnchor="middle">UK Only</text>
+
+        {/* Footer social proof */}
+        <text x="376" y="456" fontFamily="Arial, sans-serif" fontWeight="400" fontSize="18" fill="#334155">Trusted by 4,000+ trades across London</text>
+
+        {/* Dot separator */}
+        <circle cx="358" cy="448" r="3" fill="#2563EB"/>
       </svg>
     </div>
   );
