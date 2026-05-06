@@ -458,6 +458,18 @@ export default function ProfileScreen() {
           </View>
         </View>
 
+        {isWorker && (
+          <Row
+            icon="shield"
+            label="Documents & Verification"
+            onPress={() => router.push("/documents")}
+            badge={
+              (user.documents?.length ?? 0) > 0
+                ? `${user.documents!.length} uploaded`
+                : undefined
+            }
+          />
+        )}
         <Row
           icon="edit-3"
           label="Edit profile"
@@ -497,11 +509,13 @@ function Row({
   label,
   onPress,
   destructive,
+  badge,
 }: {
   icon: keyof typeof Feather.glyphMap;
   label: string;
   onPress?: () => void;
   destructive?: boolean;
+  badge?: string;
 }) {
   const colors = useColors();
   const fg = destructive ? colors.destructive : colors.foreground;
@@ -521,6 +535,11 @@ function Row({
         <Feather name={icon} size={18} color={fg} />
       </View>
       <Text style={[styles.rowLabel, { color: fg }]}>{label}</Text>
+      {badge && (
+        <View style={[styles.rowBadge, { backgroundColor: colors.primary + "22", borderColor: colors.primary + "44" }]}>
+          <Text style={[styles.rowBadgeText, { color: colors.primary }]}>{badge}</Text>
+        </View>
+      )}
       <Feather name="chevron-right" size={18} color={colors.mutedForeground} />
     </Pressable>
   );
@@ -677,6 +696,16 @@ const styles = StyleSheet.create({
     gap: 6,
     paddingVertical: 14,
     borderRadius: 12,
+  },
+  rowBadge: {
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 20,
+    borderWidth: 1,
+  },
+  rowBadgeText: {
+    fontSize: 11,
+    fontFamily: "PlusJakartaSans_600SemiBold",
   },
   themeLabel: {
     fontSize: 11,

@@ -39,6 +39,7 @@ artifacts/buildmatch/
 
 ## Notes
 
+- Document verification: workers can upload photos of trade tickets (CSCS, IPAF, PASMA, First Aid, etc.) and insurance docs (PLI, Employers Liability). Stored in AsyncStorage via `user.documents: UploadedDocument[]`. All marked "Pending" in MVP. Accessible via "Documents & Verification" row in Profile tab (worker only). Screen at `app/documents.tsx`.
 - 6 seeded workers, 3 builders, 4 jobs to bring the swipe deck to life immediately
 - Right-swipe in MVP demo simulates mutual interest and creates a match instantly
 - Sending a chat message triggers a randomised auto-reply after ~1.4s (demo only)

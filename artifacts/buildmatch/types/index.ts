@@ -96,6 +96,15 @@ export type CompletedSnap = {
   completedAt: number;
 };
 
+export type UploadedDocument = {
+  id: string;
+  category: string;   // e.g. "CSCS Card", "Public Liability Insurance"
+  section: "ticket" | "insurance";
+  uri: string;        // local image URI
+  uploadedAt: number;
+  verified: false;    // always false in MVP — backend review pending
+};
+
 export type AuthUser = {
   id: string;
   phone: string;
@@ -123,4 +132,5 @@ export type AuthUser = {
   publicLiabilityInsured?: boolean;
   insurerName?: string;
   isPro?: boolean;
+  documents?: UploadedDocument[];
 };
