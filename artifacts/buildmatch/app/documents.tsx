@@ -20,6 +20,8 @@ import type { UploadedDocument } from "@/types";
 
 const TICKET_CATEGORIES = [
   "CSCS Card",
+  "CPCS (Plant Operator)",
+  "NPORS",
   "IPAF (Powered Access)",
   "PASMA (Mobile Access)",
   "First Aid Certificate",
