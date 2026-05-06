@@ -207,14 +207,6 @@ export default function DiscoverScreen() {
     }
   };
 
-  const handlePayPerHire = () => {
-    setPaywallVisible(false);
-    if (pendingSwipe) {
-      completeSwipe(pendingSwipe.id);
-      setPendingSwipe(null);
-    }
-  };
-
   const handleGoPro = async () => {
     setPaywallVisible(false);
     await purchaseBuilderPro();
@@ -493,7 +485,6 @@ export default function DiscoverScreen() {
       <PaywallModal
         visible={paywallVisible}
         usedCount={builderMatchCount}
-        onPayPerHire={handlePayPerHire}
         onGoPro={handleGoPro}
         onClose={() => { setPaywallVisible(false); setPendingSwipe(null); }}
       />

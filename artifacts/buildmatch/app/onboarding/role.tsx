@@ -101,7 +101,7 @@ export default function RoleScreen() {
           <Card
             role="builder"
             icon="briefcase"
-            title="I'm a builder"
+            title="I'm a hirer"
             description="Find skilled workers for your jobs and crews."
           />
           <Card

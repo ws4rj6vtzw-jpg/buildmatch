@@ -9,7 +9,6 @@ const FREE_LIMIT = 5;
 type Props = {
   visible: boolean;
   usedCount: number;
-  onPayPerHire: () => void;
   onGoPro: () => void;
   onClose: () => void;
 };
@@ -21,7 +20,7 @@ const PRO_FEATURES = [
   "Priority support",
 ];
 
-export function PaywallModal({ visible, usedCount, onPayPerHire, onGoPro, onClose }: Props) {
+export function PaywallModal({ visible, usedCount, onGoPro, onClose }: Props) {
   const colors = useColors();
 
   return (
@@ -40,37 +39,8 @@ export function PaywallModal({ visible, usedCount, onPayPerHire, onGoPro, onClos
               : `${FREE_LIMIT - usedCount} free match${FREE_LIMIT - usedCount === 1 ? "" : "es"} left`}
           </Text>
           <Text style={[styles.sub, { color: colors.mutedForeground }]}>
-            Keep hiring with a single match or unlock unlimited access with BuildMatch Pro.
+            Upgrade to BuildMatch Pro for unlimited hiring and premium features.
           </Text>
-
-          <View style={[styles.option, { borderColor: colors.border, backgroundColor: colors.elevated }]}>
-            <View style={styles.optRow}>
-              <View style={{ flex: 1 }}>
-                <Text style={[styles.optTitle, { color: colors.foreground }]}>Pay per hire</Text>
-                <Text style={[styles.optDesc, { color: colors.mutedForeground }]}>
-                  One match, no commitment
-                </Text>
-              </View>
-              <Text style={[styles.price, { color: colors.foreground }]}>
-                £25
-              </Text>
-            </View>
-            <Pressable
-              onPress={onPayPerHire}
-              style={({ pressed }) => [
-                styles.btn,
-                { borderWidth: 1, borderColor: colors.primary, backgroundColor: "transparent", opacity: pressed ? 0.75 : 1 },
-              ]}
-            >
-              <Text style={[styles.btnText, { color: colors.primary }]}>Unlock this match — £25</Text>
-            </Pressable>
-          </View>
-
-          <View style={styles.orRow}>
-            <View style={[styles.divider, { backgroundColor: colors.border }]} />
-            <Text style={[styles.orText, { color: colors.mutedForeground }]}>or</Text>
-            <View style={[styles.divider, { backgroundColor: colors.border }]} />
-          </View>
 
           <View style={[styles.option, { borderColor: colors.primary, backgroundColor: colors.primary + "14" }]}>
             <View style={styles.optRow}>
@@ -82,7 +52,7 @@ export function PaywallModal({ visible, usedCount, onPayPerHire, onGoPro, onClos
                   </View>
                 </View>
                 <Text style={[styles.optDesc, { color: colors.mutedForeground }]}>
-                  Unlimited hiring
+                  Unlimited hiring, no caps
                 </Text>
               </View>
               <View style={{ alignItems: "flex-end" }}>
@@ -223,19 +193,6 @@ const styles = StyleSheet.create({
   btnText: {
     fontSize: 15,
     fontFamily: "PlusJakartaSans_600SemiBold",
-  },
-  orRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 10,
-  },
-  divider: {
-    flex: 1,
-    height: 1,
-  },
-  orText: {
-    fontSize: 12,
-    fontFamily: "PlusJakartaSans_500Medium",
   },
   cancel: {
     fontSize: 14,
