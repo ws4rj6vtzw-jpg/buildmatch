@@ -42,7 +42,7 @@ export function FeatureGraphic() {
         <text x="376" y="274" fontFamily="Arial, sans-serif" fontWeight="700" fontSize="28" fill="#0891B2">Hire Smarter. Build Faster.</text>
 
         {/* Description */}
-        <text x="376" y="320" fontFamily="Arial, sans-serif" fontWeight="400" fontSize="20" fill="#64748B">The UK's first swipe-to-hire platform for construction.</text>
+        <text x="376" y="320" fontFamily="Arial, sans-serif" fontWeight="400" fontSize="20" fill="#64748B">The UK's hardest working swipe-to-hire platform for construction.</text>
 
         {/* Pills — without UK Only */}
         <rect x="376" y="355" width="150" height="40" rx="20" fill="#EFF6FF" stroke="#BFDBFE" strokeWidth="1"/>
