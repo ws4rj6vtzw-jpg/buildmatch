@@ -1,0 +1,30 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1024" y2="1024" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#1e3a8a"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+  </defs>
+  <rect width="1024" height="1024" fill="url(#bg)"/>
+
+  <!-- Left worker head — blue circle -->
+  <circle cx="341" cy="350" r="111" fill="#3b82f6"/>
+  <!-- Left hard hat -->
+  <path d="M341 264 C281 264 248 308 248 350 L434 350 C434 308 401 264 341 264Z" fill="#ffffff"/>
+  <rect x="239" y="342" width="205" height="26" rx="13" fill="#ffffff"/>
+  <!-- Left body -->
+  <path d="M213 768 C213 631 256 580 341 580 C426 580 469 631 469 768Z" fill="#3b82f6"/>
+
+  <!-- Right worker head — yellow circle -->
+  <circle cx="683" cy="350" r="111" fill="#f59e0b"/>
+  <!-- Right hard hat -->
+  <path d="M683 264 C623 264 590 308 590 350 L776 350 C776 308 743 264 683 264Z" fill="#ffffff"/>
+  <rect x="581" y="342" width="205" height="26" rx="13" fill="#ffffff"/>
+  <!-- Right body -->
+  <path d="M555 768 C555 631 598 580 683 580 C768 580 811 631 811 768Z" fill="#f59e0b"/>
+
+  <!-- Connection arc between them -->
+  <path d="M469 427 Q512 367 555 427" stroke="#ffffff" stroke-width="17" fill="none" stroke-linecap="round"/>
+  <!-- Connection dot / spark -->
+  <circle cx="512" cy="376" r="26" fill="#ffffff"/>
+</svg>

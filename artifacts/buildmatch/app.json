@@ -21,8 +21,8 @@
       "package": "app.buildmatch.android",
       "versionCode": 1,
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/icon.png",
-        "backgroundColor": "#0E0F12"
+        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "backgroundColor": "#0f172a"
       },
       "permissions": []
     },

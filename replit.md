@@ -42,6 +42,7 @@ artifacts/buildmatch/
 - 6 seeded workers, 3 builders, 4 jobs to bring the swipe deck to life immediately
 - Right-swipe in MVP demo simulates mutual interest and creates a match instantly
 - Sending a chat message triggers a randomised auto-reply after ~1.4s (demo only)
+- App icon: "Two Workers" design — two helmeted figures (blue + yellow) on navy-to-dark-blue gradient, white connection arc. Source SVG at `assets/images/icon.svg`. `icon.png` = 1024×1024 full-bleed (iOS/Android use their own masks). `adaptive-icon.png` = foreground-only layer for Android adaptive icon.
 
 ## Marketing Landing Page (buildmatch-web)
 
