@@ -9,13 +9,15 @@ import React, {
 } from "react";
 
 import type { AuthUser, Role } from "@/types";
+import { api } from "@/lib/api";
 
 type AuthContextValue = {
   user: AuthUser | null;
   loading: boolean;
   pendingPhone: string | null;
   setPendingPhone: (phone: string | null) => void;
-  verifyOtp: (code: string) => Promise<boolean>;
+  sendOtp: (phone: string) => Promise<{ ok: boolean; error?: string }>;
+  verifyOtp: (code: string) => Promise<{ ok: boolean; error?: string }>;
   setRole: (role: Role) => Promise<void>;
   updateProfile: (patch: Partial<AuthUser>) => Promise<void>;
   signOut: () => Promise<void>;
@@ -51,9 +53,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
+  const sendOtp = useCallback(async (phone: string) => {
+    setPendingPhone(phone);
+    const result = await api.sendOtp(phone);
+    if (result.error) return { ok: false, error: result.error };
+    return { ok: true };
+  }, []);
+
   const verifyOtp = useCallback(
     async (code: string) => {
-      if (code.length !== 6 || !pendingPhone) return false;
+      if (code.length !== 6 || !pendingPhone) {
+        return { ok: false, error: "Missing phone or code" };
+      }
+      const result = await api.verifyOtp(pendingPhone, code);
+      if (result.error) return { ok: false, error: result.error };
+
       const fresh: AuthUser = {
         id: newId(),
         phone: pendingPhone,
@@ -64,7 +78,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       };
       await persist(fresh);
       setPendingPhone(null);
-      return true;
+      return { ok: true };
     },
     [pendingPhone, persist],
   );
@@ -100,12 +114,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       loading,
       pendingPhone,
       setPendingPhone,
+      sendOtp,
       verifyOtp,
       setRole,
       updateProfile,
       signOut,
     }),
-    [user, loading, pendingPhone, verifyOtp, setRole, updateProfile, signOut],
+    [user, loading, pendingPhone, sendOtp, verifyOtp, setRole, updateProfile, signOut],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

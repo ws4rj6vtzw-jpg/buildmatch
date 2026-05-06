@@ -20,19 +20,35 @@ const CELLS = 6;
 
 export default function OtpScreen() {
   const colors = useColors();
-  const { pendingPhone, verifyOtp } = useAuth();
+  const { pendingPhone, sendOtp, verifyOtp } = useAuth();
   const [code, setCode] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [resending, setResending] = useState(false);
   const inputRef = useRef<TextInput>(null);
 
   const onVerify = async () => {
     setSubmitting(true);
-    const ok = await verifyOtp(code);
+    const result = await verifyOtp(code);
     setSubmitting(false);
-    if (ok) {
+    if (result.ok) {
       router.replace("/onboarding/role");
     } else {
-      Alert.alert("Invalid code", "Enter any 6-digit code to continue (demo).");
+      Alert.alert("Incorrect code", result.error ?? "Please try again.");
+      setCode("");
+      inputRef.current?.focus();
+    }
+  };
+
+  const onResend = async () => {
+    if (!pendingPhone) return;
+    setResending(true);
+    const result = await sendOtp(pendingPhone);
+    setResending(false);
+    if (result.ok) {
+      Alert.alert("Code sent", "A new code has been sent to your phone.");
+      setCode("");
+    } else {
+      Alert.alert("Could not resend", result.error ?? "Please try again.");
     }
   };
 
@@ -49,7 +65,7 @@ export default function OtpScreen() {
             Enter the 6-digit code
           </Text>
           <Text style={[styles.subtitle, { color: colors.mutedForeground }]}>
-            Sent to +44 {pendingPhone ?? ""}. For this demo any 6 digits will work.
+            Sent to +44 {pendingPhone ?? ""}. Check your messages.
           </Text>
 
           <Pressable onPress={() => inputRef.current?.focus()} style={styles.cellRow}>
@@ -84,11 +100,18 @@ export default function OtpScreen() {
             maxLength={CELLS}
           />
 
-          <Pressable onPress={() => router.back()}>
-            <Text style={[styles.link, { color: colors.primary }]}>
-              Wrong number? Go back
-            </Text>
-          </Pressable>
+          <View style={styles.linksRow}>
+            <Pressable onPress={() => router.back()}>
+              <Text style={[styles.link, { color: colors.mutedForeground }]}>
+                Wrong number?
+              </Text>
+            </Pressable>
+            <Pressable onPress={onResend} disabled={resending}>
+              <Text style={[styles.link, { color: colors.primary, opacity: resending ? 0.5 : 1 }]}>
+                {resending ? "Sending…" : "Resend code"}
+              </Text>
+            </Pressable>
+          </View>
         </View>
 
         <View style={styles.footer}>
@@ -143,10 +166,14 @@ const styles = StyleSheet.create({
     height: 1,
     width: 1,
   },
+  linksRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: 8,
+  },
   link: {
     fontSize: 14,
     fontFamily: "PlusJakartaSans_500Medium",
-    marginTop: 12,
   },
   footer: {
     padding: 24,

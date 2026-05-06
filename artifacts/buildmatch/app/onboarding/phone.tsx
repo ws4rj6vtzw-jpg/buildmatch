@@ -2,6 +2,7 @@ import { Feather } from "@expo/vector-icons";
 import { router } from "expo-router";
 import React, { useState } from "react";
 import {
+  Alert,
   KeyboardAvoidingView,
   Platform,
   StyleSheet,
@@ -17,13 +18,20 @@ import { useAuth } from "@/contexts/AuthContext";
 
 export default function PhoneScreen() {
   const colors = useColors();
-  const { setPendingPhone } = useAuth();
+  const { sendOtp } = useAuth();
   const [phone, setPhone] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const valid = phone.replace(/\D/g, "").length >= 10;
 
-  const onContinue = () => {
-    setPendingPhone(phone);
+  const onContinue = async () => {
+    setLoading(true);
+    const result = await sendOtp(phone);
+    setLoading(false);
+    if (!result.ok) {
+      Alert.alert("Could not send code", result.error ?? "Please try again.");
+      return;
+    }
     router.push("/onboarding/otp");
   };
 
@@ -64,7 +72,7 @@ export default function PhoneScreen() {
         </View>
 
         <View style={styles.footer}>
-          <PrimaryButton label="Send code" onPress={onContinue} disabled={!valid} />
+          <PrimaryButton label="Send code" onPress={onContinue} disabled={!valid} loading={loading} />
         </View>
       </KeyboardAvoidingView>
     </SafeAreaView>
