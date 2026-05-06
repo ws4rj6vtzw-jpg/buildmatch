@@ -35,6 +35,7 @@ export default function ProfileSetupScreen() {
   const [bio, setBio] = useState(user?.bio ?? "");
   const [publicLiabilityInsured, setPublicLiabilityInsured] = useState(user?.publicLiabilityInsured ?? false);
   const [insurerName, setInsurerName] = useState(user?.insurerName ?? "");
+  const [businessType, setBusinessType] = useState<"sole_trader" | "limited_company" | undefined>(user?.businessType);
 
   const toggle = (
     list: string[],

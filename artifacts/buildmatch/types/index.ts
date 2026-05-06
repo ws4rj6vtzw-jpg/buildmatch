@@ -133,4 +133,6 @@ export type AuthUser = {
   insurerName?: string;
   isPro?: boolean;
   documents?: UploadedDocument[];
+  businessType?: "sole_trader" | "limited_company";
+  companyRegNumber?: string;  // Ltd only — Companies House number
 };

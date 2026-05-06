@@ -458,6 +458,22 @@ export default function ProfileScreen() {
           </View>
         </View>
 
+        {isWorker && user.businessType && (
+          <Row
+            icon="briefcase"
+            label="How you work"
+            badge={user.businessType === "sole_trader" ? "Sole Trader" : "Ltd Company"}
+            onPress={() => router.push("/onboarding/profile")}
+          />
+        )}
+        {isWorker && !user.businessType && (
+          <Row
+            icon="briefcase"
+            label="How you work"
+            badge="Not set"
+            onPress={() => router.push("/onboarding/profile")}
+          />
+        )}
         {isWorker && (
           <Row
             icon="shield"
