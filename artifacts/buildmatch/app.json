@@ -37,7 +37,14 @@
         }
       ],
       "expo-font",
-      "expo-web-browser"
+      "expo-web-browser",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "BuildMatch uses your photo library so you can set a profile picture.",
+          "cameraPermission": "BuildMatch uses your camera so you can take a profile photo."
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,
