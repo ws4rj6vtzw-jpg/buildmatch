@@ -71,3 +71,9 @@ id = "n1b-Fz1R4xRQbVFyVGXZZ"
 uri = "file://artifacts/buildmatch/assets/images/google-play-feature-graphic.jpg"
 type = "image"
 title = "Google Play Feature Graphic (1024×500 JPEG)"
+
+[[outputs]]
+id = "TQSTmRZr_w9l1QoDk8-iW"
+uri = "file://artifacts/buildmatch/assets/images/google-play-icon-512.jpg"
+type = "image"
+title = "Google Play Icon (512×512 JPEG)"
