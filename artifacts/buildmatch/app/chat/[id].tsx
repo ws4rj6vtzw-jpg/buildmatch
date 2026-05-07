@@ -14,10 +14,12 @@ import { KeyboardAvoidingView } from "react-native-keyboard-controller";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { Avatar } from "@/components/Avatar";
+import { PaywallModal } from "@/components/PaywallModal";
 import { TypingIndicator } from "@/components/TypingIndicator";
 import { useColors } from "@/hooks/useColors";
 import { useAuth } from "@/contexts/AuthContext";
 import { useData } from "@/contexts/DataContext";
+import { useSubscription } from "@/lib/revenuecat";
 
 export default function ChatScreen() {
   const colors = useColors();
@@ -35,8 +37,10 @@ export default function ChatScreen() {
     markMatchRead,
     typingMatches,
   } = useData();
+  const { isPro, purchaseBuilderPro } = useSubscription();
   const isPartnerTyping = !!id && typingMatches.includes(id);
   const [draft, setDraft] = useState("");
+  const [paywallVisible, setPaywallVisible] = useState(false);
 
   useEffect(() => {
     if (id) markMatchRead(id);
@@ -48,6 +52,9 @@ export default function ChatScreen() {
 
   const match = matches.find((m) => m.id === id);
   const isWorker = user?.role === "worker";
+  const isBuilder = user?.role === "builder";
+  const isLockedBuilder = isBuilder && !isPro;
+
   const partner = useMemo(() => {
     if (!match) return null;
     return isWorker
@@ -88,6 +95,8 @@ export default function ChatScreen() {
     const params = !isWorker ? `?matchId=${id}` : "";
     router.push(`${profilePath}${params}` as any);
   };
+
+  const matchCount = matches.filter((m) => m.builderId === user?.id).length;
 
   if (!match) return null;
 
@@ -210,6 +219,27 @@ export default function ChatScreen() {
         </View>
       )}
 
+      {isLockedBuilder && (
+        <Pressable
+          onPress={() => setPaywallVisible(true)}
+          style={({ pressed }) => [
+            styles.lockedBanner,
+            {
+              backgroundColor: colors.primary + "15",
+              borderBottomColor: colors.primary + "40",
+              opacity: pressed ? 0.75 : 1,
+            },
+          ]}
+        >
+          <Feather name="lock" size={13} color={colors.primary} />
+          <Text style={[styles.lockedBannerText, { color: colors.primary }]}>
+            Full profile details are locked —{" "}
+            <Text style={styles.lockedBannerLink}>Upgrade to Pro</Text>
+          </Text>
+          <Feather name="chevron-right" size={13} color={colors.primary} />
+        </Pressable>
+      )}
+
       <KeyboardAvoidingView
         behavior="padding"
         style={{ flex: 1 }}
@@ -310,6 +340,16 @@ export default function ChatScreen() {
           </Pressable>
         </View>
       </KeyboardAvoidingView>
+
+      <PaywallModal
+        visible={paywallVisible}
+        usedCount={matchCount}
+        onGoPro={async () => {
+          await purchaseBuilderPro();
+          setPaywallVisible(false);
+        }}
+        onClose={() => setPaywallVisible(false)}
+      />
     </View>
   );
 }
@@ -413,6 +453,22 @@ const styles = StyleSheet.create({
   },
   bannerLinkText: {
     fontSize: 13,
+    fontFamily: "PlusJakartaSans_600SemiBold",
+  },
+  lockedBanner: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+  },
+  lockedBannerText: {
+    fontSize: 13,
+    fontFamily: "PlusJakartaSans_500Medium",
+    flex: 1,
+  },
+  lockedBannerLink: {
     fontFamily: "PlusJakartaSans_600SemiBold",
   },
 });

@@ -1,13 +1,15 @@
 import { Feather } from "@expo/vector-icons";
 import { Stack, router, useLocalSearchParams } from "expo-router";
-import React from "react";
+import React, { useState } from "react";
 import { Platform, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 
 import { Avatar } from "@/components/Avatar";
+import { PaywallModal } from "@/components/PaywallModal";
 import { Pill } from "@/components/Pill";
 import { useColors } from "@/hooks/useColors";
 import { useAuth } from "@/contexts/AuthContext";
 import { useData } from "@/contexts/DataContext";
+import { useSubscription } from "@/lib/revenuecat";
 
 export default function WorkerProfile() {
   const colors = useColors();
@@ -15,13 +17,14 @@ export default function WorkerProfile() {
   const params = useLocalSearchParams<{ jobId?: string; matchId?: string }>();
   const { user } = useAuth();
   const { workers, jobs, matches, ratings, acceptApplicant, declineApplicant } = useData();
+  const { isPro, purchaseBuilderPro } = useSubscription();
+  const [paywallVisible, setPaywallVisible] = useState(false);
 
   const worker = workers.find((w) => w.id === id);
   const job = params.jobId ? jobs.find((j) => j.id === params.jobId) : undefined;
   const isOwnerBuilder =
     !!job && job.builderId === user?.id && job.applicants.includes(id ?? "");
 
-  // Determine if a review can be left via a matchId param or by finding a match
   const matchId = params.matchId;
   const reviewMatch = matchId
     ? matches.find((m) => m.id === matchId)
@@ -38,6 +41,11 @@ export default function WorkerProfile() {
     );
   const canLeaveReview =
     !!reviewMatch && !alreadyRated && user?.role === "builder";
+
+  const isBuilder = user?.role === "builder";
+  const isLockedBuilder = isBuilder && !isPro;
+
+  const matchCount = matches.filter((m) => m.builderId === user?.id).length;
 
   if (!worker) {
     return (
@@ -100,7 +108,15 @@ export default function WorkerProfile() {
             <Stat label="Rating" value={worker.rating.toFixed(1)} icon="star" colors={colors} />
             <Stat label="Jobs" value={String(worker.completedJobs)} icon="check-circle" colors={colors} />
             <Stat label="Years" value={String(worker.yearsExperience)} icon="award" colors={colors} />
-            <Stat label="Rate" value={`£${worker.hourlyRate}/hr`} icon="tag" colors={colors} />
+            {isLockedBuilder ? (
+              <Pressable onPress={() => setPaywallVisible(true)} style={styles.stat}>
+                <Feather name="lock" size={14} color={colors.primary} />
+                <Text style={[styles.statValue, { color: colors.mutedForeground }]}>Pro</Text>
+                <Text style={[styles.statLabel, { color: colors.mutedForeground }]}>Rate</Text>
+              </Pressable>
+            ) : (
+              <Stat label="Rate" value={`£${worker.hourlyRate}/hr`} icon="tag" colors={colors} />
+            )}
           </View>
 
           <View
@@ -134,7 +150,16 @@ export default function WorkerProfile() {
 
         {worker.bio ? (
           <Section label="About" colors={colors}>
-            <Text style={[styles.body, { color: colors.foreground }]}>{worker.bio}</Text>
+            {isLockedBuilder ? (
+              <LockedContent
+                colors={colors}
+                onUnlock={() => setPaywallVisible(true)}
+              >
+                <Text style={[styles.body, { color: colors.foreground }]}>{worker.bio}</Text>
+              </LockedContent>
+            ) : (
+              <Text style={[styles.body, { color: colors.foreground }]}>{worker.bio}</Text>
+            )}
           </Section>
         ) : null}
 
@@ -150,12 +175,52 @@ export default function WorkerProfile() {
 
         {worker.tickets.length > 0 && (
           <Section label="Tickets & licences" colors={colors}>
-            <View style={styles.pills}>
-              {worker.tickets.map((t) => (
-                <Pill key={t} label={t} />
-              ))}
-            </View>
+            {isLockedBuilder ? (
+              <LockedContent
+                colors={colors}
+                onUnlock={() => setPaywallVisible(true)}
+              >
+                <View style={styles.pills}>
+                  {worker.tickets.map((t) => (
+                    <Pill key={t} label={t} />
+                  ))}
+                </View>
+              </LockedContent>
+            ) : (
+              <View style={styles.pills}>
+                {worker.tickets.map((t) => (
+                  <Pill key={t} label={t} />
+                ))}
+              </View>
+            )}
           </Section>
+        )}
+
+        {isLockedBuilder && (
+          <Pressable
+            onPress={() => setPaywallVisible(true)}
+            style={({ pressed }) => [
+              styles.unlockCard,
+              {
+                backgroundColor: colors.card,
+                borderColor: colors.primary,
+                opacity: pressed ? 0.85 : 1,
+              },
+            ]}
+          >
+            <View style={[styles.unlockIcon, { backgroundColor: colors.primary + "20" }]}>
+              <Feather name="lock" size={20} color={colors.primary} />
+            </View>
+            <View style={{ flex: 1 }}>
+              <Text style={[styles.unlockTitle, { color: colors.foreground }]}>
+                Upgrade to view full profile
+              </Text>
+              <Text style={[styles.unlockSub, { color: colors.mutedForeground }]}>
+                See hourly rate, bio & verified tickets with BuildMatch Pro
+              </Text>
+            </View>
+            <Feather name="chevron-right" size={18} color={colors.primary} />
+          </Pressable>
         )}
 
         {canLeaveReview && reviewMatch ? (
@@ -213,6 +278,54 @@ export default function WorkerProfile() {
           </Section>
         ) : null}
       </ScrollView>
+
+      <PaywallModal
+        visible={paywallVisible}
+        usedCount={matchCount}
+        onGoPro={async () => {
+          await purchaseBuilderPro();
+          setPaywallVisible(false);
+        }}
+        onClose={() => setPaywallVisible(false)}
+      />
+    </View>
+  );
+}
+
+function LockedContent({
+  children,
+  colors,
+  onUnlock,
+}: {
+  children: React.ReactNode;
+  colors: ReturnType<typeof useColors>;
+  onUnlock: () => void;
+}) {
+  return (
+    <View style={styles.lockedWrapper}>
+      <View style={styles.lockedContentFade} pointerEvents="none">
+        {children}
+      </View>
+      <View
+        style={[
+          StyleSheet.absoluteFill,
+          styles.lockedOverlay,
+          { backgroundColor: colors.background + "e0" },
+        ]}
+        pointerEvents="none"
+      />
+      <Pressable
+        onPress={onUnlock}
+        style={({ pressed }) => [
+          styles.lockedCta,
+          { opacity: pressed ? 0.8 : 1 },
+        ]}
+      >
+        <Feather name="lock" size={14} color={colors.primary} />
+        <Text style={[styles.lockedCtaText, { color: colors.primary }]}>
+          Unlock with Pro
+        </Text>
+      </Pressable>
     </View>
   );
 }
@@ -333,6 +446,58 @@ const styles = StyleSheet.create({
     lineHeight: 22,
   },
   pills: { flexDirection: "row", flexWrap: "wrap", gap: 6 },
+  lockedWrapper: {
+    minHeight: 60,
+    borderRadius: 12,
+    overflow: "hidden",
+    justifyContent: "center",
+  },
+  lockedContentFade: {
+    opacity: 0.12,
+    padding: 4,
+  },
+  lockedOverlay: {
+    borderRadius: 12,
+  },
+  lockedCta: {
+    position: "absolute",
+    alignSelf: "center",
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+  },
+  lockedCtaText: {
+    fontSize: 13,
+    fontFamily: "PlusJakartaSans_600SemiBold",
+    letterSpacing: 0.2,
+  },
+  unlockCard: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 14,
+    padding: 16,
+    borderRadius: 14,
+    borderWidth: 1,
+  },
+  unlockIcon: {
+    width: 44,
+    height: 44,
+    borderRadius: 12,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  unlockTitle: {
+    fontSize: 14,
+    fontFamily: "PlusJakartaSans_600SemiBold",
+    marginBottom: 2,
+  },
+  unlockSub: {
+    fontSize: 12,
+    fontFamily: "PlusJakartaSans_400Regular",
+    lineHeight: 17,
+  },
   reviewBtn: {
     flexDirection: "row",
     alignItems: "center",
