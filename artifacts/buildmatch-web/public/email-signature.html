@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>BuildMatch Email Signature — Gordon Wilson</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f0f0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 40px 20px;
+      box-sizing: border-box;
+    }
+    .instructions {
+      max-width: 680px;
+      width: 100%;
+      background: #fff;
+      border-radius: 10px;
+      padding: 24px 28px;
+      margin-bottom: 28px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+      color: #333;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    .instructions h2 { margin: 0 0 12px; font-size: 16px; color: #0f172a; }
+    .instructions ol { margin: 0; padding-left: 20px; }
+    .instructions li { margin-bottom: 6px; }
+    .preview-label {
+      font-size: 12px;
+      color: #666;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 10px;
+      font-family: Arial, sans-serif;
+    }
+    .copy-btn {
+      margin-top: 20px;
+      padding: 10px 24px;
+      background: #4F73D6;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      cursor: pointer;
+      font-family: Arial, sans-serif;
+    }
+    .copy-btn:hover { background: #3a5ec0; }
+    #signature-wrap {
+      max-width: 680px;
+      width: 100%;
+      background: #fff;
+      border-radius: 10px;
+      padding: 28px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    }
+  </style>
+</head>
+<body>
+
+<div class="instructions">
+  <h2>How to add this to Gmail</h2>
+  <ol>
+    <li>Click <strong>Copy Signature</strong> below.</li>
+    <li>Open <strong>Gmail → Settings (gear icon) → See all settings → Signature</strong>.</li>
+    <li>Create a new signature and paste (<strong>Ctrl+V</strong> / <strong>Cmd+V</strong>) into the editor box.</li>
+    <li>Save changes. Done.</li>
+  </ol>
+  <p style="margin:12px 0 0;color:#555;">For Outlook: <strong>File → Options → Mail → Signatures</strong>, then paste into the signature editor.</p>
+</div>
+
+<div class="preview-label">Preview</div>
+
+<div id="signature-wrap">
+  <!-- ═══════════════ SIGNATURE STARTS HERE ═══════════════ -->
+  <div id="bm-signature" style="font-family:Arial,sans-serif;max-width:520px;">
+
+    <table cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;">
+      <tr>
+        <!-- BM Icon -->
+        <td style="vertical-align:middle;padding-right:18px;">
+          <div style="
+            width:56px;height:56px;
+            background:#0f172a;
+            border-radius:12px;
+            display:flex;align-items:center;justify-content:center;
+            text-align:center;line-height:56px;
+            font-family:Arial,sans-serif;font-weight:900;font-size:22px;
+            letter-spacing:-1px;
+          ">
+            <span style="color:#ffffff;font-family:Arial,sans-serif;font-weight:900;font-size:22px;letter-spacing:-1px;">B</span><span style="color:#4F73D6;font-family:Arial,sans-serif;font-weight:900;font-size:22px;letter-spacing:-1px;">M</span>
+          </div>
+        </td>
+
+        <!-- Name + Title + Brand -->
+        <td style="vertical-align:middle;border-left:3px solid #4F73D6;padding-left:18px;">
+          <div style="color:#0f172a;font-size:17px;font-weight:700;font-family:Arial,sans-serif;margin:0 0 2px;">Gordon Wilson</div>
+          <div style="color:#4F73D6;font-size:13px;font-weight:600;font-family:Arial,sans-serif;margin:0 0 6px;text-transform:uppercase;letter-spacing:0.5px;">Founder &amp; CEO</div>
+          <div style="color:#0f172a;font-size:15px;font-weight:800;font-family:Arial,sans-serif;letter-spacing:0.5px;margin:0 0 1px;">BUILDMATCH</div>
+          <div style="background:#F59E0B;height:2px;width:100px;margin:4px 0 6px;"></div>
+          <div style="color:#555;font-size:12px;font-family:Arial,sans-serif;font-style:italic;">Hire Smarter. Build Faster.</div>
+        </td>
+      </tr>
+    </table>
+
+    <!-- Divider -->
+    <div style="height:1px;background:#e5e7eb;margin:14px 0;"></div>
+
+    <!-- Contact row -->
+    <table cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;font-family:Arial,sans-serif;font-size:12px;color:#555;">
+      <tr>
+        <td style="padding-right:20px;">
+          🌐 <a href="https://buildmatch.online" style="color:#4F73D6;text-decoration:none;">buildmatch.online</a>
+        </td>
+        <td style="padding-right:20px;">
+          📧 <a href="mailto:gordon@buildmatch.online" style="color:#4F73D6;text-decoration:none;">gordon@buildmatch.online</a>
+        </td>
+        <td>
+          📍 United Kingdom
+        </td>
+      </tr>
+    </table>
+
+    <!-- App badges row -->
+    <div style="margin-top:12px;font-family:Arial,sans-serif;font-size:11px;color:#888;">
+      Available on &nbsp;
+      <a href="https://play.google.com/store" style="color:#4F73D6;text-decoration:none;font-weight:600;">Google Play</a>
+      &nbsp;·&nbsp;
+      <a href="https://apps.apple.com" style="color:#4F73D6;text-decoration:none;font-weight:600;">App Store</a>
+    </div>
+
+  </div>
+  <!-- ═══════════════ SIGNATURE ENDS HERE ═══════════════ -->
+</div>
+
+<button class="copy-btn" onclick="copySignature()">Copy Signature</button>
+
+<script>
+function copySignature() {
+  const el = document.getElementById('bm-signature');
+  const range = document.createRange();
+  range.selectNodeContents(el);
+  const sel = window.getSelection();
+  sel.removeAllRanges();
+  sel.addRange(range);
+  document.execCommand('copy');
+  sel.removeAllRanges();
+  const btn = document.querySelector('.copy-btn');
+  btn.textContent = 'Copied!';
+  btn.style.background = '#16a34a';
+  setTimeout(() => {
+    btn.textContent = 'Copy Signature';
+    btn.style.background = '#4F73D6';
+  }, 2000);
+}
+</script>
+
+</body>
+</html>
