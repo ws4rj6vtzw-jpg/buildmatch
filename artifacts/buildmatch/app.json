@@ -45,6 +45,14 @@
           "photosPermission": "BuildMatch uses your photo library so you can set a profile picture.",
           "cameraPermission": "BuildMatch uses your camera so you can take a profile photo."
         }
+      ],
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/images/icon.png",
+          "color": "#0f172a",
+          "sounds": []
+        }
       ]
     ],
     "experiments": {

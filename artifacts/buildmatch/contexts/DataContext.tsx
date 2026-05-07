@@ -5,6 +5,7 @@ import React, {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from "react";
 
@@ -20,6 +21,7 @@ import type {
   Worker,
 } from "@/types";
 import { useAuth } from "@/contexts/AuthContext";
+import { api } from "@/lib/api";
 
 type Persisted = {
   workers: Worker[];
@@ -72,13 +74,15 @@ type DataContextValue = Persisted & {
 };
 
 const DataContext = createContext<DataContextValue | null>(null);
-const STORAGE_KEY = "buildmatch.data.v1";
+
+// Keys for local-only data that doesn't go to the server
+const LOCAL_KEY = "buildmatch.local.v1";
 
 function newId(prefix = "id") {
   return `${prefix}-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
 }
 
-const seed: Persisted = {
+const seedBase: Persisted = {
   workers: SEED_WORKERS,
   builders: SEED_BUILDERS,
   jobs: SEED_JOBS,
@@ -93,52 +97,116 @@ const seed: Persisted = {
 };
 
 export function DataProvider({ children }: { children: React.ReactNode }) {
-  const { user } = useAuth();
-  const [data, setData] = useState<Persisted>(seed);
+  const { user, token } = useAuth();
+  const [data, setData] = useState<Persisted>(seedBase);
   const [typingMatches, setTypingMatches] = useState<string[]>([]);
   const [hydrated, setHydrated] = useState(false);
-
-  useEffect(() => {
-    AsyncStorage.getItem(STORAGE_KEY)
-      .then((raw) => {
-        if (raw) {
-          const parsed = JSON.parse(raw) as Persisted;
-          setData({
-            workers: parsed.workers?.length ? parsed.workers : SEED_WORKERS,
-            builders: parsed.builders?.length ? parsed.builders : SEED_BUILDERS,
-            jobs: parsed.jobs ?? [],
-            swipes: parsed.swipes ?? [],
-            matches: parsed.matches ?? [],
-            messages: parsed.messages ?? [],
-            ratings: parsed.ratings ?? [],
-            completedSnaps: parsed.completedSnaps ?? [],
-            savedJobs: parsed.savedJobs ?? [],
-            lastReadAt: parsed.lastReadAt ?? {},
-            boostedJobs: parsed.boostedJobs ?? [],
-          });
-        }
-      })
-      .finally(() => setHydrated(true));
-  }, []);
-
-  useEffect(() => {
-    if (hydrated) {
-      AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-    }
-  }, [data, hydrated]);
+  const tokenRef = useRef(token);
+  tokenRef.current = token;
 
   const meId = user?.id ?? "anon";
 
+  // ── Initial load from API ────────────────────────────────────────────────
+  useEffect(() => {
+    if (!token || hydrated) return;
+
+    async function load() {
+      // Load local-only data (savedJobs, lastReadAt, ratings, completedSnaps, boostedJobs)
+      const rawLocal = await AsyncStorage.getItem(LOCAL_KEY).catch(() => null);
+      const local = rawLocal
+        ? (JSON.parse(rawLocal) as Partial<Persisted>)
+        : {};
+
+      // Fetch server data in parallel
+      const [swipesRes, matchesRes, messagesRes, jobsRes] = await Promise.all([
+        api.getSwipes(),
+        api.getMatches(),
+        api.getAllMessages(),
+        api.getJobs(),
+      ]);
+
+      setData((prev) => ({
+        ...prev,
+        swipes: swipesRes.data ?? prev.swipes,
+        matches: matchesRes.data ?? prev.matches,
+        messages: messagesRes.data ?? prev.messages,
+        // Merge DB jobs (builder-posted) with seed jobs, deduplicated by id
+        jobs: mergeJobs(prev.jobs, jobsRes.data ?? []),
+        // Local-only fields
+        ratings: local.ratings ?? prev.ratings,
+        completedSnaps: local.completedSnaps ?? prev.completedSnaps,
+        savedJobs: local.savedJobs ?? prev.savedJobs,
+        lastReadAt: local.lastReadAt ?? prev.lastReadAt,
+        boostedJobs: local.boostedJobs ?? prev.boostedJobs,
+      }));
+
+      setHydrated(true);
+    }
+
+    load().catch(() => setHydrated(true));
+  }, [token, hydrated]);
+
+  // ── Polling — sync matches + messages every 10 s ─────────────────────────
+  useEffect(() => {
+    if (!token || !hydrated) return;
+
+    const interval = setInterval(async () => {
+      const [matchesRes, messagesRes, jobsRes] = await Promise.all([
+        api.getMatches(),
+        api.getAllMessages(),
+        api.getJobs(),
+      ]);
+      setData((prev) => ({
+        ...prev,
+        matches: matchesRes.data ?? prev.matches,
+        messages: messagesRes.data ?? prev.messages,
+        jobs: mergeJobs(prev.jobs, jobsRes.data ?? []),
+      }));
+    }, 10_000);
+
+    return () => clearInterval(interval);
+  }, [token, hydrated]);
+
+  // ── Persist local-only fields to AsyncStorage ────────────────────────────
+  useEffect(() => {
+    if (!hydrated) return;
+    const local = {
+      ratings: data.ratings,
+      completedSnaps: data.completedSnaps,
+      savedJobs: data.savedJobs,
+      lastReadAt: data.lastReadAt,
+      boostedJobs: data.boostedJobs,
+    };
+    AsyncStorage.setItem(LOCAL_KEY, JSON.stringify(local)).catch(() => {});
+  }, [
+    data.ratings,
+    data.completedSnaps,
+    data.savedJobs,
+    data.lastReadAt,
+    data.boostedJobs,
+    hydrated,
+  ]);
+
+  // ── Helpers ───────────────────────────────────────────────────────────────
+
+  function mergeJobs(base: Job[], fromServer: Job[]): Job[] {
+    // Seed jobs (ids starting with "j-") always show; server jobs are added/replaced
+    const seedIds = new Set(SEED_JOBS.map((j) => j.id));
+    const serverIds = new Set(fromServer.map((j) => j.id));
+    const kept = base.filter((j) => seedIds.has(j.id) && !serverIds.has(j.id));
+    return [...kept, ...fromServer];
+  }
+
+  // ── Swipe workers ─────────────────────────────────────────────────────────
   const swipeWorker = useCallback<DataContextValue["swipeWorker"]>(
     (workerId, direction) => {
       let matched = false;
       let matchId: string | undefined;
+
       setData((prev) => {
         const swipe: Swipe = { fromId: meId, toId: workerId, direction, ts: Date.now() };
         let matches = prev.matches;
         if (direction === "right") {
-          // Auto-match: in MVP demo, every right-swipe on a seeded worker creates a match
-          // (simulating mutual interest from seed data).
           matchId = newId("m");
           matched = true;
           matches = [
@@ -148,28 +216,32 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
         }
         return { ...prev, swipes: [...prev.swipes, swipe], matches };
       });
+
+      // Background: persist to server + push notification
+      api.swipe(workerId, direction, "worker").catch(() => {});
+
       return { matched, matchId };
     },
     [meId],
   );
 
+  // ── Swipe jobs ────────────────────────────────────────────────────────────
   const swipeJob = useCallback<DataContextValue["swipeJob"]>(
     (jobId, direction) => {
       let matched = false;
       let matchId: string | undefined;
+
       setData((prev) => {
         const job = prev.jobs.find((j) => j.id === jobId);
         const swipe: Swipe = { fromId: meId, toId: jobId, direction, ts: Date.now() };
         let matches = prev.matches;
         let jobs = prev.jobs;
         if (direction === "right" && job) {
-          // Worker right-swiping on job acts as an application
           jobs = jobs.map((j) =>
             j.id === jobId && !j.applicants.includes(meId)
               ? { ...j, applicants: [...j.applicants, meId] }
               : j,
           );
-          // Auto-accept in demo for delight
           matchId = newId("m");
           matched = true;
           matches = [
@@ -185,15 +257,20 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
         }
         return { ...prev, swipes: [...prev.swipes, swipe], matches, jobs };
       });
+
+      api.swipe(jobId, direction, "job").catch(() => {});
+
       return { matched, matchId };
     },
     [meId],
   );
 
+  // ── Swipe builders ────────────────────────────────────────────────────────
   const swipeBuilder = useCallback<DataContextValue["swipeBuilder"]>(
     (builderId, direction) => {
       let matched = false;
       let matchId: string | undefined;
+
       setData((prev) => {
         const swipe: Swipe = { fromId: meId, toId: builderId, direction, ts: Date.now() };
         let matches = prev.matches;
@@ -207,11 +284,15 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
         }
         return { ...prev, swipes: [...prev.swipes, swipe], matches };
       });
+
+      api.swipe(builderId, direction, "builder").catch(() => {});
+
       return { matched, matchId };
     },
     [meId],
   );
 
+  // ── Apply to job ──────────────────────────────────────────────────────────
   const applyToJob = useCallback(
     (jobId: string) => {
       setData((prev) => ({
@@ -222,10 +303,12 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
             : j,
         ),
       }));
+      api.swipe(jobId, "right", "job").catch(() => {});
     },
     [meId],
   );
 
+  // ── Accept applicant ──────────────────────────────────────────────────────
   const acceptApplicant = useCallback<DataContextValue["acceptApplicant"]>(
     (jobId, workerId) => {
       const matchId = newId("m");
@@ -251,11 +334,13 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
           ),
         };
       });
+      api.acceptApplicant(jobId, workerId).catch(() => {});
       return matchId;
     },
     [],
   );
 
+  // ── Decline applicant ─────────────────────────────────────────────────────
   const declineApplicant = useCallback<DataContextValue["declineApplicant"]>(
     (jobId, workerId) => {
       setData((prev) => ({
@@ -266,28 +351,42 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
             : j,
         ),
       }));
+      api.declineApplicant(jobId, workerId).catch(() => {});
     },
     [],
   );
 
+  // ── Post job ──────────────────────────────────────────────────────────────
   const postJob = useCallback<DataContextValue["postJob"]>(
     (job) => {
+      const optimisticId = newId("j");
       const fresh: Job = {
         ...job,
-        id: newId("j"),
+        id: optimisticId,
         builderId: meId,
         createdAt: Date.now(),
         applicants: [],
       };
       setData((prev) => ({ ...prev, jobs: [fresh, ...prev.jobs] }));
+      // Sync to server and replace optimistic entry with real one
+      api.postJob(job).then((res) => {
+        if (res.data) {
+          setData((prev) => ({
+            ...prev,
+            jobs: prev.jobs.map((j) => (j.id === optimisticId ? res.data! : j)),
+          }));
+        }
+      }).catch(() => {});
     },
     [meId],
   );
 
+  // ── Send message ──────────────────────────────────────────────────────────
   const sendMessage = useCallback<DataContextValue["sendMessage"]>(
     (matchId, text) => {
+      const optimisticId = newId("msg");
       const msg: Message = {
-        id: newId("msg"),
+        id: optimisticId,
         matchId,
         fromId: meId,
         text,
@@ -295,7 +394,10 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
       };
       setData((prev) => ({ ...prev, messages: [...prev.messages, msg] }));
 
-      // Show typing indicator briefly, then auto-reply
+      // Persist to server
+      api.sendMessage(matchId, text).catch(() => {});
+
+      // Auto-reply demo
       setTimeout(() => {
         setTypingMatches((prev) =>
           prev.includes(matchId) ? prev : [...prev, matchId],
@@ -307,7 +409,8 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
         setData((prev) => {
           const match = prev.matches.find((m) => m.id === matchId);
           if (!match) return prev;
-          const otherId = match.builderId === meId ? match.workerId : match.builderId;
+          const otherId =
+            match.builderId === meId ? match.workerId : match.builderId;
           const replies = [
             "Sounds good. When can you start?",
             "Cheers — I'll send through the address shortly.",
@@ -319,7 +422,9 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
             id: newId("msg"),
             matchId,
             fromId: otherId,
-            text: replies[Math.floor(Math.random() * replies.length)] ?? "Sounds good.",
+            text:
+              replies[Math.floor(Math.random() * replies.length)] ??
+              "Sounds good.",
             ts: Date.now(),
           };
           return { ...prev, messages: [...prev.messages, reply] };
@@ -329,6 +434,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
     [meId],
   );
 
+  // ── Rate user ─────────────────────────────────────────────────────────────
   const rateUser = useCallback<DataContextValue["rateUser"]>(
     (jobId, toId, stars, comment) => {
       const r: Rating = {
@@ -345,27 +451,29 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
     [meId],
   );
 
+  // ── Mark job complete ─────────────────────────────────────────────────────
   const markJobComplete = useCallback<DataContextValue["markJobComplete"]>(
     (jobId) => {
       setData((prev) => {
         const job = prev.jobs.find((j) => j.id === jobId);
         const match = prev.matches.find((m) => m.jobId === jobId);
-        const snaps = job && match
-          ? [
-              ...prev.completedSnaps,
-              {
-                jobId: job.id,
-                builderId: job.builderId,
-                workerId: match.workerId,
-                title: job.title,
-                trade: job.trade,
-                payRate: job.payRate,
-                payType: job.payType,
-                durationDays: job.durationDays,
-                completedAt: Date.now(),
-              } satisfies CompletedSnap,
-            ]
-          : prev.completedSnaps;
+        const snaps =
+          job && match
+            ? [
+                ...prev.completedSnaps,
+                {
+                  jobId: job.id,
+                  builderId: job.builderId,
+                  workerId: match.workerId,
+                  title: job.title,
+                  trade: job.trade,
+                  payRate: job.payRate,
+                  payType: job.payType,
+                  durationDays: job.durationDays,
+                  completedAt: Date.now(),
+                } satisfies CompletedSnap,
+              ]
+            : prev.completedSnaps;
         return {
           ...prev,
           jobs: prev.jobs.filter((j) => j.id !== jobId),
@@ -377,6 +485,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
     [],
   );
 
+  // ── Saved jobs ────────────────────────────────────────────────────────────
   const toggleSavedJob = useCallback<DataContextValue["toggleSavedJob"]>(
     (jobId) => {
       setData((prev) => ({
@@ -394,6 +503,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
     [data.savedJobs],
   );
 
+  // ── Boost job ─────────────────────────────────────────────────────────────
   const boostJob = useCallback(
     (jobId: string) => {
       setData((prev) => ({
@@ -406,22 +516,24 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
     [],
   );
 
+  // ── Undo last swipe ───────────────────────────────────────────────────────
   const undoLastSwipe = useCallback<DataContextValue["undoLastSwipe"]>(() => {
     let undone: { undoneId: string } | null = null;
     setData((prev) => {
-      // Find last swipe by me
       let idx = -1;
       for (let i = prev.swipes.length - 1; i >= 0; i--) {
-        if (prev.swipes[i].fromId === meId) {
+        if (prev.swipes[i]!.fromId === meId) {
           idx = i;
           break;
         }
       }
       if (idx === -1) return prev;
-      const last = prev.swipes[idx];
+      const last = prev.swipes[idx]!;
       undone = { undoneId: last.toId };
-      const swipes = [...prev.swipes.slice(0, idx), ...prev.swipes.slice(idx + 1)];
-      // Remove any match created from this right-swipe
+      const swipes = [
+        ...prev.swipes.slice(0, idx),
+        ...prev.swipes.slice(idx + 1),
+      ];
       let matches = prev.matches;
       let jobs = prev.jobs;
       let messages = prev.messages;
@@ -438,14 +550,22 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
               : j,
           );
         } else if (isBuilder) {
-          // Worker swiped right on a builder
           matches = matches.filter(
-            (m) => !(m.builderId === last.toId && m.workerId === meId && !m.jobId),
+            (m) =>
+              !(
+                m.builderId === last.toId &&
+                m.workerId === meId &&
+                !m.jobId
+              ),
           );
         } else {
-          // Builder swiped right on a worker
           matches = matches.filter(
-            (m) => !(m.workerId === last.toId && m.builderId === meId && !m.jobId),
+            (m) =>
+              !(
+                m.workerId === last.toId &&
+                m.builderId === meId &&
+                !m.jobId
+              ),
           );
         }
         const removedIds = new Set(
@@ -459,6 +579,10 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
       }
       return { ...prev, swipes, matches, jobs, messages };
     });
+
+    // Background: undo on server
+    api.undoSwipe().catch(() => {});
+
     return undone;
   }, [meId]);
 
@@ -467,6 +591,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
     [data.swipes, meId],
   );
 
+  // ── Read tracking (local only) ────────────────────────────────────────────
   const markMatchRead = useCallback<DataContextValue["markMatchRead"]>(
     (matchId) => {
       setData((prev) => ({
@@ -499,6 +624,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
     return count;
   }, [data.lastReadAt, data.messages, meId]);
 
+  // ── Context value ─────────────────────────────────────────────────────────
   const value = useMemo<DataContextValue>(
     () => ({
       ...data,
