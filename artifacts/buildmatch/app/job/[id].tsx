@@ -1,6 +1,6 @@
 import { Feather } from "@expo/vector-icons";
 import { router, Stack, useLocalSearchParams } from "expo-router";
-import React from "react";
+import React, { useState } from "react";
 import {
   Alert,
   Platform,
@@ -12,23 +12,31 @@ import {
 } from "react-native";
 
 import { Avatar } from "@/components/Avatar";
+import { PaywallModal } from "@/components/PaywallModal";
 import { Pill } from "@/components/Pill";
 import { PrimaryButton } from "@/components/PrimaryButton";
 import { useColors } from "@/hooks/useColors";
 import { useAuth } from "@/contexts/AuthContext";
 import { useData } from "@/contexts/DataContext";
+import { useSubscription } from "@/lib/revenuecat";
 
 export default function JobDetail() {
   const colors = useColors();
   const { id } = useLocalSearchParams<{ id: string }>();
   const { user } = useAuth();
-  const { jobs, builders, workers, applyToJob, acceptApplicant, declineApplicant } = useData();
+  const { jobs, builders, workers, matches, applyToJob, acceptApplicant, declineApplicant } = useData();
+  const { isPro, purchaseBuilderPro } = useSubscription();
+  const [paywallVisible, setPaywallVisible] = useState(false);
 
   const job = jobs.find((j) => j.id === id);
   const builder = builders.find((b) => b.id === job?.builderId);
   const isOwner = job?.builderId === user?.id;
   const isWorker = user?.role === "worker";
+  const isBuilder = user?.role === "builder";
+  const isLockedBuilder = isBuilder && !isPro;
   const alreadyApplied = !!job && !!user && job.applicants.includes(user.id);
+
+  const matchCount = matches.filter((m) => m.builderId === user?.id).length;
 
   if (!job) {
     return (
@@ -120,64 +128,111 @@ export default function JobDetail() {
                 No applicants yet. Workers who swipe right will appear here.
               </Text>
             ) : (
-              job.applicants.map((aid) => {
-                const w = workers.find((x) => x.id === aid);
-                return (
+              <>
+                {job.applicants.map((aid) => {
+                  const w = workers.find((x) => x.id === aid);
+                  return (
+                    <Pressable
+                      key={aid}
+                      onPress={() => {
+                        if (isLockedBuilder) {
+                          setPaywallVisible(true);
+                          return;
+                        }
+                        router.push({
+                          pathname: "/worker/[id]",
+                          params: { id: aid, jobId: job.id },
+                        });
+                      }}
+                      style={({ pressed }) => [
+                        styles.applicant,
+                        {
+                          backgroundColor: colors.card,
+                          borderColor: isLockedBuilder ? colors.primary + "55" : colors.border,
+                          opacity: pressed ? 0.85 : 1,
+                        },
+                      ]}
+                    >
+                      <Avatar uri={w?.photo} name={w?.name ?? "Worker"} size={44} />
+
+                      {isLockedBuilder ? (
+                        <LockedApplicantInfo
+                          colors={colors}
+                          workerName={w?.name ?? "Worker"}
+                          workerTrade={w?.primaryTrade ?? "Worker"}
+                          workerRating={w?.rating ?? 0}
+                          workerExperience={w?.yearsExperience ?? 0}
+                          onUnlock={() => setPaywallVisible(true)}
+                        />
+                      ) : (
+                        <>
+                          <View style={{ flex: 1 }}>
+                            <Text style={[styles.builderName, { color: colors.foreground }]}>
+                              {w?.name ?? "Worker"}
+                            </Text>
+                            <View style={{ flexDirection: "row", alignItems: "center", gap: 6, marginTop: 2 }}>
+                              <Feather name="star" size={11} color={colors.primary} />
+                              <Text style={[styles.builderMeta, { color: colors.mutedForeground }]}>
+                                {(w?.rating ?? 0).toFixed(1)}  ·  {w?.primaryTrade ?? "Worker"}  ·  {w?.yearsExperience ?? 0}y
+                              </Text>
+                            </View>
+                          </View>
+                          <Pressable
+                            onPress={() => declineApplicant(job.id, aid)}
+                            hitSlop={6}
+                            style={({ pressed }) => [
+                              styles.actionSm,
+                              { backgroundColor: colors.secondary, opacity: pressed ? 0.8 : 1 },
+                            ]}
+                          >
+                            <Feather name="x" size={18} color={colors.foreground} />
+                          </Pressable>
+                          <Pressable
+                            onPress={() => {
+                              const matchId = acceptApplicant(job.id, aid);
+                              router.push(`/chat/${matchId}`);
+                            }}
+                            hitSlop={6}
+                            style={({ pressed }) => [
+                              styles.actionSm,
+                              { backgroundColor: colors.primary, opacity: pressed ? 0.85 : 1 },
+                            ]}
+                          >
+                            <Feather name="check" size={18} color={colors.primaryForeground} />
+                          </Pressable>
+                        </>
+                      )}
+                    </Pressable>
+                  );
+                })}
+
+                {isLockedBuilder && (
                   <Pressable
-                    key={aid}
-                    onPress={() =>
-                      router.push({
-                        pathname: "/worker/[id]",
-                        params: { id: aid, jobId: job.id },
-                      })
-                    }
+                    onPress={() => setPaywallVisible(true)}
                     style={({ pressed }) => [
-                      styles.applicant,
+                      styles.unlockCard,
                       {
                         backgroundColor: colors.card,
-                        borderColor: colors.border,
+                        borderColor: colors.primary,
                         opacity: pressed ? 0.85 : 1,
                       },
                     ]}
                   >
-                    <Avatar uri={w?.photo} name={w?.name ?? "Worker"} size={44} />
-                    <View style={{ flex: 1 }}>
-                      <Text style={[styles.builderName, { color: colors.foreground }]}>
-                        {w?.name ?? "Worker"}
-                      </Text>
-                      <View style={{ flexDirection: "row", alignItems: "center", gap: 6, marginTop: 2 }}>
-                        <Feather name="star" size={11} color={colors.primary} />
-                        <Text style={[styles.builderMeta, { color: colors.mutedForeground }]}>
-                          {(w?.rating ?? 0).toFixed(1)}  ·  {w?.primaryTrade ?? "Worker"}  ·  {w?.yearsExperience ?? 0}y
-                        </Text>
-                      </View>
+                    <View style={[styles.unlockIcon, { backgroundColor: colors.primary + "20" }]}>
+                      <Feather name="lock" size={20} color={colors.primary} />
                     </View>
-                    <Pressable
-                      onPress={() => declineApplicant(job.id, aid)}
-                      hitSlop={6}
-                      style={({ pressed }) => [
-                        styles.actionSm,
-                        { backgroundColor: colors.secondary, opacity: pressed ? 0.8 : 1 },
-                      ]}
-                    >
-                      <Feather name="x" size={18} color={colors.foreground} />
-                    </Pressable>
-                    <Pressable
-                      onPress={() => {
-                        const matchId = acceptApplicant(job.id, aid);
-                        router.push(`/chat/${matchId}`);
-                      }}
-                      hitSlop={6}
-                      style={({ pressed }) => [
-                        styles.actionSm,
-                        { backgroundColor: colors.primary, opacity: pressed ? 0.85 : 1 },
-                      ]}
-                    >
-                      <Feather name="check" size={18} color={colors.primaryForeground} />
-                    </Pressable>
+                    <View style={{ flex: 1 }}>
+                      <Text style={[styles.unlockTitle, { color: colors.foreground }]}>
+                        Upgrade to view applicants
+                      </Text>
+                      <Text style={[styles.unlockSub, { color: colors.mutedForeground }]}>
+                        See names, trades & ratings — then accept or decline with BuildMatch Pro
+                      </Text>
+                    </View>
+                    <Feather name="chevron-right" size={18} color={colors.primary} />
                   </Pressable>
-                );
-              })
+                )}
+              </>
             )}
           </Section>
         )}
@@ -192,6 +247,61 @@ export default function JobDetail() {
           </View>
         )}
       </ScrollView>
+
+      <PaywallModal
+        visible={paywallVisible}
+        usedCount={matchCount}
+        onGoPro={async () => {
+          await purchaseBuilderPro();
+          setPaywallVisible(false);
+        }}
+        onClose={() => setPaywallVisible(false)}
+      />
+    </View>
+  );
+}
+
+function LockedApplicantInfo({
+  colors,
+  workerName,
+  workerTrade,
+  workerRating,
+  workerExperience,
+  onUnlock,
+}: {
+  colors: ReturnType<typeof useColors>;
+  workerName: string;
+  workerTrade: string;
+  workerRating: number;
+  workerExperience: number;
+  onUnlock: () => void;
+}) {
+  return (
+    <View style={styles.lockedRow}>
+      <View style={styles.lockedContentFade} pointerEvents="none">
+        <Text style={[styles.builderName, { color: colors.foreground }]}>{workerName}</Text>
+        <View style={{ flexDirection: "row", alignItems: "center", gap: 6, marginTop: 2 }}>
+          <Feather name="star" size={11} color={colors.primary} />
+          <Text style={[styles.builderMeta, { color: colors.mutedForeground }]}>
+            {workerRating.toFixed(1)}  ·  {workerTrade}  ·  {workerExperience}y
+          </Text>
+        </View>
+      </View>
+      <View
+        style={[
+          StyleSheet.absoluteFill,
+          styles.lockedOverlay,
+          { backgroundColor: colors.card + "e8" },
+        ]}
+        pointerEvents="none"
+      />
+      <Pressable
+        onPress={onUnlock}
+        style={({ pressed }) => [styles.lockedCta, { opacity: pressed ? 0.8 : 1 }]}
+      >
+        <Feather name="lock" size={13} color={colors.primary} />
+        <Text style={[styles.lockedCtaText, { color: colors.primary }]}>Unlock with Pro</Text>
+      </Pressable>
     </View>
   );
 }
@@ -325,5 +435,59 @@ const styles = StyleSheet.create({
     borderRadius: 18,
     alignItems: "center",
     justifyContent: "center",
+  },
+  lockedRow: {
+    flex: 1,
+    minHeight: 44,
+    borderRadius: 8,
+    overflow: "hidden",
+    justifyContent: "center",
+  },
+  lockedContentFade: {
+    opacity: 0.12,
+    paddingHorizontal: 4,
+  },
+  lockedOverlay: {
+    borderRadius: 8,
+  },
+  lockedCta: {
+    position: "absolute",
+    alignSelf: "center",
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 5,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+  },
+  lockedCtaText: {
+    fontSize: 12,
+    fontFamily: "PlusJakartaSans_600SemiBold",
+    letterSpacing: 0.2,
+  },
+  unlockCard: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 14,
+    padding: 16,
+    borderRadius: 14,
+    borderWidth: 1,
+    marginTop: 4,
+  },
+  unlockIcon: {
+    width: 44,
+    height: 44,
+    borderRadius: 12,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  unlockTitle: {
+    fontSize: 14,
+    fontFamily: "PlusJakartaSans_600SemiBold",
+    marginBottom: 2,
+  },
+  unlockSub: {
+    fontSize: 12,
+    fontFamily: "PlusJakartaSans_400Regular",
+    lineHeight: 17,
   },
 });
