@@ -15,11 +15,13 @@ import {
 
 import { JobCard } from "@/components/JobCard";
 import { Pill } from "@/components/Pill";
+import { ProModal } from "@/components/ProModal";
 import { ScreenHeader } from "@/components/ScreenHeader";
 import { TRADES } from "@/constants/trades";
 import { useColors } from "@/hooks/useColors";
 import { useAuth } from "@/contexts/AuthContext";
 import { useData } from "@/contexts/DataContext";
+import { useSubscription } from "@/lib/revenuecat";
 
 export default function JobsScreen() {
   const colors = useColors();
@@ -27,6 +29,8 @@ export default function JobsScreen() {
   const { jobs, builders, boostedJobs, boostJob } = useData();
   const isWorker = user?.role === "worker";
   const [boostingJobId, setBoostingJobId] = useState<string | null>(null);
+  const [proModalVisible, setProModalVisible] = useState(false);
+  const { isPro, purchaseWorkerPro } = useSubscription();
 
   const { savedJobs, toggleSavedJob } = useData();
   const [filter, setFilter] = useState<string | null>(null);
@@ -205,6 +209,52 @@ export default function JobsScreen() {
         </Pressable>
       </Modal>
 
+      {/* Worker Pro boost banner */}
+      {isWorker && !isPro && (
+        <Pressable
+          onPress={() => setProModalVisible(true)}
+          style={({ pressed }) => [
+            styles.proBoostBanner,
+            {
+              backgroundColor: colors.card,
+              borderColor: colors.accent + "55",
+              opacity: pressed ? 0.85 : 1,
+            },
+          ]}
+        >
+          <View style={[styles.proBoostIconWrap, { backgroundColor: colors.accent + "22" }]}>
+            <Feather name="trending-up" size={16} color={colors.accent} />
+          </View>
+          <View style={{ flex: 1 }}>
+            <Text style={[styles.proBoostTitle, { color: colors.foreground }]}>
+              Boost your profile
+            </Text>
+            <Text style={[styles.proBoostSub, { color: colors.mutedForeground }]}>
+              Get seen first by builders hiring in your trade
+            </Text>
+          </View>
+          <View style={[styles.proBoostCta, { backgroundColor: colors.accent }]}>
+            <Text style={styles.proBoostCtaText}>Pro</Text>
+          </View>
+        </Pressable>
+      )}
+
+      {isWorker && isPro && (
+        <View
+          style={[
+            styles.proBoostBanner,
+            { backgroundColor: colors.card, borderColor: colors.accent + "55" },
+          ]}
+        >
+          <View style={[styles.proBoostIconWrap, { backgroundColor: colors.accent + "22" }]}>
+            <Feather name="award" size={16} color={colors.accent} />
+          </View>
+          <Text style={[styles.proBoostTitle, { color: colors.accent, flex: 1 }]}>
+            Pro active — you appear first in builder searches
+          </Text>
+        </View>
+      )}
+
       {isWorker && (
         <>
           <View style={styles.toggleRow}>
@@ -322,6 +372,13 @@ export default function JobsScreen() {
         </>
       )}
 
+      {/* Worker Pro modal */}
+      <ProModal
+        visible={proModalVisible}
+        onUpgrade={async () => { setProModalVisible(false); await purchaseWorkerPro(); }}
+        onClose={() => setProModalVisible(false)}
+      />
+
       <FlatList
         data={browseJobs}
         keyExtractor={(j) => j.id}
@@ -419,6 +476,44 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontFamily: "PlusJakartaSans_500Medium",
     paddingVertical: 0,
+  },
+  proBoostBanner: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+    marginHorizontal: 16,
+    marginTop: 10,
+    marginBottom: 4,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    borderRadius: 14,
+    borderWidth: 1,
+  },
+  proBoostIconWrap: {
+    width: 34,
+    height: 34,
+    borderRadius: 10,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  proBoostTitle: {
+    fontSize: 13,
+    fontFamily: "PlusJakartaSans_600SemiBold",
+  },
+  proBoostSub: {
+    fontSize: 11,
+    fontFamily: "PlusJakartaSans_400Regular",
+    marginTop: 2,
+  },
+  proBoostCta: {
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 8,
+  },
+  proBoostCtaText: {
+    fontSize: 12,
+    fontFamily: "PlusJakartaSans_700Bold",
+    color: "#fff",
   },
   list: {
     padding: 20,

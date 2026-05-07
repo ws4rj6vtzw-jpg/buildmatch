@@ -13,6 +13,7 @@ import {
 } from "react-native";
 
 import { PaywallModal } from "@/components/PaywallModal";
+import { ProModal } from "@/components/ProModal";
 import { ScreenHeader } from "@/components/ScreenHeader";
 import { SwipeCard, type SwipeCardData } from "@/components/SwipeCard";
 import { useColors } from "@/hooks/useColors";
@@ -64,8 +65,9 @@ export default function DiscoverScreen() {
   const [paywallVisible, setPaywallVisible] = useState(false);
   const [pendingSwipe, setPendingSwipe] = useState<{ id: string } | null>(null);
   const [workerView, setWorkerView] = useState<WorkerView>("jobs");
+  const [proModalVisible, setProModalVisible] = useState(false);
 
-  const { isPro, purchaseBuilderPro } = useSubscription();
+  const { isPro, purchaseBuilderPro, purchaseWorkerPro } = useSubscription();
 
   const isWorker = user?.role === "worker";
   const radius = user?.travelRadiusMiles ?? DEFAULT_RADIUS;
@@ -324,6 +326,52 @@ export default function DiscoverScreen() {
         </View>
       )}
 
+      {/* Worker Pro boost banner */}
+      {isWorker && !isPro && (
+        <Pressable
+          onPress={() => setProModalVisible(true)}
+          style={({ pressed }) => [
+            styles.proBoostBanner,
+            {
+              backgroundColor: colors.card,
+              borderColor: colors.accent + "55",
+              opacity: pressed ? 0.85 : 1,
+            },
+          ]}
+        >
+          <View style={[styles.proBoostIconWrap, { backgroundColor: colors.accent + "22" }]}>
+            <Feather name="trending-up" size={16} color={colors.accent} />
+          </View>
+          <View style={{ flex: 1 }}>
+            <Text style={[styles.proBoostTitle, { color: colors.foreground }]}>
+              Boost your profile
+            </Text>
+            <Text style={[styles.proBoostSub, { color: colors.mutedForeground }]}>
+              Get seen first by builders hiring in your trade
+            </Text>
+          </View>
+          <View style={[styles.proBoostCta, { backgroundColor: colors.accent }]}>
+            <Text style={styles.proBoostCtaText}>Pro</Text>
+          </View>
+        </Pressable>
+      )}
+
+      {isWorker && isPro && (
+        <View
+          style={[
+            styles.proBoostBanner,
+            { backgroundColor: colors.card, borderColor: colors.accent + "55" },
+          ]}
+        >
+          <View style={[styles.proBoostIconWrap, { backgroundColor: colors.accent + "22" }]}>
+            <Feather name="award" size={16} color={colors.accent} />
+          </View>
+          <Text style={[styles.proBoostTitle, { color: colors.accent, flex: 1 }]}>
+            Pro active — you appear first in builder searches
+          </Text>
+        </View>
+      )}
+
       {/* Free match counter — builders only, free tier */}
       {!isWorker && !isPro && (
         <View style={[styles.freeBar, { backgroundColor: colors.elevated, borderBottomColor: colors.border }]}>
@@ -517,6 +565,13 @@ export default function DiscoverScreen() {
         onClose={() => { setPaywallVisible(false); setPendingSwipe(null); }}
       />
 
+      {/* Worker Pro modal */}
+      <ProModal
+        visible={proModalVisible}
+        onUpgrade={async () => { setProModalVisible(false); await purchaseWorkerPro(); }}
+        onClose={() => setProModalVisible(false)}
+      />
+
     </View>
   );
 }
@@ -584,6 +639,44 @@ const styles = StyleSheet.create({
   segmentLabel: {
     fontSize: 13,
     fontFamily: "PlusJakartaSans_600SemiBold",
+  },
+  proBoostBanner: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+    marginHorizontal: 16,
+    marginTop: 10,
+    marginBottom: 4,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    borderRadius: 14,
+    borderWidth: 1,
+  },
+  proBoostIconWrap: {
+    width: 34,
+    height: 34,
+    borderRadius: 10,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  proBoostTitle: {
+    fontSize: 13,
+    fontFamily: "PlusJakartaSans_600SemiBold",
+  },
+  proBoostSub: {
+    fontSize: 11,
+    fontFamily: "PlusJakartaSans_400Regular",
+    marginTop: 2,
+  },
+  proBoostCta: {
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 8,
+  },
+  proBoostCtaText: {
+    fontSize: 12,
+    fontFamily: "PlusJakartaSans_700Bold",
+    color: "#fff",
   },
   freeBar: {
     flexDirection: "row",
