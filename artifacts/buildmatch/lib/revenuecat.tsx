@@ -44,9 +44,25 @@ const SubscriptionContext = createContext<SubscriptionState>({
   restorePurchases: async () => {},
 });
 
-export function SubscriptionProvider({ children }: { children: React.ReactNode }) {
+type OnProChange = (isPro: boolean) => void;
+
+export function SubscriptionProvider({
+  children,
+  onProChange,
+}: {
+  children: React.ReactNode;
+  onProChange?: OnProChange;
+}) {
   const [isPro, setIsPro] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+
+  const setProWithCallback = useCallback(
+    (value: boolean) => {
+      setIsPro(value);
+      onProChange?.(value);
+    },
+    [onProChange],
+  );
 
   useEffect(() => {
     checkSubscription();
@@ -55,7 +71,8 @@ export function SubscriptionProvider({ children }: { children: React.ReactNode }
   async function checkSubscription() {
     try {
       const info = await Purchases.getCustomerInfo();
-      setIsPro(info.entitlements.active[RC_ENTITLEMENT] != null);
+      const active = info.entitlements.active[RC_ENTITLEMENT] != null;
+      setProWithCallback(active);
     } catch {
       // not fatal — may fail in simulator without a configured store
     } finally {
@@ -63,23 +80,30 @@ export function SubscriptionProvider({ children }: { children: React.ReactNode }
     }
   }
 
-  const purchasePackageById = useCallback(async (packageId: string) => {
-    try {
-      const offerings = await Purchases.getOfferings();
-      const offering = offerings.current;
-      if (!offering) throw new Error("No offering available");
-      const pkg = offering.availablePackages.find(
-        (p) => p.identifier === packageId,
-      );
-      if (!pkg) throw new Error(`Package ${packageId} not found`);
-      const { customerInfo } = await Purchases.purchasePackage(pkg);
-      setIsPro(customerInfo.entitlements.active[RC_ENTITLEMENT] != null);
-    } catch (e: any) {
-      if (!e.userCancelled) {
-        Alert.alert("Purchase failed", e.message ?? "Something went wrong. Please try again.");
+  const purchasePackageById = useCallback(
+    async (packageId: string) => {
+      try {
+        const offerings = await Purchases.getOfferings();
+        const offering = offerings.current;
+        if (!offering) throw new Error("No offering available");
+        const pkg = offering.availablePackages.find(
+          (p) => p.identifier === packageId,
+        );
+        if (!pkg) throw new Error(`Package ${packageId} not found`);
+        const { customerInfo } = await Purchases.purchasePackage(pkg);
+        const active = customerInfo.entitlements.active[RC_ENTITLEMENT] != null;
+        setProWithCallback(active);
+      } catch (e: any) {
+        if (!e.userCancelled) {
+          Alert.alert(
+            "Purchase failed",
+            e.message ?? "Something went wrong. Please try again.",
+          );
+        }
       }
-    }
-  }, []);
+    },
+    [setProWithCallback],
+  );
 
   const purchaseWorkerPro = useCallback(
     () => purchasePackageById(WORKER_PACKAGE_ID),
@@ -95,7 +119,7 @@ export function SubscriptionProvider({ children }: { children: React.ReactNode }
     try {
       const info = await Purchases.restorePurchases();
       const active = info.entitlements.active[RC_ENTITLEMENT] != null;
-      setIsPro(active);
+      setProWithCallback(active);
       if (active) {
         Alert.alert("Restored", "Your Pro subscription has been restored.");
       } else {
@@ -104,7 +128,7 @@ export function SubscriptionProvider({ children }: { children: React.ReactNode }
     } catch (e: any) {
       Alert.alert("Restore failed", e.message ?? "Something went wrong.");
     }
-  }, []);
+  }, [setProWithCallback]);
 
   return (
     <SubscriptionContext.Provider

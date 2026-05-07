@@ -9,14 +9,14 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
-import React, { useEffect } from "react";
+import React, { useCallback, useEffect } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { KeyboardProvider } from "react-native-keyboard-controller";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { Notifier } from "@/components/Notifier";
-import { AuthProvider } from "@/contexts/AuthContext";
+import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { DataProvider } from "@/contexts/DataContext";
 import { NotificationProvider } from "@/contexts/NotificationContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
@@ -39,6 +39,23 @@ function RootLayoutNav() {
       <Stack.Screen name="post-job" options={{ presentation: "modal" }} />
       <Stack.Screen name="documents" />
     </Stack>
+  );
+}
+
+function SubscriptionBridge({ children }: { children: React.ReactNode }) {
+  const { updateProfile } = useAuth();
+
+  const onProChange = useCallback(
+    (isPro: boolean) => {
+      updateProfile({ isPro });
+    },
+    [updateProfile],
+  );
+
+  return (
+    <SubscriptionProvider onProChange={onProChange}>
+      {children}
+    </SubscriptionProvider>
   );
 }
 
@@ -67,13 +84,13 @@ export default function RootLayout() {
               <ThemeProvider>
                 <AuthProvider>
                   <DataProvider>
-                    <SubscriptionProvider>
+                    <SubscriptionBridge>
                       <NotificationProvider>
                         <StatusBar style="auto" />
                         <RootLayoutNav />
                         <Notifier />
                       </NotificationProvider>
-                    </SubscriptionProvider>
+                    </SubscriptionBridge>
                   </DataProvider>
                 </AuthProvider>
               </ThemeProvider>

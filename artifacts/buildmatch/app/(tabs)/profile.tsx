@@ -27,7 +27,7 @@ export default function ProfileScreen() {
   const { mode: themeMode, setMode: setThemeMode } = useTheme();
   const { user, signOut, setRole, updateProfile } = useAuth();
   const { matches, swipes, jobs, ratings, completedSnaps } = useData();
-  const { purchaseWorkerPro, restorePurchases } = useSubscription();
+  const { isPro, purchaseWorkerPro, restorePurchases } = useSubscription();
   const [copied, setCopied] = useState(false);
   const [proModalVisible, setProModalVisible] = useState(false);
 
@@ -225,7 +225,7 @@ export default function ProfileScreen() {
                     : `Within ${user.travelRadiusMiles} miles`}
                 </Text>
               )}
-              {user.isPro && (
+              {isPro && (
                 <View style={[styles.proBadge, { backgroundColor: colors.accent + "22", borderColor: colors.accent + "55" }]}>
                   <Feather name="award" size={11} color={colors.accent} />
                   <Text style={[styles.proBadgeText, { color: colors.accent }]}>
@@ -300,7 +300,7 @@ export default function ProfileScreen() {
         </View>
 
         {/* Pro upgrade / status card */}
-        {isWorker && !user.isPro && (
+        {isWorker && !isPro && (
           <Pressable
             onPress={() => setProModalVisible(true)}
             style={({ pressed }) => [

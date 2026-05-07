@@ -13,6 +13,7 @@ import {
 } from "react-native";
 
 import { PaywallModal } from "@/components/PaywallModal";
+import { ProModal } from "@/components/ProModal";
 import { ScreenHeader } from "@/components/ScreenHeader";
 import { SwipeCard, type SwipeCardData } from "@/components/SwipeCard";
 import { useColors } from "@/hooks/useColors";
@@ -62,10 +63,11 @@ export default function DiscoverScreen() {
   const [matchModal, setMatchModal] = useState<MatchModalState | null>(null);
   const [radiusOpen, setRadiusOpen] = useState(false);
   const [paywallVisible, setPaywallVisible] = useState(false);
+  const [workerProVisible, setWorkerProVisible] = useState(false);
   const [pendingSwipe, setPendingSwipe] = useState<{ id: string } | null>(null);
   const [workerView, setWorkerView] = useState<WorkerView>("jobs");
 
-  const { purchaseBuilderPro } = useSubscription();
+  const { isPro, purchaseBuilderPro, purchaseWorkerPro } = useSubscription();
 
   const isWorker = user?.role === "worker";
   const radius = user?.travelRadiusMiles ?? DEFAULT_RADIUS;
@@ -76,8 +78,14 @@ export default function DiscoverScreen() {
     () => matches.filter((m) => m.builderId === user?.id).length,
     [matches, user?.id],
   );
-  const freeLeft = Math.max(0, FREE_LIMIT - builderMatchCount);
-  const isPro = !!user?.isPro;
+
+  const workerSwipeCount = useMemo(
+    () => swipes.filter((s) => s.fromId === user?.id && s.direction === "right").length,
+    [swipes, user?.id],
+  );
+
+  const builderFreeLeft = Math.max(0, FREE_LIMIT - builderMatchCount);
+  const workerFreeLeft = Math.max(0, FREE_LIMIT - workerSwipeCount);
 
   // Jobs deck — workers swiping on jobs
   const jobsDeck: SwipeCardData[] = useMemo(() => {
@@ -166,7 +174,7 @@ export default function DiscoverScreen() {
           badges: [
             {
               label: w.availableNow ? "Available now" : `Avail. ${w.availableFrom ?? "soon"}`,
-              tone: w.availableNow ? "primary" : "default",
+              tone: (w.availableNow ? "primary" : "default") as "primary" | "default",
             },
             ...(w.publicLiabilityInsured ? [{ label: "Insured", tone: "accent" as const }] : []),
             ...w.skills.slice(0, 2).map((s) => ({ label: s })),
@@ -215,10 +223,17 @@ export default function DiscoverScreen() {
       ).catch(() => undefined);
     }
 
-    if (!isWorker && dir === "right" && !isPro && builderMatchCount >= FREE_LIMIT) {
-      setPendingSwipe({ id });
-      setPaywallVisible(true);
-      return;
+    if (dir === "right" && !isPro) {
+      if (!isWorker && builderMatchCount >= FREE_LIMIT) {
+        setPendingSwipe({ id });
+        setPaywallVisible(true);
+        return;
+      }
+      if (isWorker && workerSwipeCount >= FREE_LIMIT) {
+        setPendingSwipe({ id });
+        setWorkerProVisible(true);
+        return;
+      }
     }
 
     if (dir === "right") {
@@ -234,9 +249,18 @@ export default function DiscoverScreen() {
     }
   };
 
-  const handleGoPro = async () => {
+  const handleBuilderGoPro = async () => {
     setPaywallVisible(false);
     await purchaseBuilderPro();
+    if (pendingSwipe) {
+      completeSwipe(pendingSwipe.id);
+      setPendingSwipe(null);
+    }
+  };
+
+  const handleWorkerUpgrade = async () => {
+    setWorkerProVisible(false);
+    await purchaseWorkerPro();
     if (pendingSwipe) {
       completeSwipe(pendingSwipe.id);
       setPendingSwipe(null);
@@ -324,7 +348,43 @@ export default function DiscoverScreen() {
         </View>
       )}
 
-      {/* Free match counter — builders only */}
+      {/* Free swipe counter — workers only, free tier */}
+      {isWorker && !isPro && (
+        <View style={[styles.freeBar, { backgroundColor: colors.elevated, borderBottomColor: colors.border }]}>
+          <View style={styles.freeDots}>
+            {Array.from({ length: FREE_LIMIT }).map((_, i) => (
+              <View
+                key={i}
+                style={[
+                  styles.freeDot,
+                  {
+                    backgroundColor: i < workerSwipeCount
+                      ? workerFreeLeft <= 1 ? "#F59E0B" : colors.accent
+                      : colors.border,
+                  },
+                ]}
+              />
+            ))}
+          </View>
+          <Text style={[styles.freeText, { color: workerFreeLeft <= 1 ? "#F59E0B" : colors.mutedForeground }]}>
+            {workerFreeLeft === 0
+              ? "Free applies used — upgrade to Pro"
+              : `${workerFreeLeft} free application${workerFreeLeft === 1 ? "" : "s"} remaining`}
+          </Text>
+          <Pressable onPress={() => { setPendingSwipe(null); setWorkerProVisible(true); }} hitSlop={8}>
+            <Text style={[styles.upgradeLink, { color: colors.accent }]}>Upgrade</Text>
+          </Pressable>
+        </View>
+      )}
+
+      {isWorker && isPro && (
+        <View style={[styles.freeBar, { backgroundColor: colors.elevated, borderBottomColor: colors.border }]}>
+          <Feather name="award" size={13} color={colors.accent} />
+          <Text style={[styles.freeText, { color: colors.accent }]}>Pro · Unlimited applications active</Text>
+        </View>
+      )}
+
+      {/* Free match counter — builders only, free tier */}
       {!isWorker && !isPro && (
         <View style={[styles.freeBar, { backgroundColor: colors.elevated, borderBottomColor: colors.border }]}>
           <View style={styles.freeDots}>
@@ -335,17 +395,17 @@ export default function DiscoverScreen() {
                   styles.freeDot,
                   {
                     backgroundColor: i < builderMatchCount
-                      ? freeLeft <= 1 ? "#F59E0B" : colors.primary
+                      ? builderFreeLeft <= 1 ? "#F59E0B" : colors.primary
                       : colors.border,
                   },
                 ]}
               />
             ))}
           </View>
-          <Text style={[styles.freeText, { color: freeLeft <= 1 ? "#F59E0B" : colors.mutedForeground }]}>
-            {freeLeft === 0
+          <Text style={[styles.freeText, { color: builderFreeLeft <= 1 ? "#F59E0B" : colors.mutedForeground }]}>
+            {builderFreeLeft === 0
               ? "Free matches used — upgrade to hire more"
-              : `${freeLeft} free match${freeLeft === 1 ? "" : "es"} remaining`}
+              : `${builderFreeLeft} free match${builderFreeLeft === 1 ? "" : "es"} remaining`}
           </Text>
           <Pressable onPress={() => { setPendingSwipe(null); setPaywallVisible(true); }} hitSlop={8}>
             <Text style={[styles.upgradeLink, { color: colors.primary }]}>Upgrade</Text>
@@ -509,12 +569,19 @@ export default function DiscoverScreen() {
         </Pressable>
       </Modal>
 
-      {/* Paywall modal */}
+      {/* Builder paywall */}
       <PaywallModal
         visible={paywallVisible}
         usedCount={builderMatchCount}
-        onGoPro={handleGoPro}
+        onGoPro={handleBuilderGoPro}
         onClose={() => { setPaywallVisible(false); setPendingSwipe(null); }}
+      />
+
+      {/* Worker Pro upgrade modal */}
+      <ProModal
+        visible={workerProVisible}
+        onUpgrade={handleWorkerUpgrade}
+        onClose={() => { setWorkerProVisible(false); setPendingSwipe(null); }}
       />
     </View>
   );
@@ -653,9 +720,9 @@ const styles = StyleSheet.create({
   },
   modalBg: {
     flex: 1,
-    backgroundColor: "rgba(0,0,0,0.78)",
-    alignItems: "center",
+    backgroundColor: "rgba(0,0,0,0.7)",
     justifyContent: "center",
+    alignItems: "center",
     padding: 24,
   },
   modalCard: {
@@ -664,33 +731,35 @@ const styles = StyleSheet.create({
     borderRadius: 24,
     padding: 28,
     alignItems: "center",
+    gap: 12,
   },
   modalIcon: {
-    width: 76,
-    height: 76,
-    borderRadius: 38,
+    width: 72,
+    height: 72,
+    borderRadius: 36,
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: 16,
+    marginBottom: 4,
   },
   modalTitle: {
-    fontSize: 26,
+    fontSize: 22,
     fontFamily: "PlusJakartaSans_700Bold",
-    letterSpacing: -0.6,
-    marginBottom: 6,
+    letterSpacing: -0.4,
+    textAlign: "center",
   },
   modalText: {
-    fontSize: 15,
+    fontSize: 14,
     fontFamily: "PlusJakartaSans_400Regular",
     textAlign: "center",
-    marginBottom: 22,
+    lineHeight: 20,
   },
   modalBtn: {
-    alignSelf: "stretch",
-    height: 52,
+    width: "100%",
+    height: 50,
     borderRadius: 14,
     alignItems: "center",
     justifyContent: "center",
+    marginTop: 4,
   },
   modalBtnText: {
     fontSize: 16,
@@ -700,41 +769,41 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontFamily: "PlusJakartaSans_500Medium",
   },
+  radiusCard: {
+    width: "100%",
+    maxWidth: 360,
+    borderRadius: 24,
+    padding: 28,
+    alignItems: "center",
+    gap: 8,
+  },
+  radiusValue: {
+    fontSize: 32,
+    fontFamily: "PlusJakartaSans_700Bold",
+    letterSpacing: -1,
+    marginTop: 8,
+  },
+  radiusSliderLabels: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "100%",
+    marginTop: -4,
+  },
+  radiusSliderEnd: {
+    fontSize: 11,
+    fontFamily: "PlusJakartaSans_500Medium",
+  },
   radiusBtn: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 6,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 99,
+    gap: 5,
+    paddingHorizontal: 11,
+    paddingVertical: 7,
+    borderRadius: 20,
     borderWidth: 1,
   },
   radiusBtnText: {
     fontSize: 13,
     fontFamily: "PlusJakartaSans_600SemiBold",
-  },
-  radiusCard: {
-    width: "100%",
-    maxWidth: 380,
-    borderRadius: 24,
-    padding: 26,
-    alignItems: "center",
-  },
-  radiusValue: {
-    fontSize: 24,
-    fontFamily: "PlusJakartaSans_700Bold",
-    textAlign: "center",
-    marginTop: 12,
-    marginBottom: 2,
-  },
-  radiusSliderLabels: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignSelf: "stretch",
-    marginTop: -4,
-  },
-  radiusSliderEnd: {
-    fontSize: 12,
-    fontFamily: "PlusJakartaSans_400Regular",
   },
 });
