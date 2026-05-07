@@ -14,6 +14,7 @@ type Props = {
 };
 
 const PRO_FEATURES = [
+  "Unlock full worker profiles & contact details",
   "Unlimited worker matches",
   "Boost job listings to top of feed",
   "Verified builder badge",
