@@ -8,6 +8,7 @@ type Props = {
   visible: boolean;
   onUpgrade: () => void;
   onClose: () => void;
+  contextMessage?: string;
 };
 
 const BENEFITS = [
@@ -18,7 +19,7 @@ const BENEFITS = [
   { icon: "shield" as const, text: "Dedicated support line" },
 ];
 
-export function ProModal({ visible, onUpgrade, onClose }: Props) {
+export function ProModal({ visible, onUpgrade, onClose, contextMessage }: Props) {
   const colors = useColors();
 
   return (
@@ -26,6 +27,13 @@ export function ProModal({ visible, onUpgrade, onClose }: Props) {
       <View style={styles.bg}>
         <View style={[styles.sheet, { backgroundColor: colors.card }]}>
           <View style={[styles.handle, { backgroundColor: colors.border }]} />
+
+          {contextMessage && (
+            <View style={[styles.contextBanner, { backgroundColor: colors.primary + "18", borderColor: colors.primary + "44" }]}>
+              <Feather name="star" size={15} color={colors.primary} />
+              <Text style={[styles.contextText, { color: colors.primary }]}>{contextMessage}</Text>
+            </View>
+          )}
 
           <View style={styles.header}>
             <View style={[styles.iconWrap, { backgroundColor: colors.accent }]}>
@@ -189,5 +197,19 @@ const styles = StyleSheet.create({
   cancel: {
     fontSize: 14,
     fontFamily: "PlusJakartaSans_500Medium",
+  },
+  contextBanner: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    padding: 12,
+    borderRadius: 12,
+    borderWidth: 1,
+  },
+  contextText: {
+    fontSize: 13,
+    fontFamily: "PlusJakartaSans_600SemiBold",
+    flex: 1,
+    lineHeight: 18,
   },
 });

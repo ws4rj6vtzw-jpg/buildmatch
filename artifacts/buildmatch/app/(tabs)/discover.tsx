@@ -1,6 +1,6 @@
 import { Feather } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
-import { router } from "expo-router";
+import { router, type Href } from "expo-router";
 import Slider from "@react-native-community/slider";
 import React, { useMemo, useState } from "react";
 import {
@@ -66,6 +66,7 @@ export default function DiscoverScreen() {
   const [pendingSwipe, setPendingSwipe] = useState<{ id: string } | null>(null);
   const [workerView, setWorkerView] = useState<WorkerView>("jobs");
   const [proModalVisible, setProModalVisible] = useState(false);
+  const [proModalContext, setProModalContext] = useState<string | undefined>(undefined);
 
   const { isPro, purchaseBuilderPro, purchaseWorkerPro } = useSubscription();
 
@@ -242,6 +243,18 @@ export default function DiscoverScreen() {
     if (pendingSwipe) {
       completeSwipe(pendingSwipe.id);
       setPendingSwipe(null);
+    }
+  };
+
+  const dismissMatchModal = (navigateTo?: Href) => {
+    const title = matchModal?.title;
+    setMatchModal(null);
+    if (navigateTo) router.push(navigateTo);
+    if (!navigateTo && isWorker && !isPro && title) {
+      setProModalContext(
+        `You matched with ${title}! Go Pro to appear at the top of every builder's search and land even more matches like this.`,
+      );
+      setProModalVisible(true);
     }
   };
 
@@ -475,7 +488,7 @@ export default function DiscoverScreen() {
       )}
 
       {/* Match modal */}
-      <Modal transparent animationType="fade" visible={!!matchModal} onRequestClose={() => setMatchModal(null)}>
+      <Modal transparent animationType="fade" visible={!!matchModal} onRequestClose={() => dismissMatchModal()}>
         <View style={styles.modalBg}>
           <View style={[styles.modalCard, { backgroundColor: colors.card }]}>
             <View style={[styles.modalIcon, { backgroundColor: colors.primary }]}>
@@ -490,11 +503,7 @@ export default function DiscoverScreen() {
                 : `${matchModal?.title} is expecting to hear from you.`}
             </Text>
             <Pressable
-              onPress={() => {
-                const id = matchModal?.matchId;
-                setMatchModal(null);
-                if (id) router.push(`/chat/${id}`);
-              }}
+              onPress={() => dismissMatchModal(matchModal?.matchId ? `/chat/${matchModal.matchId}` : undefined)}
               style={({ pressed }) => [
                 styles.modalBtn,
                 { backgroundColor: colors.primary, opacity: pressed ? 0.85 : 1 },
@@ -502,7 +511,7 @@ export default function DiscoverScreen() {
             >
               <Text style={[styles.modalBtnText, { color: colors.primaryForeground }]}>Send a message</Text>
             </Pressable>
-            <Pressable onPress={() => setMatchModal(null)} style={{ marginTop: 12 }}>
+            <Pressable onPress={() => dismissMatchModal()} style={{ marginTop: 12 }}>
               <Text style={[styles.modalLink, { color: colors.mutedForeground }]}>Keep swiping</Text>
             </Pressable>
           </View>
@@ -568,8 +577,9 @@ export default function DiscoverScreen() {
       {/* Worker Pro modal */}
       <ProModal
         visible={proModalVisible}
-        onUpgrade={async () => { setProModalVisible(false); await purchaseWorkerPro(); }}
-        onClose={() => setProModalVisible(false)}
+        onUpgrade={async () => { setProModalVisible(false); setProModalContext(undefined); await purchaseWorkerPro(); }}
+        onClose={() => { setProModalVisible(false); setProModalContext(undefined); }}
+        contextMessage={proModalContext}
       />
 
     </View>
