@@ -13,7 +13,6 @@ import {
 } from "react-native";
 
 import { PaywallModal } from "@/components/PaywallModal";
-import { ProModal } from "@/components/ProModal";
 import { ScreenHeader } from "@/components/ScreenHeader";
 import { SwipeCard, type SwipeCardData } from "@/components/SwipeCard";
 import { useColors } from "@/hooks/useColors";
@@ -63,11 +62,10 @@ export default function DiscoverScreen() {
   const [matchModal, setMatchModal] = useState<MatchModalState | null>(null);
   const [radiusOpen, setRadiusOpen] = useState(false);
   const [paywallVisible, setPaywallVisible] = useState(false);
-  const [workerProVisible, setWorkerProVisible] = useState(false);
   const [pendingSwipe, setPendingSwipe] = useState<{ id: string } | null>(null);
   const [workerView, setWorkerView] = useState<WorkerView>("jobs");
 
-  const { isPro, purchaseBuilderPro, purchaseWorkerPro } = useSubscription();
+  const { isPro, purchaseBuilderPro } = useSubscription();
 
   const isWorker = user?.role === "worker";
   const radius = user?.travelRadiusMiles ?? DEFAULT_RADIUS;
@@ -79,13 +77,7 @@ export default function DiscoverScreen() {
     [matches, user?.id],
   );
 
-  const workerSwipeCount = useMemo(
-    () => swipes.filter((s) => s.fromId === user?.id && s.direction === "right").length,
-    [swipes, user?.id],
-  );
-
   const builderFreeLeft = Math.max(0, FREE_LIMIT - builderMatchCount);
-  const workerFreeLeft = Math.max(0, FREE_LIMIT - workerSwipeCount);
 
   // Jobs deck — workers swiping on jobs
   const jobsDeck: SwipeCardData[] = useMemo(() => {
@@ -223,17 +215,10 @@ export default function DiscoverScreen() {
       ).catch(() => undefined);
     }
 
-    if (dir === "right" && !isPro) {
-      if (!isWorker && builderMatchCount >= FREE_LIMIT) {
-        setPendingSwipe({ id });
-        setPaywallVisible(true);
-        return;
-      }
-      if (isWorker && workerSwipeCount >= FREE_LIMIT) {
-        setPendingSwipe({ id });
-        setWorkerProVisible(true);
-        return;
-      }
+    if (dir === "right" && !isPro && !isWorker && builderMatchCount >= FREE_LIMIT) {
+      setPendingSwipe({ id });
+      setPaywallVisible(true);
+      return;
     }
 
     if (dir === "right") {
@@ -252,15 +237,6 @@ export default function DiscoverScreen() {
   const handleBuilderGoPro = async () => {
     setPaywallVisible(false);
     await purchaseBuilderPro();
-    if (pendingSwipe) {
-      completeSwipe(pendingSwipe.id);
-      setPendingSwipe(null);
-    }
-  };
-
-  const handleWorkerUpgrade = async () => {
-    setWorkerProVisible(false);
-    await purchaseWorkerPro();
     if (pendingSwipe) {
       completeSwipe(pendingSwipe.id);
       setPendingSwipe(null);
@@ -345,42 +321,6 @@ export default function DiscoverScreen() {
               </Text>
             </Pressable>
           </View>
-        </View>
-      )}
-
-      {/* Free swipe counter — workers only, free tier */}
-      {isWorker && !isPro && (
-        <View style={[styles.freeBar, { backgroundColor: colors.elevated, borderBottomColor: colors.border }]}>
-          <View style={styles.freeDots}>
-            {Array.from({ length: FREE_LIMIT }).map((_, i) => (
-              <View
-                key={i}
-                style={[
-                  styles.freeDot,
-                  {
-                    backgroundColor: i < workerSwipeCount
-                      ? workerFreeLeft <= 1 ? "#F59E0B" : colors.accent
-                      : colors.border,
-                  },
-                ]}
-              />
-            ))}
-          </View>
-          <Text style={[styles.freeText, { color: workerFreeLeft <= 1 ? "#F59E0B" : colors.mutedForeground }]}>
-            {workerFreeLeft === 0
-              ? "Free applies used — upgrade to Pro"
-              : `${workerFreeLeft} free application${workerFreeLeft === 1 ? "" : "s"} remaining`}
-          </Text>
-          <Pressable onPress={() => { setPendingSwipe(null); setWorkerProVisible(true); }} hitSlop={8}>
-            <Text style={[styles.upgradeLink, { color: colors.accent }]}>Upgrade</Text>
-          </Pressable>
-        </View>
-      )}
-
-      {isWorker && isPro && (
-        <View style={[styles.freeBar, { backgroundColor: colors.elevated, borderBottomColor: colors.border }]}>
-          <Feather name="award" size={13} color={colors.accent} />
-          <Text style={[styles.freeText, { color: colors.accent }]}>Pro · Unlimited applications active</Text>
         </View>
       )}
 
@@ -577,12 +517,6 @@ export default function DiscoverScreen() {
         onClose={() => { setPaywallVisible(false); setPendingSwipe(null); }}
       />
 
-      {/* Worker Pro upgrade modal */}
-      <ProModal
-        visible={workerProVisible}
-        onUpgrade={handleWorkerUpgrade}
-        onClose={() => { setWorkerProVisible(false); setPendingSwipe(null); }}
-      />
     </View>
   );
 }
