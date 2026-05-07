@@ -77,3 +77,9 @@ id = "TQSTmRZr_w9l1QoDk8-iW"
 uri = "file://artifacts/buildmatch/assets/images/google-play-icon-512.jpg"
 type = "image"
 title = "Google Play Icon (512×512 JPEG)"
+
+[[outputs]]
+id = "kQI_mtkLQKvFag2eftG8s"
+uri = "file://screenshots/email-signature-full.jpg"
+type = "image"
+title = "BuildMatch Email Signature — Gordon Wilson"
