@@ -39,19 +39,23 @@ artifacts/buildmatch/
 
 ## Deploying to Google Play
 
-**First release (or after native changes):**
+**First release (or after native changes — new packages, app.json changes, etc.):**
 ```bash
 cd artifacts/buildmatch && eas login
 eas build --platform android --profile production   # ~15 min → .aab
 eas submit --platform android                        # needs google-service-account.json
 ```
 
-**Subsequent JS-only changes (OTA — no Play Store review needed):**
+**JS-only changes — OTA push (no Play Store review, instant delivery):**
 ```bash
-cd artifacts/buildmatch && eas login
-eas update --branch production --message "describe change"
+./scripts/push-update.sh "describe what changed"
 ```
-`expo-updates` is configured (added May 2026). OTA requires the installed app to have been built with the production profile. Users receive updates silently on next launch.
+- Sends new JS bundle directly to every installed phone
+- Users get it **silently on next launch** or when they **bring the app to the foreground**
+- No rebuild needed. No Play Store wait.
+- Requires EXPO_TOKEN env var (already set as Replit secret)
+
+`expo-updates` is configured with `checkAutomatically: ON_LOAD` + foreground check via `UpdateBridge` in `_layout.tsx`. OTA only works on production builds (not Expo Go).
 
 ## Notes
 

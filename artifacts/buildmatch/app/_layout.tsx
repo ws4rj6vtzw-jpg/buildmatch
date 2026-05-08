@@ -10,9 +10,10 @@ import * as Device from "expo-device";
 import * as Notifications from "expo-notifications";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
+import * as Updates from "expo-updates";
 import { StatusBar } from "expo-status-bar";
 import React, { useCallback, useEffect, useRef } from "react";
-import { Platform } from "react-native";
+import { AppState, AppStateStatus, Platform } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { KeyboardProvider } from "react-native-keyboard-controller";
 import { SafeAreaProvider } from "react-native-safe-area-context";
@@ -103,6 +104,42 @@ async function registerForPushNotifications(): Promise<string | null> {
   }
 }
 
+function UpdateBridge({ children }: { children: React.ReactNode }) {
+  const appState = useRef<AppStateStatus>(AppState.currentState);
+  const checking = useRef(false);
+
+  useEffect(() => {
+    if (!Updates.isEnabled) return;
+
+    async function checkForUpdate() {
+      if (checking.current) return;
+      checking.current = true;
+      try {
+        const result = await Updates.checkForUpdateAsync();
+        if (result.isAvailable) {
+          await Updates.fetchUpdateAsync();
+          await Updates.reloadAsync();
+        }
+      } catch {
+        // silently ignore — network errors, dev builds, etc.
+      } finally {
+        checking.current = false;
+      }
+    }
+
+    const sub = AppState.addEventListener("change", (next: AppStateStatus) => {
+      if (appState.current.match(/inactive|background/) && next === "active") {
+        checkForUpdate();
+      }
+      appState.current = next;
+    });
+
+    return () => sub.remove();
+  }, []);
+
+  return <>{children}</>;
+}
+
 function PushBridge({ children }: { children: React.ReactNode }) {
   const { user } = useAuth();
   const registeredForRef = useRef<string | null>(null);
@@ -159,6 +196,7 @@ export default function RootLayout() {
           <GestureHandlerRootView style={{ flex: 1 }}>
             <KeyboardProvider>
               <ThemeProvider>
+                <UpdateBridge>
                 <AuthProvider>
                   <PushBridge>
                     <DataProvider>
@@ -172,6 +210,7 @@ export default function RootLayout() {
                     </DataProvider>
                   </PushBridge>
                 </AuthProvider>
+                </UpdateBridge>
               </ThemeProvider>
             </KeyboardProvider>
           </GestureHandlerRootView>
