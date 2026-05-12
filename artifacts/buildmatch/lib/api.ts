@@ -1,6 +1,6 @@
 import type { AuthUser, Job, Swipe, Match, Message } from "@/types";
 
-const BASE_URL = `https://${process.env.EXPO_PUBLIC_DOMAIN}/api`;
+const BASE_URL = `https://${process.env.EXPO_PUBLIC_DOMAIN ?? "buildmatch.online"}/api`;
 
 let _token: string | null = null;
 
