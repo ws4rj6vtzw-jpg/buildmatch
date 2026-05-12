@@ -11,7 +11,9 @@ MESSAGE="${1:-Update}"
 echo "Pushing OTA update to production: \"$MESSAGE\""
 cd "$(dirname "$0")/../artifacts/buildmatch"
 
-GIT_OPTIONAL_LOCKS=0 eas update \
+EXPO_PUBLIC_DOMAIN=buildmatch.online \
+EAS_SKIP_AUTO_FINGERPRINT=1 \
+  eas update \
   --branch production \
   --message "$MESSAGE" \
   --non-interactive
