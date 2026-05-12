@@ -1,8 +1,14 @@
 import { Router } from "express";
 import twilio from "twilio";
+import admin from "firebase-admin";
 import { eq } from "drizzle-orm";
 import { db, usersTable } from "@workspace/db";
 import { signToken } from "../lib/jwt";
+
+// Initialise Firebase Admin (uses Google's public keys — no service account needed for token verification)
+if (!admin.apps.length) {
+  admin.initializeApp({ projectId: "buildmatch-7130d" });
+}
 
 const router = Router();
 
@@ -141,6 +147,46 @@ router.post("/auth/verify-otp", async (req, res): Promise<void> => {
 
   const jwtToken = signToken({ userId: existing.id, phone: existing.phone });
   req.log.info({ userId: existing.id }, "OTP verified — JWT issued");
+  res.json({ token: jwtToken, user: dbUserToAuthUser(existing) });
+});
+
+// POST /api/auth/firebase-verify → { token, user }
+// Called after the app verifies the phone OTP with Firebase directly.
+// We receive the Firebase ID token, verify it server-side, then issue our own JWT.
+router.post("/auth/firebase-verify", async (req, res): Promise<void> => {
+  const { idToken } = req.body as { idToken?: string };
+  if (!idToken) {
+    res.status(400).json({ message: "idToken required" });
+    return;
+  }
+
+  let phoneNumber: string | undefined;
+  try {
+    const decoded = await admin.auth().verifyIdToken(idToken);
+    phoneNumber = decoded.phone_number;
+  } catch (err) {
+    req.log.warn({ err }, "Firebase ID token verification failed");
+    res.status(401).json({ message: "Invalid or expired verification. Please try again." });
+    return;
+  }
+
+  if (!phoneNumber) {
+    res.status(400).json({ message: "No phone number in Firebase token" });
+    return;
+  }
+
+  // Find or create user
+  let [existing] = await db.select().from(usersTable).where(eq(usersTable.phone, phoneNumber));
+  if (!existing) {
+    const [created] = await db
+      .insert(usersTable)
+      .values({ id: newUserId(), phone: phoneNumber, role: "worker" })
+      .returning();
+    existing = created;
+  }
+
+  const jwtToken = signToken({ userId: existing.id, phone: existing.phone });
+  req.log.info({ userId: existing.id }, "Firebase phone verified — JWT issued");
   res.json({ token: jwtToken, user: dbUserToAuthUser(existing) });
 });
 

@@ -44,6 +44,9 @@ export const api = {
   verifyOtp: (phone: string, code: string) =>
     request<{ token: string; user: AuthUser }>("POST", "/auth/verify-otp", { phone, code }),
 
+  firebaseVerify: (idToken: string) =>
+    request<{ token: string; user: AuthUser }>("POST", "/auth/firebase-verify", { idToken }),
+
   // ── User profile ─────────────────────────────────────────────────────────
   getMe: () => request<AuthUser>("GET", "/users/me"),
 

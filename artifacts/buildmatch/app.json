@@ -19,7 +19,8 @@
     },
     "android": {
       "package": "app.buildmatch.android",
-      "versionCode": 2,
+      "versionCode": 3,
+      "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#0f172a"
@@ -30,6 +31,7 @@
       "favicon": "./assets/images/icon.png"
     },
     "plugins": [
+      "@react-native-firebase/app",
       "expo-updates",
       [
         "expo-router",
