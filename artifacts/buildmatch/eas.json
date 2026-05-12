@@ -23,6 +23,9 @@
       "channel": "production",
       "android": {
         "buildType": "app-bundle"
+      },
+      "env": {
+        "EXPO_PUBLIC_DOMAIN": "buildmatch.online"
       }
     }
   },

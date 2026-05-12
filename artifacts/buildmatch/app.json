@@ -19,7 +19,7 @@
     },
     "android": {
       "package": "app.buildmatch.android",
-      "versionCode": 3,
+      "versionCode": 4,
       "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
