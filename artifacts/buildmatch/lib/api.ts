@@ -89,4 +89,11 @@ export const api = {
 
   declineApplicant: (jobId: string, workerId: string) =>
     request<{ ok: boolean }>("POST", `/jobs/${jobId}/applicants/${workerId}/decline`),
+
+  // ── Promo codes ───────────────────────────────────────────────────────────
+  getPromoStatus: () =>
+    request<{ hasPromo: boolean; spotsLeft: number }>("GET", "/promo/status"),
+
+  redeemPromo: (code: string) =>
+    request<{ success: boolean; spotsLeft: number }>("POST", "/promo/redeem", { code }),
 };

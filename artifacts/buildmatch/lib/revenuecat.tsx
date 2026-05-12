@@ -1,6 +1,7 @@
 import Purchases, { LOG_LEVEL } from "react-native-purchases";
 import React, { createContext, useCallback, useContext, useEffect, useState } from "react";
 import { Alert, Platform } from "react-native";
+import { api } from "./api";
 
 export const RC_ENTITLEMENT = "BuildMatch Pro";
 const WORKER_PACKAGE_ID = "$rc_monthly";
@@ -34,6 +35,7 @@ type SubscriptionState = {
   purchaseWorkerPro: () => Promise<void>;
   purchaseBuilderPro: () => Promise<void>;
   restorePurchases: () => Promise<void>;
+  redeemPromoCode: (code: string) => Promise<{ error?: string }>;
 };
 
 const SubscriptionContext = createContext<SubscriptionState>({
@@ -42,6 +44,7 @@ const SubscriptionContext = createContext<SubscriptionState>({
   purchaseWorkerPro: async () => {},
   purchaseBuilderPro: async () => {},
   restorePurchases: async () => {},
+  redeemPromoCode: async () => ({}),
 });
 
 type OnProChange = (isPro: boolean) => void;
@@ -70,9 +73,15 @@ export function SubscriptionProvider({
 
   async function checkSubscription() {
     try {
+      // Check RevenueCat entitlement
       const info = await Purchases.getCustomerInfo();
-      const active = info.entitlements.active[RC_ENTITLEMENT] != null;
-      setProWithCallback(active);
+      const rcActive = info.entitlements.active[RC_ENTITLEMENT] != null;
+
+      // Also check server-side promo redemption (FOUNDER20 campaign)
+      const { data: promoData } = await api.getPromoStatus();
+      const promoActive = promoData?.hasPromo ?? false;
+
+      setProWithCallback(rcActive || promoActive);
     } catch {
       // not fatal — may fail in simulator without a configured store
     } finally {
@@ -130,9 +139,21 @@ export function SubscriptionProvider({
     }
   }, [setProWithCallback]);
 
+  const redeemPromoCode = useCallback(
+    async (code: string): Promise<{ error?: string }> => {
+      const { data, error } = await api.redeemPromo(code);
+      if (error) return { error };
+      if (data?.success) {
+        setProWithCallback(true);
+      }
+      return {};
+    },
+    [setProWithCallback],
+  );
+
   return (
     <SubscriptionContext.Provider
-      value={{ isPro, isLoading, purchaseWorkerPro, purchaseBuilderPro, restorePurchases }}
+      value={{ isPro, isLoading, purchaseWorkerPro, purchaseBuilderPro, restorePurchases, redeemPromoCode }}
     >
       {children}
     </SubscriptionContext.Provider>

@@ -3,12 +3,14 @@ import { router } from "expo-router";
 import React, { useMemo, useState } from "react";
 import {
   Alert,
+  Modal,
   Platform,
   Pressable,
   ScrollView,
   Share,
   StyleSheet,
   Text,
+  TextInput,
   View,
 } from "react-native";
 
@@ -27,9 +29,14 @@ export default function ProfileScreen() {
   const { mode: themeMode, setMode: setThemeMode } = useTheme();
   const { user, signOut, setRole, updateProfile } = useAuth();
   const { matches, swipes, jobs, ratings, completedSnaps } = useData();
-  const { isPro, purchaseWorkerPro, restorePurchases } = useSubscription();
+  const { isPro, purchaseWorkerPro, restorePurchases, redeemPromoCode } = useSubscription();
   const [copied, setCopied] = useState(false);
   const [proModalVisible, setProModalVisible] = useState(false);
+  const [promoModalVisible, setPromoModalVisible] = useState(false);
+  const [promoCode, setPromoCode] = useState("");
+  const [promoLoading, setPromoLoading] = useState(false);
+  const [promoError, setPromoError] = useState<string | null>(null);
+  const [promoSuccess, setPromoSuccess] = useState(false);
 
   if (!user) return null;
   const isWorker = user.role === "worker";
@@ -81,6 +88,22 @@ export default function ProfileScreen() {
     const next = isWorker ? "builder" : "worker";
     await setRole(next);
     router.replace("/onboarding/profile");
+  };
+
+  const handleRedeemPromo = async () => {
+    if (!promoCode.trim()) {
+      setPromoError("Please enter a code.");
+      return;
+    }
+    setPromoLoading(true);
+    setPromoError(null);
+    const { error } = await redeemPromoCode(promoCode.trim());
+    setPromoLoading(false);
+    if (error) {
+      setPromoError(error);
+    } else {
+      setPromoSuccess(true);
+    }
   };
 
   // Ratings received by me
@@ -503,6 +526,18 @@ export default function ProfileScreen() {
           label={isWorker ? "Switch to builder" : "Switch to worker"}
           onPress={onSwitchRole}
         />
+        {!isPro && (
+          <Row
+            icon="tag"
+            label="Redeem promo code"
+            onPress={() => {
+              setPromoCode("");
+              setPromoError(null);
+              setPromoSuccess(false);
+              setPromoModalVisible(true);
+            }}
+          />
+        )}
         <Row
           icon="refresh-cw"
           label="Restore purchases"
@@ -523,6 +558,74 @@ export default function ProfileScreen() {
         }}
         onClose={() => setProModalVisible(false)}
       />
+
+      {/* Promo code modal */}
+      <Modal
+        visible={promoModalVisible}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setPromoModalVisible(false)}
+      >
+        <Pressable
+          style={styles.promoOverlay}
+          onPress={() => setPromoModalVisible(false)}
+        >
+          <Pressable style={[styles.promoSheet, { backgroundColor: colors.card, borderColor: colors.border }]} onPress={() => {}}>
+            {promoSuccess ? (
+              <>
+                <Text style={[styles.promoTitle, { color: colors.primary }]}>🎉 You're now Pro!</Text>
+                <Text style={[styles.promoBody, { color: colors.mutedForeground }]}>
+                  Welcome to BuildMatch Pro. Enjoy unlimited swipes and all Pro features.
+                </Text>
+                <Pressable
+                  style={[styles.promoBtn, { backgroundColor: colors.primary }]}
+                  onPress={() => setPromoModalVisible(false)}
+                >
+                  <Text style={[styles.promoBtnText, { color: colors.primaryForeground }]}>Let's go</Text>
+                </Pressable>
+              </>
+            ) : (
+              <>
+                <Text style={[styles.promoTitle, { color: colors.foreground }]}>Redeem promo code</Text>
+                <Text style={[styles.promoBody, { color: colors.mutedForeground }]}>
+                  Enter your code below to unlock BuildMatch Pro free.
+                </Text>
+                <TextInput
+                  style={[
+                    styles.promoInput,
+                    {
+                      backgroundColor: colors.elevated,
+                      borderColor: promoError ? colors.destructive : colors.border,
+                      color: colors.foreground,
+                    },
+                  ]}
+                  placeholder="e.g. FOUNDER20"
+                  placeholderTextColor={colors.mutedForeground}
+                  value={promoCode}
+                  onChangeText={(t) => { setPromoCode(t); setPromoError(null); }}
+                  autoCapitalize="characters"
+                  autoCorrect={false}
+                  returnKeyType="done"
+                  onSubmitEditing={handleRedeemPromo}
+                  editable={!promoLoading}
+                />
+                {promoError && (
+                  <Text style={[styles.promoError, { color: colors.destructive }]}>{promoError}</Text>
+                )}
+                <Pressable
+                  style={[styles.promoBtn, { backgroundColor: colors.primary, opacity: promoLoading ? 0.6 : 1 }]}
+                  onPress={handleRedeemPromo}
+                  disabled={promoLoading}
+                >
+                  <Text style={[styles.promoBtnText, { color: colors.primaryForeground }]}>
+                    {promoLoading ? "Checking…" : "Redeem"}
+                  </Text>
+                </Pressable>
+              </>
+            )}
+          </Pressable>
+        </Pressable>
+      </Modal>
     </View>
   );
 }
@@ -840,5 +943,56 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontFamily: "PlusJakartaSans_400Regular",
     marginTop: 2,
+  },
+  promoOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.55)",
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 24,
+  },
+  promoSheet: {
+    width: "100%",
+    maxWidth: 380,
+    borderRadius: 20,
+    borderWidth: 1,
+    padding: 24,
+    gap: 14,
+  },
+  promoTitle: {
+    fontSize: 20,
+    fontFamily: "PlusJakartaSans_700Bold",
+    letterSpacing: -0.3,
+  },
+  promoBody: {
+    fontSize: 14,
+    fontFamily: "PlusJakartaSans_400Regular",
+    lineHeight: 21,
+  },
+  promoInput: {
+    height: 50,
+    borderRadius: 12,
+    borderWidth: 1,
+    paddingHorizontal: 14,
+    fontSize: 18,
+    fontFamily: "PlusJakartaSans_700Bold",
+    letterSpacing: 3,
+    textAlign: "center",
+  },
+  promoError: {
+    fontSize: 13,
+    fontFamily: "PlusJakartaSans_500Medium",
+    textAlign: "center",
+  },
+  promoBtn: {
+    height: 50,
+    borderRadius: 14,
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 4,
+  },
+  promoBtnText: {
+    fontSize: 15,
+    fontFamily: "PlusJakartaSans_700Bold",
   },
 });
