@@ -46,12 +46,14 @@ export function SwipeCard({ data, isTop, onSwipe, onTap, stackOffset = 0, rightL
   const colors = useColors();
   const translateX = useRef(new Animated.Value(0)).current;
   const translateY = useRef(new Animated.Value(0)).current;
+  const isTopRef = useRef(isTop);
+  isTopRef.current = isTop;
 
   const responder = useRef(
     PanResponder.create({
-      onStartShouldSetPanResponder: () => isTop,
+      onStartShouldSetPanResponder: () => isTopRef.current,
       onMoveShouldSetPanResponder: (_, g) =>
-        isTop && (Math.abs(g.dx) > 6 || Math.abs(g.dy) > 6),
+        isTopRef.current && (Math.abs(g.dx) > 6 || Math.abs(g.dy) > 6),
       onPanResponderMove: Animated.event(
         [null, { dx: translateX, dy: translateY }],
         { useNativeDriver: false },

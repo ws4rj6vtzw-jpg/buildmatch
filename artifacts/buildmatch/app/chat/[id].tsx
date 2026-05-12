@@ -245,6 +245,14 @@ export default function ChatScreen() {
         style={{ flex: 1 }}
         keyboardVerticalOffset={Platform.OS === "ios" ? 90 : 0}
       >
+        {thread.length === 0 && !isPartnerTyping && (
+          <View style={styles.empty}>
+            <Text style={[styles.emptyText, { color: colors.mutedForeground }]}>
+              Say hello
+            </Text>
+          </View>
+        )}
+
         <FlatList
           data={thread}
           keyExtractor={(m) => m.id}
@@ -253,15 +261,6 @@ export default function ChatScreen() {
           keyboardShouldPersistTaps="handled"
           contentContainerStyle={styles.thread}
           ListHeaderComponent={isPartnerTyping ? <TypingIndicator /> : null}
-          ListEmptyComponent={
-            <View style={styles.empty}>
-              <Text
-                style={[styles.emptyText, { color: colors.mutedForeground }]}
-              >
-                You matched. Say hello.
-              </Text>
-            </View>
-          }
           renderItem={({ item }) => {
             const mine = item.fromId === user?.id;
             return (
@@ -381,7 +380,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     paddingVertical: 80,
-    transform: [{ scaleY: -1 }],
   },
   emptyText: { fontSize: 14, fontFamily: "PlusJakartaSans_500Medium" },
   inputBar: {
