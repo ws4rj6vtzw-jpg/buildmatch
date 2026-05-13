@@ -109,12 +109,12 @@ export default function Home() {
                 The UK's first swipe-to-hire platform for construction. Match and connect with qualified and reliable labour and skilled tradespeople in your area.
               </p>
             </FadeIn>
-            <FadeIn delay={0.3} className="flex flex-col sm:flex-row gap-4 items-start">
-              <a href="#" className="hover:opacity-80 transition-opacity">
-                <img src={`${import.meta.env.BASE_URL}images/badge-app-store.svg`} alt="Download on the App Store" style={{ height: 48 }} />
+            <FadeIn delay={0.3} className="flex flex-col sm:flex-row gap-4 items-center">
+              <a href="#" className="hover:opacity-80 transition-opacity" style={{ display: 'flex', alignItems: 'center', height: 48, overflow: 'hidden' }}>
+                <img src={`${import.meta.env.BASE_URL}images/badge-app-store.svg`} alt="Download on the App Store" style={{ height: 48, width: 'auto' }} />
               </a>
-              <a href="https://play.google.com/store/apps/details?id=com.gordonwilson.buildmatch" className="hover:opacity-80 transition-opacity">
-                <img src={`${import.meta.env.BASE_URL}images/badge-google-play.png`} alt="Get it on Google Play" style={{ height: 71 }} />
+              <a href="https://play.google.com/store/apps/details?id=com.gordonwilson.buildmatch" className="hover:opacity-80 transition-opacity" style={{ display: 'flex', alignItems: 'center', height: 48, overflow: 'hidden' }}>
+                <img src={`${import.meta.env.BASE_URL}images/badge-google-play.png`} alt="Get it on Google Play" style={{ height: 71, width: 'auto' }} />
               </a>
             </FadeIn>
             
@@ -584,11 +584,11 @@ export default function Home() {
               Join thousands of professionals changing how the UK builds. Stop calling agencies. Start matching.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-              <a href="#" className="hover:opacity-80 transition-opacity">
-                <img src={`${import.meta.env.BASE_URL}images/badge-app-store.svg`} alt="Download on the App Store" style={{ height: 48 }} />
+              <a href="#" className="hover:opacity-80 transition-opacity" style={{ display: 'flex', alignItems: 'center', height: 48, overflow: 'hidden' }}>
+                <img src={`${import.meta.env.BASE_URL}images/badge-app-store.svg`} alt="Download on the App Store" style={{ height: 48, width: 'auto' }} />
               </a>
-              <a href="https://play.google.com/store/apps/details?id=com.gordonwilson.buildmatch" className="hover:opacity-80 transition-opacity">
-                <img src={`${import.meta.env.BASE_URL}images/badge-google-play.png`} alt="Get it on Google Play" style={{ height: 71 }} />
+              <a href="https://play.google.com/store/apps/details?id=com.gordonwilson.buildmatch" className="hover:opacity-80 transition-opacity" style={{ display: 'flex', alignItems: 'center', height: 48, overflow: 'hidden' }}>
+                <img src={`${import.meta.env.BASE_URL}images/badge-google-play.png`} alt="Get it on Google Play" style={{ height: 71, width: 'auto' }} />
               </a>
             </div>
           </FadeIn>
@@ -636,11 +636,11 @@ export default function Home() {
         <div className="max-w-7xl mx-auto pt-8 border-t border-border text-center md:text-left flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-sm text-muted-foreground font-medium">© {new Date().getFullYear()} BuildMatch Limited. Registered in England & Wales · Company No. 17191553</p>
           <div className="flex gap-3 items-center">
-            <a href="#" className="hover:opacity-80 transition-opacity">
-              <img src={`${import.meta.env.BASE_URL}images/badge-app-store.svg`} alt="Download on the App Store" style={{ height: 40 }} />
+            <a href="#" className="hover:opacity-80 transition-opacity" style={{ display: 'flex', alignItems: 'center', height: 40, overflow: 'hidden' }}>
+              <img src={`${import.meta.env.BASE_URL}images/badge-app-store.svg`} alt="Download on the App Store" style={{ height: 40, width: 'auto' }} />
             </a>
-            <a href="https://play.google.com/store/apps/details?id=com.gordonwilson.buildmatch" className="hover:opacity-80 transition-opacity">
-              <img src={`${import.meta.env.BASE_URL}images/badge-google-play.png`} alt="Get it on Google Play" style={{ height: 59 }} />
+            <a href="https://play.google.com/store/apps/details?id=com.gordonwilson.buildmatch" className="hover:opacity-80 transition-opacity" style={{ display: 'flex', alignItems: 'center', height: 40, overflow: 'hidden' }}>
+              <img src={`${import.meta.env.BASE_URL}images/badge-google-play.png`} alt="Get it on Google Play" style={{ height: 59, width: 'auto' }} />
             </a>
           </div>
         </div>
