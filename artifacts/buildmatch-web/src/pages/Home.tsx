@@ -461,61 +461,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Testimonials */}
-      <section className="py-24 px-6 border-y border-border bg-secondary">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
-            <FadeIn>
-              <h2 className="text-4xl lg:text-5xl font-black uppercase tracking-tighter">Word on the <span className="text-foreground">Site.</span></h2>
-            </FadeIn>
-            <FadeIn delay={0.1}>
-              <div className="flex gap-2">
-                <div className="w-12 h-12 border border-border flex items-center justify-center hover:bg-foreground/5 cursor-pointer transition-colors"><ChevronLeft className="w-6 h-6 text-foreground" /></div>
-                <div className="w-12 h-12 bg-primary flex items-center justify-center hover:bg-primary/90 cursor-pointer transition-colors"><ChevronRight className="w-6 h-6 text-white" /></div>
-              </div>
-            </FadeIn>
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-8">
-            <FadeIn delay={0.2}>
-              <Card className="bg-card border-border rounded-none p-8 hover:border-primary/50 transition-colors shadow-sm">
-                <div className="flex gap-1 mb-6">
-                  {[1,2,3,4,5].map(i => <Star key={i} className="w-5 h-5 fill-accent text-accent" />)}
-                </div>
-                <p className="text-xl font-medium text-foreground/90 mb-8 leading-relaxed">
-                  "Agencies used to take £50 off my daily rate. With BuildMatch I set £250/day and that's exactly what lands in my account on Friday. Haven't made a cold call in 6 months."
-                </p>
-                <div className="flex items-center gap-4 border-t border-border pt-6">
-                  <div className="w-12 h-12 bg-secondary flex items-center justify-center text-lg font-black uppercase border border-border">MB</div>
-                  <div>
-                    <div className="font-bold text-foreground uppercase tracking-wider">Mark B.</div>
-                    <div className="text-sm text-primary font-medium">Level 3 Carpenter, Croydon</div>
-                  </div>
-                </div>
-              </Card>
-            </FadeIn>
-
-            <FadeIn delay={0.3}>
-              <Card className="bg-card border-border rounded-none p-8 hover:border-accent/50 transition-colors shadow-sm">
-                <div className="flex gap-1 mb-6">
-                  {[1,2,3,4,5].map(i => <Star key={i} className="w-5 h-5 fill-accent text-accent" />)}
-                </div>
-                <p className="text-xl font-medium text-foreground/90 mb-8 leading-relaxed">
-                  "Had two plasterers no-show on a Tuesday. Put it on the app at 8am, matched with two verified guys locally by 9am, they were on site for 11. Saved the entire week's schedule."
-                </p>
-                <div className="flex items-center gap-4 border-t border-border pt-6">
-                  <div className="w-12 h-12 bg-primary flex items-center justify-center text-lg font-black uppercase text-white">TD</div>
-                  <div>
-                    <div className="font-bold text-foreground uppercase tracking-wider">Tom D.</div>
-                    <div className="text-sm text-accent font-medium">Site Manager, MainContractor Ltd</div>
-                  </div>
-                </div>
-              </Card>
-            </FadeIn>
-          </div>
-        </div>
-      </section>
-
       {/* Pricing Section */}
       <section id="pricing" className="py-24 md:py-32 px-6 bg-background relative overflow-hidden">
         {/* Background graphic */}
