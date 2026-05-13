@@ -111,10 +111,10 @@ export default function Home() {
             </FadeIn>
             <FadeIn delay={0.3} className="flex flex-col sm:flex-row gap-4 items-start">
               <a href="#" className="hover:opacity-80 transition-opacity">
-                <img src={`${import.meta.env.BASE_URL}images/badge-app-store.svg`} alt="Download on the App Store" className="h-12" />
+                <img src={`${import.meta.env.BASE_URL}images/badge-app-store.svg`} alt="Download on the App Store" style={{ height: 48 }} />
               </a>
               <a href="https://play.google.com/store/apps/details?id=com.gordonwilson.buildmatch" className="hover:opacity-80 transition-opacity">
-                <img src={`${import.meta.env.BASE_URL}images/badge-google-play.png`} alt="Get it on Google Play" className="h-14" />
+                <img src={`${import.meta.env.BASE_URL}images/badge-google-play.png`} alt="Get it on Google Play" style={{ height: 71 }} />
               </a>
             </FadeIn>
             
@@ -585,10 +585,10 @@ export default function Home() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
               <a href="#" className="hover:opacity-80 transition-opacity">
-                <img src={`${import.meta.env.BASE_URL}images/badge-app-store.svg`} alt="Download on the App Store" className="h-12" />
+                <img src={`${import.meta.env.BASE_URL}images/badge-app-store.svg`} alt="Download on the App Store" style={{ height: 48 }} />
               </a>
               <a href="https://play.google.com/store/apps/details?id=com.gordonwilson.buildmatch" className="hover:opacity-80 transition-opacity">
-                <img src={`${import.meta.env.BASE_URL}images/badge-google-play.png`} alt="Get it on Google Play" className="h-14" />
+                <img src={`${import.meta.env.BASE_URL}images/badge-google-play.png`} alt="Get it on Google Play" style={{ height: 71 }} />
               </a>
             </div>
           </FadeIn>
@@ -637,10 +637,10 @@ export default function Home() {
           <p className="text-sm text-muted-foreground font-medium">© {new Date().getFullYear()} BuildMatch Limited. Registered in England & Wales · Company No. 17191553</p>
           <div className="flex gap-3 items-center">
             <a href="#" className="hover:opacity-80 transition-opacity">
-              <img src={`${import.meta.env.BASE_URL}images/badge-app-store.svg`} alt="Download on the App Store" className="h-10" />
+              <img src={`${import.meta.env.BASE_URL}images/badge-app-store.svg`} alt="Download on the App Store" style={{ height: 40 }} />
             </a>
             <a href="https://play.google.com/store/apps/details?id=com.gordonwilson.buildmatch" className="hover:opacity-80 transition-opacity">
-              <img src={`${import.meta.env.BASE_URL}images/badge-google-play.png`} alt="Get it on Google Play" className="h-12" />
+              <img src={`${import.meta.env.BASE_URL}images/badge-google-play.png`} alt="Get it on Google Play" style={{ height: 59 }} />
             </a>
           </div>
         </div>
