@@ -20,7 +20,8 @@
       "googleServicesFile": "./GoogleService-Info.plist",
       "infoPlist": {
         "NSPhotoLibraryUsageDescription": "BuildMatch uses your photo library so you can set a profile picture.",
-        "NSCameraUsageDescription": "BuildMatch uses your camera so you can take a profile photo."
+        "NSCameraUsageDescription": "BuildMatch uses your camera so you can take a profile photo.",
+        "ITSAppUsesNonExemptEncryption": false
       }
     },
     "android": {
