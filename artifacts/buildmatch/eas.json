@@ -36,8 +36,8 @@
         "track": "internal"
       },
       "ios": {
-        "appleId": "YOUR_APPLE_ID_EMAIL",
-        "ascAppId": "YOUR_APP_STORE_CONNECT_APP_ID",
+        "appleId": "gordonwilson@live.com.au",
+        "ascAppId": "6769304580",
         "appleTeamId": "YOUR_APPLE_TEAM_ID"
       }
     }
