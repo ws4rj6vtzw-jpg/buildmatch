@@ -1,3 +1,4 @@
 - [iOS build - pnpm lockfile trap](ios-build-lockfile.md) — adding @expo/config-plugins as direct dep breaks @react-native-firebase/app plugin resolution with old local EAS CLI
 - [iOS Firebase static frameworks fix](ios-firebase-plugin.md) — plugin at artifacts/buildmatch/plugins/withFirebaseStaticFrameworks.js must not import @expo/config-plugins; modifies config.mods.ios.dangerous directly
 - [EAS submit - app-specific password](eas-submit-auth.md) — use EXPO_APPLE_APP_SPECIFIC_PASSWORD env var for non-interactive iOS submit; ASC API key route kept failing from Apple portal
+- [GitHub repo](github-repo.md) — repo is github.com/ws4rj6vtzw-jpg/buildmatch; PAT stored as GITHUB_PERSONAL_ACCESS_TOKEN secret; push via inline URL (git remote add is blocked in main agent)
