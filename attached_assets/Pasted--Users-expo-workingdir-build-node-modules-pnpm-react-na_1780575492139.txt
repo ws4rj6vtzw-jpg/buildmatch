@@ -1,0 +1,37 @@
+ (/Users/expo/workingdir/build/node_modules/.pnpm/@react-native-firebase+app@24.0.0_@react-native-async-storage+async-storage@2.2.0_react_d685750dbbf8aab2883c9ae7a3eeba3a/node_modules/@react-native-firebase/app/ios/RNFBApp/RCTConvert+FIRApp.h:19:9)
+
+  17 | 
+  18 | #import <FirebaseCore/FirebaseCore.h>
+> 19 | #import <React/RCTConvert.h>
+     |         ^ include of non-modular header inside framework module 'RNFBApp.RCTConvert_FIRApp': '/Users/expo/workingdir/build/artifacts/buildmatch/ios/Pods/Headers/Public/React-Core/React/RCTConvert.h' [-Werror,-Wnon-modular-include-in-framework-module]
+  20 | 
+  21 | @interface RCTConvert (FIRApp)
+  22 | + (FIRApp *)firAppFromString:(NSString *)appName;
+
+❌  (/Users/expo/workingdir/build/node_modules/.pnpm/@react-native-firebase+app@24.0.0_@react-native-async-storage+async-storage@2.2.0_react_d685750dbbf8aab2883c9ae7a3eeba3a/node_modules/@react-native-firebase/app/ios/RNFBApp/RCTConvert+FIROptions.h:19:9)
+
+  17 | 
+  18 | #import <FirebaseCore/FirebaseCore.h>
+> 19 | #import <React/RCTConvert.h>
+     |         ^ include of non-modular header inside framework module 'RNFBApp.RCTConvert_FIROptions': '/Users/expo/workingdir/build/artifacts/buildmatch/ios/Pods/Headers/Public/React-Core/React/RCTConvert.h' [-Werror,-Wnon-modular-include-in-framework-module]
+  20 | 
+  21 | @interface RCTConvert (FIROptions)
+  22 | + (FIROptions *)convertRawOptions:(NSDictionary *)rawOptions;
+
+❌  (/Users/expo/workingdir/build/node_modules/.pnpm/@react-native-firebase+app@24.0.0_@react-native-async-storage+async-storage@2.2.0_react_d685750dbbf8aab2883c9ae7a3eeba3a/node_modules/@react-native-firebase/app/ios/RNFBApp/RNFBAppModule.h:20:9)
+
+  18 | #import <Foundation/Foundation.h>
+  19 | 
+> 20 | #import <React/RCTBridgeModule.h>
+     |         ^ include of non-modular header inside framework module 'RNFBApp.RNFBAppModule': '/Users/expo/workingdir/build/artifacts/buildmatch/ios/Pods/Headers/Public/React-Core/React/RCTBridgeModule.h' [-Werror,-Wnon-modular-include-in-framework-module]
+  21 | 
+  22 | @interface RNFBAppModule : NSObject <RCTBridgeModule>
+  23 | 
+
+❌  (/Users/expo/workingdir/build/node_modules/.pnpm/@react-native-firebase+app@24.0.0_@react-native-async-storage+async-storage@2.2.0_react_d685750dbbf8aab2883c9ae7a3eeba3a/node_modules/@react-native-firebase/app/ios/RNFBApp/RNFBRCTEventEmitter.h:19:9)
+
+rk module 'RNFBApp.RNFBRCTEventEmitter': '/Users/expo/workingdir/build/artifacts/buildmatch/ios/Pods/Headers/Public/React-Core/React/RCTEventEmitter.h' [-Werror,-Wnon-modular-include-in-framework-module]
+        ^ include of non-modular header inside framewo
+(warning truncated)
+
+❌  (/Users/expo/workingdir/build/node_modules/.pnpm/@react-native-firebase+app@24.0.0_@react-native-async-storage+async-storage@2.2.0_react_d685750dbbf8aab2883c9ae7a3eeba3a/node_modules/@react-native-firebase/app/ios/RNFBApp/RNFBSharedUtils.h:22:9)

@@ -38,6 +38,7 @@
       "favicon": "./assets/images/icon.png"
     },
     "plugins": [
+      "./plugins/withFirebaseStaticFrameworks",
       [
         "expo-build-properties",
         {
