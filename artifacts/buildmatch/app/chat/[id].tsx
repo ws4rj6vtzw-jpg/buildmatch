@@ -15,7 +15,6 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { Avatar } from "@/components/Avatar";
 import { PaywallModal } from "@/components/PaywallModal";
-import { TypingIndicator } from "@/components/TypingIndicator";
 import { useColors } from "@/hooks/useColors";
 import { useAuth } from "@/contexts/AuthContext";
 import { useData } from "@/contexts/DataContext";
@@ -35,10 +34,8 @@ export default function ChatScreen() {
     ratings,
     sendMessage,
     markMatchRead,
-    typingMatches,
   } = useData();
   const { isPro, purchaseBuilderPro } = useSubscription();
-  const isPartnerTyping = !!id && typingMatches.includes(id);
   const [draft, setDraft] = useState("");
   const [paywallVisible, setPaywallVisible] = useState(false);
 
@@ -245,7 +242,7 @@ export default function ChatScreen() {
         style={{ flex: 1 }}
         keyboardVerticalOffset={Platform.OS === "ios" ? 90 : 0}
       >
-        {thread.length === 0 && !isPartnerTyping && (
+        {thread.length === 0 && (
           <View style={styles.empty}>
             <Text style={[styles.emptyText, { color: colors.mutedForeground }]}>
               Say hello
@@ -260,7 +257,7 @@ export default function ChatScreen() {
           keyboardDismissMode="interactive"
           keyboardShouldPersistTaps="handled"
           contentContainerStyle={styles.thread}
-          ListHeaderComponent={isPartnerTyping ? <TypingIndicator /> : null}
+          ListHeaderComponent={null}
           renderItem={({ item }) => {
             const mine = item.fromId === user?.id;
             return (

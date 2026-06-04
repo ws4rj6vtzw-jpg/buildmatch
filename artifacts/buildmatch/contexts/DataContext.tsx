@@ -9,7 +9,6 @@ import React, {
   useState,
 } from "react";
 
-import { SEED_BUILDERS, SEED_JOBS, SEED_WORKERS } from "@/constants/seed";
 import type {
   Builder,
   CompletedSnap,
@@ -67,7 +66,6 @@ type DataContextValue = Persisted & {
   markMatchRead: (matchId: string) => void;
   unreadCount: (matchId: string) => number;
   totalUnread: number;
-  typingMatches: string[];
   undoLastSwipe: () => { undoneId: string } | null;
   canUndo: boolean;
   boostJob: (jobId: string) => void;
@@ -82,10 +80,10 @@ function newId(prefix = "id") {
   return `${prefix}-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
 }
 
-const seedBase: Persisted = {
-  workers: SEED_WORKERS,
-  builders: SEED_BUILDERS,
-  jobs: SEED_JOBS,
+const emptyState: Persisted = {
+  workers: [],
+  builders: [],
+  jobs: [],
   swipes: [],
   matches: [],
   messages: [],
@@ -98,8 +96,7 @@ const seedBase: Persisted = {
 
 export function DataProvider({ children }: { children: React.ReactNode }) {
   const { user, token } = useAuth();
-  const [data, setData] = useState<Persisted>(seedBase);
-  const [typingMatches, setTypingMatches] = useState<string[]>([]);
+  const [data, setData] = useState<Persisted>(emptyState);
   const [hydrated, setHydrated] = useState(false);
   const tokenRef = useRef(token);
   tokenRef.current = token;
@@ -130,8 +127,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
         swipes: swipesRes.data ?? prev.swipes,
         matches: matchesRes.data ?? prev.matches,
         messages: messagesRes.data ?? prev.messages,
-        // Merge DB jobs (builder-posted) with seed jobs, deduplicated by id
-        jobs: mergeJobs(prev.jobs, jobsRes.data ?? []),
+        jobs: jobsRes.data ?? prev.jobs,
         // Local-only fields
         ratings: local.ratings ?? prev.ratings,
         completedSnaps: local.completedSnaps ?? prev.completedSnaps,
@@ -160,7 +156,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
         ...prev,
         matches: matchesRes.data ?? prev.matches,
         messages: messagesRes.data ?? prev.messages,
-        jobs: mergeJobs(prev.jobs, jobsRes.data ?? []),
+        jobs: jobsRes.data ?? prev.jobs,
       }));
     }, 10_000);
 
@@ -187,16 +183,6 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
     hydrated,
   ]);
 
-  // ── Helpers ───────────────────────────────────────────────────────────────
-
-  function mergeJobs(base: Job[], fromServer: Job[]): Job[] {
-    // Seed jobs (ids starting with "j-") always show; server jobs are added/replaced
-    const seedIds = new Set(SEED_JOBS.map((j) => j.id));
-    const serverIds = new Set(fromServer.map((j) => j.id));
-    const kept = base.filter((j) => seedIds.has(j.id) && !serverIds.has(j.id));
-    return [...kept, ...fromServer];
-  }
-
   // ── Swipe workers ─────────────────────────────────────────────────────────
   const swipeWorker = useCallback<DataContextValue["swipeWorker"]>(
     (workerId, direction) => {
@@ -217,7 +203,6 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
         return { ...prev, swipes: [...prev.swipes, swipe], matches };
       });
 
-      // Background: persist to server + push notification
       api.swipe(workerId, direction, "worker").catch(() => {});
 
       return { matched, matchId };
@@ -368,7 +353,6 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
         applicants: [],
       };
       setData((prev) => ({ ...prev, jobs: [fresh, ...prev.jobs] }));
-      // Sync to server and replace optimistic entry with real one
       api.postJob(job).then((res) => {
         if (res.data) {
           setData((prev) => ({
@@ -393,43 +377,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
         ts: Date.now(),
       };
       setData((prev) => ({ ...prev, messages: [...prev.messages, msg] }));
-
-      // Persist to server
       api.sendMessage(matchId, text).catch(() => {});
-
-      // Auto-reply demo
-      setTimeout(() => {
-        setTypingMatches((prev) =>
-          prev.includes(matchId) ? prev : [...prev, matchId],
-        );
-      }, 450);
-
-      setTimeout(() => {
-        setTypingMatches((prev) => prev.filter((id) => id !== matchId));
-        setData((prev) => {
-          const match = prev.matches.find((m) => m.id === matchId);
-          if (!match) return prev;
-          const otherId =
-            match.builderId === meId ? match.workerId : match.builderId;
-          const replies = [
-            "Sounds good. When can you start?",
-            "Cheers — I'll send through the address shortly.",
-            "Yep, I've got the tickets you need.",
-            "On site by 7? I'll bring my own tools.",
-            "All good. Let me confirm with the crew.",
-          ];
-          const reply: Message = {
-            id: newId("msg"),
-            matchId,
-            fromId: otherId,
-            text:
-              replies[Math.floor(Math.random() * replies.length)] ??
-              "Sounds good.",
-            ts: Date.now(),
-          };
-          return { ...prev, messages: [...prev.messages, reply] };
-        });
-      }, 1900);
     },
     [meId],
   );
@@ -580,7 +528,6 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
       return { ...prev, swipes, matches, jobs, messages };
     });
 
-    // Background: undo on server
     api.undoSwipe().catch(() => {});
 
     return undone;
@@ -643,14 +590,12 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
       markMatchRead,
       unreadCount,
       totalUnread,
-      typingMatches,
       undoLastSwipe,
       canUndo,
       boostJob,
     }),
     [
       data,
-      typingMatches,
       swipeWorker,
       swipeJob,
       swipeBuilder,
