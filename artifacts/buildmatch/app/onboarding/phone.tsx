@@ -26,7 +26,9 @@ export default function PhoneScreen() {
 
   const onContinue = async () => {
     setLoading(true);
-    const result = await sendOtp(phone);
+    const digits = phone.replace(/\D/g, "");
+    const e164 = digits.startsWith("44") ? `+${digits}` : `+44${digits.replace(/^0/, "")}`;
+    const result = await sendOtp(e164);
     setLoading(false);
     if (!result.ok) {
       Alert.alert("Could not send code", result.error ?? "Please try again.");
