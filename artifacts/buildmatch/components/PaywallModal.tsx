@@ -1,34 +1,95 @@
 import { Feather } from "@expo/vector-icons";
 import React, { useState } from "react";
-import { Modal, Pressable, StyleSheet, Text, View } from "react-native";
+import { Modal, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 
 import { useColors } from "@/hooks/useColors";
+
+type Tier = "basic" | "pro" | "elite";
 
 type Props = {
   visible: boolean;
   usedCount: number;
-  onGoPro: (tier: "basic" | "pro") => void;
+  onGoPro: (tier: Tier) => void;
   onClose: () => void;
 };
 
-const BASIC_FEATURES = [
-  "Post unlimited job requirements",
-  "Browse & contact verified workers",
-  "£5 per successful match",
-  "Direct in-app messaging",
-];
+type TierConfig = {
+  id: Tier;
+  name: string;
+  price: string;
+  badge?: string;
+  placementFee: string;
+  jobPosts: string;
+  dmBefore: string;
+  features: string[];
+};
 
-const PRO_FEATURES = [
-  "Everything in Basic",
-  "£5 per successful match",
-  "Boost job listings to top of feed",
-  "Verified builder badge",
-  "Priority support & analytics",
+const TIERS: TierConfig[] = [
+  {
+    id: "basic",
+    name: "Basic",
+    price: "£14.90",
+    placementFee: "£8 per placement",
+    jobPosts: "3 job posts / month",
+    dmBefore: "Matched workers only",
+    features: [
+      "Unlimited swipes",
+      "Browse worker contact info",
+      "3 job posts per month",
+    ],
+  },
+  {
+    id: "pro",
+    name: "Pro",
+    price: "£24.90",
+    badge: "Popular",
+    placementFee: "£5 per placement",
+    jobPosts: "Unlimited job posts",
+    dmBefore: "5 DMs / month before matching",
+    features: [
+      "Unlimited swipes",
+      "Browse worker contact info",
+      "Unlimited job posts",
+      "5 DMs / month before matching",
+      "Verified builder badge",
+    ],
+  },
+  {
+    id: "elite",
+    name: "Elite",
+    price: "£49.90",
+    badge: "Best value",
+    placementFee: "No placement fee",
+    jobPosts: "Unlimited job posts",
+    dmBefore: "Unlimited before matching",
+    features: [
+      "Unlimited swipes",
+      "Browse worker contact info",
+      "Unlimited job posts",
+      "Unlimited DMs before matching",
+      "Verified builder badge",
+      "Priority support & analytics",
+      "Job listings boosted to top",
+      "Profile boosted to top of discover",
+    ],
+  },
 ];
 
 export function PaywallModal({ visible, usedCount, onGoPro, onClose }: Props) {
   const colors = useColors();
-  const [selected, setSelected] = useState<"basic" | "pro">("pro");
+  const [selected, setSelected] = useState<Tier>("pro");
+  const [loading, setLoading] = useState(false);
+
+  const selectedTier = TIERS.find((t) => t.id === selected)!;
+
+  const handleSubscribe = async () => {
+    setLoading(true);
+    try {
+      await Promise.resolve(onGoPro(selected));
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <Modal transparent animationType="slide" visible={visible} onRequestClose={onClose}>
@@ -36,104 +97,114 @@ export function PaywallModal({ visible, usedCount, onGoPro, onClose }: Props) {
         <View style={[styles.sheet, { backgroundColor: colors.card }]}>
           <View style={[styles.handle, { backgroundColor: colors.border }]} />
 
+          {/* Header */}
           <View style={[styles.iconWrap, { backgroundColor: colors.primary }]}>
-            <Feather name="zap" size={28} color={colors.primaryForeground} />
+            <Feather name="zap" size={26} color={colors.primaryForeground} />
           </View>
-
           <Text style={[styles.title, { color: colors.foreground }]}>
-            Hire smarter, pay less
+            Upgrade your BuildMatch
           </Text>
-          <Text style={[styles.sub, { color: colors.mutedForeground }]}>
-            Simple subscription + £5 per successful match. No agency fees, ever.
-          </Text>
+          {usedCount >= 5 && (
+            <View style={[styles.limitBadge, { backgroundColor: "#F59E0B18", borderColor: "#F59E0B44" }]}>
+              <Feather name="alert-circle" size={13} color="#F59E0B" />
+              <Text style={[styles.limitText, { color: "#F59E0B" }]}>
+                Free swipe limit reached — subscribe to keep hiring
+              </Text>
+            </View>
+          )}
 
-          {/* Tier selector */}
-          <View style={styles.tiers}>
-            {/* Basic */}
-            <Pressable
-              onPress={() => setSelected("basic")}
-              style={[
-                styles.tier,
-                {
-                  borderColor: selected === "basic" ? colors.primary : colors.border,
-                  backgroundColor: selected === "basic" ? colors.primary + "14" : colors.elevated,
-                },
-              ]}
-            >
-              <View style={styles.tierHeader}>
-                <Text style={[styles.tierName, { color: colors.foreground }]}>Basic</Text>
-                <View style={{ alignItems: "flex-end" }}>
-                  <Text style={[styles.tierPrice, { color: selected === "basic" ? colors.primary : colors.foreground }]}>£14.90</Text>
-                  <Text style={[styles.tierUnit, { color: colors.mutedForeground }]}>/month</Text>
-                </View>
-              </View>
-              <Text style={[styles.tierMatchFee, { color: colors.accent }]}>+ £5 per match</Text>
-              <View style={styles.featureList}>
-                {BASIC_FEATURES.map((f) => (
-                  <View key={f} style={styles.featureRow}>
-                    <Feather name="check" size={12} color={selected === "basic" ? colors.primary : colors.mutedForeground} />
-                    <Text style={[styles.featureText, { color: colors.mutedForeground }]}>{f}</Text>
-                  </View>
-                ))}
-              </View>
-              {selected === "basic" && (
-                <View style={[styles.selectedDot, { backgroundColor: colors.primary }]} />
-              )}
-            </Pressable>
-
-            {/* Pro */}
-            <Pressable
-              onPress={() => setSelected("pro")}
-              style={[
-                styles.tier,
-                {
-                  borderColor: selected === "pro" ? colors.primary : colors.border,
-                  backgroundColor: selected === "pro" ? colors.primary + "14" : colors.elevated,
-                },
-              ]}
-            >
-              <View style={styles.tierHeader}>
-                <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
-                  <Text style={[styles.tierName, { color: colors.foreground }]}>Pro</Text>
-                  <View style={[styles.badge, { backgroundColor: colors.accent }]}>
-                    <Text style={[styles.badgeText, { color: "#fff" }]}>Best value</Text>
-                  </View>
-                </View>
-                <View style={{ alignItems: "flex-end" }}>
-                  <Text style={[styles.tierPrice, { color: selected === "pro" ? colors.primary : colors.foreground }]}>£24.90</Text>
-                  <Text style={[styles.tierUnit, { color: colors.mutedForeground }]}>/month</Text>
-                </View>
-              </View>
-              <Text style={[styles.tierMatchFee, { color: colors.accent }]}>+ £5 per match</Text>
-              <View style={styles.featureList}>
-                {PRO_FEATURES.map((f) => (
-                  <View key={f} style={styles.featureRow}>
-                    <Feather name="check" size={12} color={selected === "pro" ? colors.primary : colors.mutedForeground} />
-                    <Text style={[styles.featureText, { color: colors.mutedForeground }]}>{f}</Text>
-                  </View>
-                ))}
-              </View>
-              {selected === "pro" && (
-                <View style={[styles.selectedDot, { backgroundColor: colors.primary }]} />
-              )}
-            </Pressable>
+          {/* Tier selector — horizontal tabs */}
+          <View style={[styles.tabRow, { backgroundColor: colors.elevated, borderColor: colors.border }]}>
+            {TIERS.map((tier) => (
+              <Pressable
+                key={tier.id}
+                onPress={() => setSelected(tier.id)}
+                style={[
+                  styles.tab,
+                  selected === tier.id && { backgroundColor: colors.primary },
+                ]}
+              >
+                <Text
+                  style={[
+                    styles.tabLabel,
+                    { color: selected === tier.id ? colors.primaryForeground : colors.mutedForeground },
+                  ]}
+                >
+                  {tier.name}
+                </Text>
+                <Text
+                  style={[
+                    styles.tabPrice,
+                    { color: selected === tier.id ? colors.primaryForeground : colors.foreground },
+                  ]}
+                >
+                  {tier.price}
+                </Text>
+              </Pressable>
+            ))}
           </View>
 
+          {/* Selected tier detail */}
+          <View style={[styles.detailCard, { backgroundColor: colors.elevated, borderColor: colors.primary + "44" }]}>
+            {selectedTier.badge && (
+              <View style={[styles.popularBadge, { backgroundColor: colors.accent }]}>
+                <Text style={styles.popularText}>{selectedTier.badge}</Text>
+              </View>
+            )}
+
+            {/* Key stats row */}
+            <View style={styles.statsRow}>
+              <View style={styles.stat}>
+                <Text style={[styles.statValue, { color: colors.accent }]}>
+                  {selectedTier.placementFee}
+                </Text>
+                <Text style={[styles.statLabel, { color: colors.mutedForeground }]}>
+                  Placement fee
+                </Text>
+              </View>
+              <View style={[styles.statDivider, { backgroundColor: colors.border }]} />
+              <View style={styles.stat}>
+                <Text style={[styles.statValue, { color: colors.primary }]}>
+                  {selectedTier.jobPosts}
+                </Text>
+                <Text style={[styles.statLabel, { color: colors.mutedForeground }]}>
+                  Job posts
+                </Text>
+              </View>
+            </View>
+
+            {/* Feature list */}
+            <View style={styles.featureList}>
+              {selectedTier.features.map((f) => (
+                <View key={f} style={styles.featureRow}>
+                  <View style={[styles.checkCircle, { backgroundColor: colors.primary + "22" }]}>
+                    <Feather name="check" size={10} color={colors.primary} />
+                  </View>
+                  <Text style={[styles.featureText, { color: colors.foreground }]}>{f}</Text>
+                </View>
+              ))}
+            </View>
+          </View>
+
+          {/* Subscribe button */}
           <Pressable
-            onPress={() => onGoPro(selected)}
+            onPress={handleSubscribe}
+            disabled={loading}
             style={({ pressed }) => [
               styles.btn,
-              { backgroundColor: colors.primary, opacity: pressed ? 0.85 : 1 },
+              { backgroundColor: colors.primary, opacity: pressed || loading ? 0.82 : 1 },
             ]}
           >
             <Feather name="zap" size={15} color={colors.primaryForeground} />
             <Text style={[styles.btnText, { color: colors.primaryForeground }]}>
-              Subscribe — £{selected === "basic" ? "14.90" : "24.90"}/month
+              {loading
+                ? "Processing…"
+                : `Subscribe to ${selectedTier.name} — ${selectedTier.price}/mo`}
             </Text>
           </Pressable>
 
           <Text style={[styles.legal, { color: colors.mutedForeground }]}>
-            £5 charged per successful match. Cancel any time.
+            Billed monthly. Cancel any time from your profile.
           </Text>
 
           <Pressable onPress={onClose} style={{ alignSelf: "center" }}>
@@ -154,101 +225,128 @@ const styles = StyleSheet.create({
   sheet: {
     borderTopLeftRadius: 28,
     borderTopRightRadius: 28,
-    padding: 24,
+    padding: 22,
     paddingBottom: 36,
-    gap: 14,
-    alignItems: "stretch",
+    gap: 12,
   },
   handle: {
     width: 36,
     height: 4,
     borderRadius: 2,
     alignSelf: "center",
-    marginBottom: 8,
+    marginBottom: 4,
   },
   iconWrap: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
+    width: 56,
+    height: 56,
+    borderRadius: 28,
     alignItems: "center",
     justifyContent: "center",
     alignSelf: "center",
   },
   title: {
-    fontSize: 22,
+    fontSize: 20,
     fontFamily: "PlusJakartaSans_700Bold",
-    letterSpacing: -0.4,
+    letterSpacing: -0.3,
     textAlign: "center",
   },
-  sub: {
-    fontSize: 14,
-    fontFamily: "PlusJakartaSans_400Regular",
-    textAlign: "center",
-    lineHeight: 20,
-  },
-  tiers: {
+  limitBadge: {
     flexDirection: "row",
-    gap: 10,
+    alignItems: "center",
+    gap: 7,
+    padding: 10,
+    borderRadius: 10,
+    borderWidth: 1,
   },
-  tier: {
+  limitText: {
+    fontSize: 12,
+    fontFamily: "PlusJakartaSans_500Medium",
     flex: 1,
-    borderRadius: 14,
-    borderWidth: 1.5,
-    padding: 12,
-    gap: 6,
   },
-  tierHeader: {
+  tabRow: {
     flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "flex-start",
+    borderRadius: 14,
+    borderWidth: 1,
+    padding: 4,
+    gap: 4,
   },
-  tierName: {
-    fontSize: 14,
-    fontFamily: "PlusJakartaSans_700Bold",
+  tab: {
+    flex: 1,
+    alignItems: "center",
+    borderRadius: 10,
+    paddingVertical: 8,
+    paddingHorizontal: 4,
+    gap: 2,
   },
-  tierPrice: {
-    fontSize: 18,
-    fontFamily: "PlusJakartaSans_700Bold",
-  },
-  tierUnit: {
-    fontSize: 10,
-    fontFamily: "PlusJakartaSans_400Regular",
-  },
-  tierMatchFee: {
-    fontSize: 11,
+  tabLabel: {
+    fontSize: 12,
     fontFamily: "PlusJakartaSans_600SemiBold",
   },
+  tabPrice: {
+    fontSize: 13,
+    fontFamily: "PlusJakartaSans_700Bold",
+  },
+  detailCard: {
+    borderRadius: 16,
+    borderWidth: 1.5,
+    padding: 16,
+    gap: 12,
+  },
+  popularBadge: {
+    alignSelf: "flex-start",
+    borderRadius: 6,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+  },
+  popularText: {
+    fontSize: 10,
+    fontFamily: "PlusJakartaSans_700Bold",
+    color: "#fff",
+    letterSpacing: 0.3,
+  },
+  statsRow: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  stat: {
+    flex: 1,
+    alignItems: "center",
+    gap: 3,
+  },
+  statValue: {
+    fontSize: 13,
+    fontFamily: "PlusJakartaSans_700Bold",
+    textAlign: "center",
+  },
+  statLabel: {
+    fontSize: 10,
+    fontFamily: "PlusJakartaSans_400Regular",
+    textAlign: "center",
+  },
+  statDivider: {
+    width: 1,
+    height: 32,
+    marginHorizontal: 8,
+  },
   featureList: {
-    gap: 5,
-    marginTop: 4,
+    gap: 8,
   },
   featureRow: {
     flexDirection: "row",
-    alignItems: "flex-start",
-    gap: 6,
+    alignItems: "center",
+    gap: 10,
+  },
+  checkCircle: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    alignItems: "center",
+    justifyContent: "center",
   },
   featureText: {
-    fontSize: 11,
-    fontFamily: "PlusJakartaSans_400Regular",
+    fontSize: 13,
+    fontFamily: "PlusJakartaSans_500Medium",
     flex: 1,
-    lineHeight: 16,
-  },
-  selectedDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    alignSelf: "center",
-    marginTop: 4,
-  },
-  badge: {
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    borderRadius: 6,
-  },
-  badgeText: {
-    fontSize: 9,
-    fontFamily: "PlusJakartaSans_700Bold",
-    letterSpacing: 0.2,
   },
   btn: {
     height: 52,

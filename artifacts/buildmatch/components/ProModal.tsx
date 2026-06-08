@@ -13,9 +13,10 @@ type Props = {
 
 const BENEFITS = [
   { icon: "award" as const, text: "Verified badge on your profile" },
-  { icon: "trending-up" as const, text: "Priority listing in builder searches" },
+  { icon: "trending-up" as const, text: "Profile boosted to top of discover" },
   { icon: "bell" as const, text: "Instant job alerts — be first to apply" },
-  { icon: "star" as const, text: "Profile boosting to top of discover" },
+  { icon: "message-circle" as const, text: "5 DMs per month before matching" },
+  { icon: "phone" as const, text: "Browse builder contact info" },
 ];
 
 export function ProModal({ visible, onUpgrade, onClose, contextMessage }: Props) {
@@ -45,7 +46,7 @@ export function ProModal({ visible, onUpgrade, onClose, contextMessage }: Props)
               </Text>
             </View>
             <View style={{ alignItems: "flex-end" }}>
-              <Text style={[styles.price, { color: colors.accent }]}>£9.99</Text>
+              <Text style={[styles.price, { color: colors.accent }]}>£9.90</Text>
               <Text style={[styles.priceUnit, { color: colors.mutedForeground }]}>/month</Text>
             </View>
           </View>
@@ -80,7 +81,7 @@ export function ProModal({ visible, onUpgrade, onClose, contextMessage }: Props)
           </Pressable>
 
           <Text style={[styles.legal, { color: colors.mutedForeground }]}>
-            £9.99/month after trial. Cancel any time from your profile.
+            £9.90/month after trial. Cancel any time from your profile.
           </Text>
 
           <Pressable onPress={onClose} style={{ alignSelf: "center" }}>

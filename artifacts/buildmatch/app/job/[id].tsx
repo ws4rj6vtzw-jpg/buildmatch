@@ -25,7 +25,7 @@ export default function JobDetail() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { user } = useAuth();
   const { jobs, builders, workers, matches, applyToJob, acceptApplicant, declineApplicant } = useData();
-  const { isPro, purchaseBuilderBasic, purchaseBuilderPro } = useSubscription();
+  const { isPro, purchaseBuilderBasic, purchaseBuilderPro, purchaseBuilderElite } = useSubscription();
   const [paywallVisible, setPaywallVisible] = useState(false);
 
   const job = jobs.find((j) => j.id === id);
@@ -251,12 +251,10 @@ export default function JobDetail() {
       <PaywallModal
         visible={paywallVisible}
         usedCount={matchCount}
-        onGoPro={async (tier: "basic" | "pro") => {
-          if (tier === "basic") {
-            await purchaseBuilderBasic();
-          } else {
-            await purchaseBuilderPro();
-          }
+        onGoPro={async (tier: "basic" | "pro" | "elite") => {
+          if (tier === "basic") await purchaseBuilderBasic();
+          else if (tier === "pro") await purchaseBuilderPro();
+          else await purchaseBuilderElite();
           setPaywallVisible(false);
         }}
         onClose={() => setPaywallVisible(false)}

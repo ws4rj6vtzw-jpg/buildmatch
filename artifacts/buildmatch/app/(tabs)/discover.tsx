@@ -68,7 +68,7 @@ export default function DiscoverScreen() {
   const [proModalVisible, setProModalVisible] = useState(false);
   const [proModalContext, setProModalContext] = useState<string | undefined>(undefined);
 
-  const { isPro, purchaseBuilderBasic, purchaseBuilderPro, purchaseWorkerPro } = useSubscription();
+  const { isPro, builderTier, purchaseBuilderBasic, purchaseBuilderPro, purchaseBuilderElite, purchaseWorkerPro } = useSubscription();
 
   const isWorker = user?.role === "worker";
   const radius = user?.travelRadiusMiles ?? DEFAULT_RADIUS;
@@ -218,7 +218,7 @@ export default function DiscoverScreen() {
       ).catch(() => undefined);
     }
 
-    if (dir === "right" && !isPro && !isWorker && builderMatchCount >= FREE_LIMIT) {
+    if (dir === "right" && builderTier === "none" && !isWorker && builderMatchCount >= FREE_LIMIT) {
       setPendingSwipe({ id });
       setPaywallVisible(true);
       return;
@@ -237,12 +237,14 @@ export default function DiscoverScreen() {
     }
   };
 
-  const handleBuilderGoPro = async (tier: "basic" | "pro") => {
+  const handleBuilderGoPro = async (tier: "basic" | "pro" | "elite") => {
     setPaywallVisible(false);
     if (tier === "basic") {
       await purchaseBuilderBasic();
-    } else {
+    } else if (tier === "pro") {
       await purchaseBuilderPro();
+    } else {
+      await purchaseBuilderElite();
     }
     if (pendingSwipe) {
       completeSwipe(pendingSwipe.id);
@@ -390,7 +392,7 @@ export default function DiscoverScreen() {
       )}
 
       {/* Free match counter — builders only, free tier */}
-      {!isWorker && !isPro && (
+      {!isWorker && builderTier === "none" && (
         <View style={[styles.freeBar, { backgroundColor: colors.elevated, borderBottomColor: colors.border }]}>
           <View style={styles.freeDots}>
             {Array.from({ length: FREE_LIMIT }).map((_, i) => (
@@ -418,10 +420,12 @@ export default function DiscoverScreen() {
         </View>
       )}
 
-      {!isWorker && isPro && (
+      {!isWorker && builderTier !== "none" && (
         <View style={[styles.freeBar, { backgroundColor: colors.elevated, borderBottomColor: colors.border }]}>
           <Feather name="zap" size={13} color={colors.accent} />
-          <Text style={[styles.freeText, { color: colors.accent }]}>Pro · Unlimited matches active</Text>
+          <Text style={[styles.freeText, { color: colors.accent }]}>
+            {builderTier === "elite" ? "Elite" : builderTier === "pro" ? "Pro" : "Basic"} · Unlimited swipes active
+          </Text>
         </View>
       )}
 

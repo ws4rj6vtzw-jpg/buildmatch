@@ -4,9 +4,19 @@ import { Alert, Platform } from "react-native";
 import { api } from "./api";
 
 export const RC_ENTITLEMENT = "BuildMatch Pro";
+
+// Package identifiers (must match RevenueCat dashboard)
 const WORKER_PACKAGE_ID = "$rc_monthly";
 export const BUILDER_BASIC_PACKAGE_ID = "buildmatch_builder_basic";
 export const BUILDER_PRO_PACKAGE_ID = "buildmatch_builder_pro";
+export const BUILDER_ELITE_PACKAGE_ID = "buildmatch_builder_elite";
+
+// Store product identifiers — used to detect active tier
+const BASIC_PRODUCT = "buildmatch_builder_basic_monthly";
+const PRO_PRODUCT = "buildmatch_builder_pro_monthly";
+const ELITE_PRODUCT = "buildmatch_builder_elite_monthly";
+
+export type BuilderTier = "none" | "basic" | "pro" | "elite";
 
 export function initializeRevenueCat() {
   const apiKey = Platform.select({
@@ -32,25 +42,36 @@ export function initializeRevenueCat() {
 
 type SubscriptionState = {
   isPro: boolean;
+  builderTier: BuilderTier;
   isLoading: boolean;
   purchaseWorkerPro: () => Promise<void>;
   purchaseBuilderBasic: () => Promise<void>;
   purchaseBuilderPro: () => Promise<void>;
+  purchaseBuilderElite: () => Promise<void>;
   restorePurchases: () => Promise<void>;
   redeemPromoCode: (code: string) => Promise<{ error?: string }>;
 };
 
 const SubscriptionContext = createContext<SubscriptionState>({
   isPro: false,
+  builderTier: "none",
   isLoading: true,
   purchaseWorkerPro: async () => {},
   purchaseBuilderBasic: async () => {},
   purchaseBuilderPro: async () => {},
+  purchaseBuilderElite: async () => {},
   restorePurchases: async () => {},
   redeemPromoCode: async () => ({}),
 });
 
 type OnProChange = (isPro: boolean) => void;
+
+function detectBuilderTier(activeSubscriptions: Set<string>): BuilderTier {
+  if (activeSubscriptions.has(ELITE_PRODUCT)) return "elite";
+  if (activeSubscriptions.has(PRO_PRODUCT)) return "pro";
+  if (activeSubscriptions.has(BASIC_PRODUCT)) return "basic";
+  return "none";
+}
 
 export function SubscriptionProvider({
   children,
@@ -60,6 +81,7 @@ export function SubscriptionProvider({
   onProChange?: OnProChange;
 }) {
   const [isPro, setIsPro] = useState(false);
+  const [builderTier, setBuilderTier] = useState<BuilderTier>("none");
   const [isLoading, setIsLoading] = useState(true);
 
   const setProWithCallback = useCallback(
@@ -78,9 +100,12 @@ export function SubscriptionProvider({
     try {
       const info = await Purchases.getCustomerInfo();
       const rcActive = info.entitlements.active[RC_ENTITLEMENT] != null;
+
       const { data: promoData } = await api.getPromoStatus();
       const promoActive = promoData?.hasPromo ?? false;
+
       setProWithCallback(rcActive || promoActive);
+      setBuilderTier(detectBuilderTier(info.activeSubscriptions));
     } catch {
       // not fatal
     } finally {
@@ -89,7 +114,7 @@ export function SubscriptionProvider({
   }
 
   const purchasePackageById = useCallback(
-    async (packageId: string) => {
+    async (packageId: string): Promise<boolean> => {
       try {
         const offerings = await Purchases.getOfferings();
         const offering = offerings.current;
@@ -101,6 +126,8 @@ export function SubscriptionProvider({
         const { customerInfo } = await Purchases.purchasePackage(pkg);
         const active = customerInfo.entitlements.active[RC_ENTITLEMENT] != null;
         setProWithCallback(active);
+        setBuilderTier(detectBuilderTier(customerInfo.activeSubscriptions));
+        return active;
       } catch (e: any) {
         if (!e.userCancelled) {
           Alert.alert(
@@ -108,23 +135,29 @@ export function SubscriptionProvider({
             e.message ?? "Something went wrong. Please try again.",
           );
         }
+        return false;
       }
     },
     [setProWithCallback],
   );
 
   const purchaseWorkerPro = useCallback(
-    () => purchasePackageById(WORKER_PACKAGE_ID),
+    () => purchasePackageById(WORKER_PACKAGE_ID).then(() => undefined),
     [purchasePackageById],
   );
 
   const purchaseBuilderBasic = useCallback(
-    () => purchasePackageById(BUILDER_BASIC_PACKAGE_ID),
+    () => purchasePackageById(BUILDER_BASIC_PACKAGE_ID).then(() => undefined),
     [purchasePackageById],
   );
 
   const purchaseBuilderPro = useCallback(
-    () => purchasePackageById(BUILDER_PRO_PACKAGE_ID),
+    () => purchasePackageById(BUILDER_PRO_PACKAGE_ID).then(() => undefined),
+    [purchasePackageById],
+  );
+
+  const purchaseBuilderElite = useCallback(
+    () => purchasePackageById(BUILDER_ELITE_PACKAGE_ID).then(() => undefined),
     [purchasePackageById],
   );
 
@@ -133,6 +166,7 @@ export function SubscriptionProvider({
       const info = await Purchases.restorePurchases();
       const active = info.entitlements.active[RC_ENTITLEMENT] != null;
       setProWithCallback(active);
+      setBuilderTier(detectBuilderTier(info.activeSubscriptions));
       if (active) {
         Alert.alert("Restored", "Your subscription has been restored.");
       } else {
@@ -157,7 +191,17 @@ export function SubscriptionProvider({
 
   return (
     <SubscriptionContext.Provider
-      value={{ isPro, isLoading, purchaseWorkerPro, purchaseBuilderBasic, purchaseBuilderPro, restorePurchases, redeemPromoCode }}
+      value={{
+        isPro,
+        builderTier,
+        isLoading,
+        purchaseWorkerPro,
+        purchaseBuilderBasic,
+        purchaseBuilderPro,
+        purchaseBuilderElite,
+        restorePurchases,
+        redeemPromoCode,
+      }}
     >
       {children}
     </SubscriptionContext.Provider>
