@@ -251,7 +251,7 @@ export default function JobDetail() {
       <PaywallModal
         visible={paywallVisible}
         usedCount={matchCount}
-        onGoPro={async () => {
+        onGoPro={async (_tier: "basic" | "pro") => {
           await purchaseBuilderPro();
           setPaywallVisible(false);
         }}

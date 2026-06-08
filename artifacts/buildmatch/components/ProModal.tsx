@@ -12,11 +12,10 @@ type Props = {
 };
 
 const BENEFITS = [
-  { icon: "award" as const, text: "Verified Pro badge on your profile" },
-  { icon: "trending-up" as const, text: "Priority placement in builder searches" },
-  { icon: "bell" as const, text: "First access to new job postings" },
-  { icon: "bar-chart-2" as const, text: "Application insights & analytics" },
-  { icon: "shield" as const, text: "Dedicated support line" },
+  { icon: "award" as const, text: "Verified badge on your profile" },
+  { icon: "trending-up" as const, text: "Priority listing in builder searches" },
+  { icon: "bell" as const, text: "Instant job alerts — be first to apply" },
+  { icon: "star" as const, text: "Profile boosting to top of discover" },
 ];
 
 export function ProModal({ visible, onUpgrade, onClose, contextMessage }: Props) {
@@ -40,9 +39,9 @@ export function ProModal({ visible, onUpgrade, onClose, contextMessage }: Props)
               <Feather name="award" size={28} color="#fff" />
             </View>
             <View style={{ flex: 1 }}>
-              <Text style={[styles.title, { color: colors.foreground }]}>BuildMatch Pro</Text>
+              <Text style={[styles.title, { color: colors.foreground }]}>Worker Boost</Text>
               <Text style={[styles.subtitle, { color: colors.mutedForeground }]}>
-                For serious tradespeople
+                Stand out. Get hired faster.
               </Text>
             </View>
             <View style={{ alignItems: "flex-end" }}>

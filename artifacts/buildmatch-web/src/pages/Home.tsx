@@ -487,6 +487,7 @@ export default function Home() {
                 <li className="flex items-center gap-4"><CheckCircle className="w-6 h-6 text-primary flex-shrink-0" /> <span>Digital ticket storage (CSCS, etc)</span></li>
                 <li className="flex items-center gap-4"><CheckCircle className="w-6 h-6 text-primary flex-shrink-0" /> <span>Direct messaging with connections</span></li>
                 <li className="flex items-center gap-4"><CheckCircle className="w-6 h-6 text-primary flex-shrink-0" /> <span>Keep 100% of your agreed rate</span></li>
+                <li className="flex items-center gap-4"><CheckCircle className="w-6 h-6 text-primary flex-shrink-0" /> <span><span className="font-bold">Boost:</span> verified badge, priority listing, instant alerts</span></li>
               </ul>
               
               <Button variant="outline" className="w-full bg-transparent hover:bg-foreground/5 text-foreground rounded-none border border-border h-14 font-black uppercase tracking-wider text-lg">Create Profile</Button>
@@ -495,23 +496,28 @@ export default function Home() {
 
           <FadeIn direction="left" delay={0.2}>
             <div className="bg-primary p-10 h-full flex flex-col relative z-10 shadow-[0_0_50px_rgba(59,130,246,0.3)] md:-ml-8 md:my-[-20px]">
-              <div className="absolute top-0 right-0 bg-foreground text-background text-xs font-black uppercase tracking-widest px-4 py-2 border-b border-l border-white/10">Industry Standard</div>
+              <div className="absolute top-0 right-0 bg-foreground text-background text-xs font-black uppercase tracking-widest px-4 py-2 border-b border-l border-white/10">Most Popular</div>
               
               <h3 className="text-2xl font-black uppercase tracking-tight mb-2 text-white mt-4">For Hirers</h3>
-              <div className="flex items-baseline gap-2 mb-6">
-                <span className="text-6xl font-black text-white">£49</span>
+              <div className="flex items-baseline gap-2 mb-1">
+                <span className="text-white/70 uppercase tracking-widest text-sm font-bold">from</span>
+                <span className="text-6xl font-black text-white">£14.90</span>
                 <span className="text-white/70 uppercase tracking-widest text-sm font-bold">/month</span>
               </div>
-              <p className="text-white/90 font-medium mb-10 text-lg leading-snug">Cheaper than an agency's margin on a single worker for half a day.</p>
+              <div className="flex items-center gap-2 mb-6">
+                <span className="bg-accent/30 text-accent font-black text-sm px-3 py-1 rounded-full">+ £5 per successful match</span>
+              </div>
+              <p className="text-white/90 font-medium mb-8 text-base leading-snug">Low monthly base. Only pay when you find the right person. No agency fees ever.</p>
               
-              <ul className="space-y-5 mb-10 flex-1 text-white font-medium">
+              <ul className="space-y-4 mb-8 flex-1 text-white font-medium">
                 <li className="flex items-center gap-4"><CheckCircle className="w-6 h-6 text-accent flex-shrink-0" /> <span>Post unlimited job requirements</span></li>
-                <li className="flex items-center gap-4 bg-white/10 p-2 -mx-2"><CheckCircle className="w-6 h-6 text-accent flex-shrink-0" /> <span className="font-bold">5 Free Matches to start</span></li>
+                <li className="flex items-center gap-4"><CheckCircle className="w-6 h-6 text-accent flex-shrink-0" /> <span>Browse verified worker profiles</span></li>
                 <li className="flex items-center gap-4"><CheckCircle className="w-6 h-6 text-accent flex-shrink-0" /> <span>Access to verified CSCS database</span></li>
                 <li className="flex items-center gap-4"><CheckCircle className="w-6 h-6 text-accent flex-shrink-0" /> <span>Instant chat & hiring tools</span></li>
+                <li className="flex items-center gap-4 bg-white/10 p-2 -mx-2"><CheckCircle className="w-6 h-6 text-accent flex-shrink-0" /> <span className="font-bold">Pro plan: £24.90/mo + boosts & badge</span></li>
               </ul>
               
-              <Button className="w-full bg-foreground hover:bg-foreground/90 text-background rounded-none h-14 font-black uppercase tracking-wider text-lg shadow-xl">Start Free Trial</Button>
+              <Button className="w-full bg-foreground hover:bg-foreground/90 text-background rounded-none h-14 font-black uppercase tracking-wider text-lg shadow-xl">Get Started</Button>
             </div>
           </FadeIn>
         </div>

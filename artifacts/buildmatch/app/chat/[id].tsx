@@ -340,7 +340,7 @@ export default function ChatScreen() {
       <PaywallModal
         visible={paywallVisible}
         usedCount={matchCount}
-        onGoPro={async () => {
+        onGoPro={async (_tier: "basic" | "pro") => {
           await purchaseBuilderPro();
           setPaywallVisible(false);
         }}

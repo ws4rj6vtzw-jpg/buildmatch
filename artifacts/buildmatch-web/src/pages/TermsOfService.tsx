@@ -57,8 +57,9 @@ export default function TermsOfService() {
             <ul className="list-disc pl-6 space-y-2 text-muted-foreground">
               <li>Subscriptions renew automatically unless cancelled at least 24 hours before the renewal date</li>
               <li>Prices are displayed in GBP and include VAT where applicable</li>
-              <li>Worker Pro: £9.99/month (includes a 7-day free trial for new subscribers)</li>
-              <li>Builder Pro: £49/month</li>
+              <li>Worker Boost: £9.99/month (includes a 7-day free trial for new subscribers) — verified badge, priority listing, instant job alerts, profile boosting</li>
+              <li>Hirer Basic: £14.90/month + £5 per successful match</li>
+              <li>Hirer Pro: £24.90/month + £5 per successful match (includes boosted listings, verified builder badge, priority support)</li>
               <li>Refunds are handled in accordance with Apple App Store or Google Play Store policies</li>
               <li>We reserve the right to change pricing with 30 days' notice to existing subscribers</li>
             </ul>

@@ -237,7 +237,7 @@ export default function DiscoverScreen() {
     }
   };
 
-  const handleBuilderGoPro = async () => {
+  const handleBuilderGoPro = async (_tier: "basic" | "pro") => {
     setPaywallVisible(false);
     await purchaseBuilderPro();
     if (pendingSwipe) {
