@@ -2,6 +2,7 @@ import { router } from "expo-router";
 import Slider from "@react-native-community/slider";
 import React, { useState } from "react";
 import {
+  KeyboardAvoidingView,
   Platform,
   Pressable,
   ScrollView,
@@ -85,10 +86,16 @@ export default function ProfileSetupScreen() {
 
   return (
     <SafeAreaView style={[styles.safe, { backgroundColor: colors.background }]}>
+      <KeyboardAvoidingView
+        style={styles.flex}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 24}
+      >
       <ScrollView
         style={styles.flex}
         contentContainerStyle={styles.content}
         keyboardShouldPersistTaps="handled"
+        automaticallyAdjustKeyboardInsets
       >
         <Text style={[styles.title, { color: colors.foreground }]}>
           {isWorker ? "Tell us about you" : "Set up your company"}
@@ -331,6 +338,7 @@ export default function ProfileSetupScreen() {
         <PrimaryButton label="Finish setup" onPress={onSave} disabled={!valid} />
         <View style={{ height: 32 }} />
       </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
