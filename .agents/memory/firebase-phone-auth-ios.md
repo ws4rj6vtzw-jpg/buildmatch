@@ -42,3 +42,8 @@ The original `GoogleService-Info.plist` had no `CLIENT_ID` or `REVERSED_CLIENT_I
 API-based OTP via `POST /api/auth/send-otp` + `POST /api/auth/verify-otp`. Server wildcard mode accepts any 6-digit code. Used while waiting for native build.
 
 **Why:** The `@react-native-firebase/app` Expo plugin does NOT automatically add the REVERSED_CLIENT_ID URL scheme unless it's present in the plist. Without it, the reCAPTCHA redirect crashes the app at the native layer.
+
+## reCAPTCHA showing on TestFlight (no crash, but clunky UX)
+If the app works but shows a Google reCAPTCHA web view on every auth attempt, the APNs key is only uploaded to the **Development** slot in Firebase Console. TestFlight and App Store builds use the **Production** APNs environment — Firebase can't send the silent push verification and falls back to reCAPTCHA.
+
+**Fix:** Firebase Console → Project Settings → Cloud Messaging → your iOS app → upload the same `.p8` key to the **Production APNs auth key** slot (Key ID: 8U4W5GPDAN, Team ID: 2C625WHCQT). Takes effect immediately, no rebuild or OTA needed.
