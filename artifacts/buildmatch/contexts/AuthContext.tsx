@@ -5,8 +5,11 @@ import React, {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from "react";
+import auth from "@react-native-firebase/auth";
+import type { FirebaseAuthTypes } from "@react-native-firebase/auth";
 
 import type { AuthUser, Role } from "@/types";
 import { api, setAuthToken } from "@/lib/api";
@@ -34,6 +37,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [token, setToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [pendingPhone, setPendingPhone] = useState<string | null>(null);
+  const confirmationRef = useRef<FirebaseAuthTypes.ConfirmationResult | null>(null);
 
   useEffect(() => {
     Promise.all([
@@ -71,9 +75,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const sendOtp = useCallback(async (phone: string) => {
     setPendingPhone(phone);
-    const result = await api.sendOtp(phone);
-    if (result.error) return { ok: false, error: result.error };
-    return { ok: true };
+    try {
+      const confirmation = await auth().signInWithPhoneNumber(phone);
+      confirmationRef.current = confirmation;
+      return { ok: true };
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Failed to send code";
+      return { ok: false, error: msg };
+    }
   }, []);
 
   const verifyOtp = useCallback(
@@ -81,19 +90,29 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (code.length !== 6) {
         return { ok: false, error: "Please enter the 6-digit code" };
       }
-      if (!pendingPhone) {
+      if (!confirmationRef.current) {
         return { ok: false, error: "No code was sent. Please request a new one." };
       }
-      const result = await api.verifyOtp(pendingPhone, code);
-      if (result.error) return { ok: false, error: result.error };
-      if (!result.data) return { ok: false, error: "No response from server" };
+      try {
+        const credential = await confirmationRef.current.confirm(code);
+        if (!credential?.user) {
+          return { ok: false, error: "Verification failed. Please try again." };
+        }
+        const idToken = await credential.user.getIdToken();
+        const result = await api.firebaseVerify(idToken);
+        if (result.error) return { ok: false, error: result.error };
+        if (!result.data) return { ok: false, error: "No response from server" };
 
-      const { token: jwt, user: serverUser } = result.data;
-      await persist(serverUser, jwt);
-      setPendingPhone(null);
-      return { ok: true };
+        confirmationRef.current = null;
+        setPendingPhone(null);
+        await persist(result.data.user, result.data.token);
+        return { ok: true };
+      } catch (err: unknown) {
+        const msg = err instanceof Error ? err.message : "Incorrect code. Please try again.";
+        return { ok: false, error: msg };
+      }
     },
-    [pendingPhone, persist],
+    [persist],
   );
 
   const setRole = useCallback(
@@ -123,6 +142,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   );
 
   const signOut = useCallback(async () => {
+    await auth().signOut().catch(() => {});
     await persist(null, null);
   }, [persist]);
 
