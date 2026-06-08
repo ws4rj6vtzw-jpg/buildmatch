@@ -46,7 +46,7 @@ export function ProModal({ visible, onUpgrade, onClose, contextMessage }: Props)
               </Text>
             </View>
             <View style={{ alignItems: "flex-end" }}>
-              <Text style={[styles.price, { color: colors.accent }]}>£9.90</Text>
+              <Text style={[styles.price, { color: colors.accent }]}>£9.99</Text>
               <Text style={[styles.priceUnit, { color: colors.mutedForeground }]}>/month</Text>
             </View>
           </View>
@@ -81,7 +81,7 @@ export function ProModal({ visible, onUpgrade, onClose, contextMessage }: Props)
           </Pressable>
 
           <Text style={[styles.legal, { color: colors.mutedForeground }]}>
-            £9.90/month after trial. Cancel any time from your profile.
+            £9.99/month after trial. Cancel any time from your profile.
           </Text>
 
           <Pressable onPress={onClose} style={{ alignSelf: "center" }}>
