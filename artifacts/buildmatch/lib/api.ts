@@ -96,4 +96,37 @@ export const api = {
 
   redeemPromo: (code: string) =>
     request<{ success: boolean; spotsLeft: number }>("POST", "/promo/redeem", { code }),
+
+  // ── Payments / Placements ────────────────────────────────────────────────
+  getPaymentMethod: () =>
+    request<{
+      hasCard: boolean;
+      card?: { brand: string; last4: string; expMonth: number; expYear: number } | null;
+    }>("GET", "/payments/payment-method"),
+
+  createSetupIntent: () =>
+    request<{ clientSecret: string; publishableKey: string; customerId: string }>(
+      "POST",
+      "/payments/setup-intent",
+    ),
+
+  confirmHire: (body: { matchId?: string; workerId: string; tier: string }) =>
+    request<{
+      success: boolean;
+      placementId: string;
+      charged: boolean;
+      amountPence: number;
+      status?: string;
+    }>("POST", "/payments/confirm-hire", body),
+
+  getPlacements: () =>
+    request<Array<{
+      id: string;
+      workerId: string;
+      matchId?: string;
+      amountPence: number;
+      tier: string;
+      status: string;
+      createdAt: string;
+    }>>("GET", "/payments/placements"),
 };

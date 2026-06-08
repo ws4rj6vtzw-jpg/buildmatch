@@ -20,6 +20,8 @@
     "jsonwebtoken": "^9.0.3",
     "pino": "^9",
     "pino-http": "^10",
+    "stripe": "^17",
+    "stripe-replit-sync": "^0",
     "twilio": "^6.0.0"
   },
   "devDependencies": {

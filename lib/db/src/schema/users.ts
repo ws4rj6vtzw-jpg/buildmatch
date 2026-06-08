@@ -32,6 +32,7 @@ export const usersTable = pgTable("users", {
   completedJobs: integer("completed_jobs").default(0),
   isPro: boolean("is_pro").default(false),
   profileComplete: boolean("profile_complete").default(false),
+  stripeCustomerId: text("stripe_customer_id"),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow().$onUpdate(() => new Date()),
 });

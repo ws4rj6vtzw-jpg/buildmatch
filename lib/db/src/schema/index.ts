@@ -5,3 +5,4 @@ export * from "./matches";
 export * from "./messages";
 export * from "./push_tokens";
 export * from "./promo_redemptions";
+export * from "./placements";

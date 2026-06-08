@@ -34,15 +34,18 @@ export default function MatchesScreen() {
         const lastMsg = messages
           .filter((msg) => msg.matchId === m.id)
           .slice(-1)[0];
+        const primaryTrade = (partner as { primaryTrade?: string } | undefined)?.primaryTrade;
         return {
           id: m.id,
+          workerId: isWorker ? undefined : m.workerId,
           name: partner?.name ?? "BuildMatch user",
           photo: partner?.photo,
           subtitle: job
             ? job.title
             : isWorker
             ? `${(partner as { suburb?: string } | undefined)?.suburb ?? ""}`
-            : (partner as { primaryTrade?: string } | undefined)?.primaryTrade ?? "",
+            : primaryTrade ?? "",
+          workerTrade: primaryTrade,
           preview: lastMsg?.text ?? "Say hello — start the conversation",
           ts: lastMsg?.ts ?? m.createdAt,
           unread: unreadCount(m.id),
@@ -79,49 +82,72 @@ export default function MatchesScreen() {
           </View>
         }
         renderItem={({ item }) => (
-          <Pressable
-            onPress={() => router.push(`/chat/${item.id}`)}
-            style={({ pressed }) => [styles.row, { opacity: pressed ? 0.7 : 1 }]}
-          >
-            <Avatar uri={item.photo} name={item.name} size={52} />
-            <View style={styles.rowText}>
-              <View style={styles.rowTop}>
-                <Text style={[styles.name, { color: colors.foreground }]} numberOfLines={1}>
-                  {item.name}
-                </Text>
-                <Text style={[styles.time, { color: colors.mutedForeground }]}>
-                  {formatTime(item.ts)}
-                </Text>
-              </View>
-              {item.subtitle ? (
-                <Text style={[styles.subtitle, { color: colors.primary }]} numberOfLines={1}>
-                  {item.subtitle}
-                </Text>
-              ) : null}
-              <View style={styles.previewRow}>
-                <Text
-                  style={[
-                    styles.preview,
-                    {
-                      color: item.unread > 0 ? colors.foreground : colors.mutedForeground,
-                      fontFamily:
-                        item.unread > 0 ? "PlusJakartaSans_600SemiBold" : "PlusJakartaSans_400Regular",
-                    },
-                  ]}
-                  numberOfLines={1}
-                >
-                  {item.preview}
-                </Text>
-                {item.unread > 0 ? (
-                  <View style={[styles.unreadDot, { backgroundColor: colors.primary }]}>
-                    <Text style={[styles.unreadText, { color: colors.primaryForeground }]}>
-                      {item.unread > 9 ? "9+" : item.unread}
-                    </Text>
-                  </View>
+          <View style={styles.rowOuter}>
+            <Pressable
+              onPress={() => router.push(`/chat/${item.id}`)}
+              style={({ pressed }) => [styles.row, { opacity: pressed ? 0.7 : 1, flex: 1 }]}
+            >
+              <Avatar uri={item.photo} name={item.name} size={52} />
+              <View style={styles.rowText}>
+                <View style={styles.rowTop}>
+                  <Text style={[styles.name, { color: colors.foreground }]} numberOfLines={1}>
+                    {item.name}
+                  </Text>
+                  <Text style={[styles.time, { color: colors.mutedForeground }]}>
+                    {formatTime(item.ts)}
+                  </Text>
+                </View>
+                {item.subtitle ? (
+                  <Text style={[styles.subtitle, { color: colors.primary }]} numberOfLines={1}>
+                    {item.subtitle}
+                  </Text>
                 ) : null}
+                <View style={styles.previewRow}>
+                  <Text
+                    style={[
+                      styles.preview,
+                      {
+                        color: item.unread > 0 ? colors.foreground : colors.mutedForeground,
+                        fontFamily:
+                          item.unread > 0 ? "PlusJakartaSans_600SemiBold" : "PlusJakartaSans_400Regular",
+                      },
+                    ]}
+                    numberOfLines={1}
+                  >
+                    {item.preview}
+                  </Text>
+                  {item.unread > 0 ? (
+                    <View style={[styles.unreadDot, { backgroundColor: colors.primary }]}>
+                      <Text style={[styles.unreadText, { color: colors.primaryForeground }]}>
+                        {item.unread > 9 ? "9+" : item.unread}
+                      </Text>
+                    </View>
+                  ) : null}
+                </View>
               </View>
-            </View>
-          </Pressable>
+            </Pressable>
+            {!isWorker && item.workerId ? (
+              <Pressable
+                style={({ pressed }) => [
+                  styles.hireBtn,
+                  { backgroundColor: colors.primary, opacity: pressed ? 0.75 : 1 },
+                ]}
+                onPress={() =>
+                  router.push({
+                    pathname: "/confirm-hire",
+                    params: {
+                      matchId: item.id,
+                      workerId: item.workerId!,
+                      workerName: item.name,
+                      workerTrade: item.workerTrade ?? "",
+                    },
+                  })
+                }
+              >
+                <Text style={[styles.hireBtnText, { color: colors.primaryForeground }]}>Hire</Text>
+              </Pressable>
+            ) : null}
+          </View>
         )}
       />
     </View>
@@ -150,11 +176,25 @@ const styles = StyleSheet.create({
     flexGrow: 1,
   },
   sep: { height: 1, marginLeft: 72, opacity: 0.5 },
+  rowOuter: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
   row: {
     flexDirection: "row",
     alignItems: "center",
     gap: 14,
     paddingVertical: 12,
+  },
+  hireBtn: {
+    borderRadius: 20,
+    paddingHorizontal: 14,
+    paddingVertical: 7,
+    marginLeft: 8,
+  },
+  hireBtnText: {
+    fontSize: 13,
+    fontFamily: "PlusJakartaSans_700Bold",
   },
   rowText: { flex: 1, gap: 2 },
   rowTop: {

@@ -7,6 +7,7 @@ import swipesRouter from "./swipes";
 import matchesRouter from "./matches";
 import pushTokensRouter from "./pushTokens";
 import promoRouter from "./promo";
+import paymentsRouter from "./payments";
 
 const router: IRouter = Router();
 
@@ -18,5 +19,6 @@ router.use(swipesRouter);
 router.use(matchesRouter);
 router.use(pushTokensRouter);
 router.use(promoRouter);
+router.use(paymentsRouter);
 
 export default router;
