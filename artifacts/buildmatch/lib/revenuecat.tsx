@@ -5,7 +5,8 @@ import { api } from "./api";
 
 export const RC_ENTITLEMENT = "BuildMatch Pro";
 const WORKER_PACKAGE_ID = "$rc_monthly";
-const BUILDER_PACKAGE_ID = "$rc_annual";
+export const BUILDER_BASIC_PACKAGE_ID = "buildmatch_builder_basic";
+export const BUILDER_PRO_PACKAGE_ID = "buildmatch_builder_pro";
 
 export function initializeRevenueCat() {
   const apiKey = Platform.select({
@@ -33,6 +34,7 @@ type SubscriptionState = {
   isPro: boolean;
   isLoading: boolean;
   purchaseWorkerPro: () => Promise<void>;
+  purchaseBuilderBasic: () => Promise<void>;
   purchaseBuilderPro: () => Promise<void>;
   restorePurchases: () => Promise<void>;
   redeemPromoCode: (code: string) => Promise<{ error?: string }>;
@@ -42,6 +44,7 @@ const SubscriptionContext = createContext<SubscriptionState>({
   isPro: false,
   isLoading: true,
   purchaseWorkerPro: async () => {},
+  purchaseBuilderBasic: async () => {},
   purchaseBuilderPro: async () => {},
   restorePurchases: async () => {},
   redeemPromoCode: async () => ({}),
@@ -73,17 +76,13 @@ export function SubscriptionProvider({
 
   async function checkSubscription() {
     try {
-      // Check RevenueCat entitlement
       const info = await Purchases.getCustomerInfo();
       const rcActive = info.entitlements.active[RC_ENTITLEMENT] != null;
-
-      // Also check server-side promo redemption (FOUNDER20 campaign)
       const { data: promoData } = await api.getPromoStatus();
       const promoActive = promoData?.hasPromo ?? false;
-
       setProWithCallback(rcActive || promoActive);
     } catch {
-      // not fatal — may fail in simulator without a configured store
+      // not fatal
     } finally {
       setIsLoading(false);
     }
@@ -119,8 +118,13 @@ export function SubscriptionProvider({
     [purchasePackageById],
   );
 
+  const purchaseBuilderBasic = useCallback(
+    () => purchasePackageById(BUILDER_BASIC_PACKAGE_ID),
+    [purchasePackageById],
+  );
+
   const purchaseBuilderPro = useCallback(
-    () => purchasePackageById(BUILDER_PACKAGE_ID),
+    () => purchasePackageById(BUILDER_PRO_PACKAGE_ID),
     [purchasePackageById],
   );
 
@@ -130,7 +134,7 @@ export function SubscriptionProvider({
       const active = info.entitlements.active[RC_ENTITLEMENT] != null;
       setProWithCallback(active);
       if (active) {
-        Alert.alert("Restored", "Your Pro subscription has been restored.");
+        Alert.alert("Restored", "Your subscription has been restored.");
       } else {
         Alert.alert("No purchases found", "No active subscription to restore.");
       }
@@ -153,7 +157,7 @@ export function SubscriptionProvider({
 
   return (
     <SubscriptionContext.Provider
-      value={{ isPro, isLoading, purchaseWorkerPro, purchaseBuilderPro, restorePurchases, redeemPromoCode }}
+      value={{ isPro, isLoading, purchaseWorkerPro, purchaseBuilderBasic, purchaseBuilderPro, restorePurchases, redeemPromoCode }}
     >
       {children}
     </SubscriptionContext.Provider>

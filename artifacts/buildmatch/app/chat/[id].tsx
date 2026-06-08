@@ -35,7 +35,7 @@ export default function ChatScreen() {
     sendMessage,
     markMatchRead,
   } = useData();
-  const { isPro, purchaseBuilderPro } = useSubscription();
+  const { isPro, purchaseBuilderBasic, purchaseBuilderPro } = useSubscription();
   const [draft, setDraft] = useState("");
   const [paywallVisible, setPaywallVisible] = useState(false);
 
@@ -340,8 +340,12 @@ export default function ChatScreen() {
       <PaywallModal
         visible={paywallVisible}
         usedCount={matchCount}
-        onGoPro={async (_tier: "basic" | "pro") => {
-          await purchaseBuilderPro();
+        onGoPro={async (tier: "basic" | "pro") => {
+          if (tier === "basic") {
+            await purchaseBuilderBasic();
+          } else {
+            await purchaseBuilderPro();
+          }
           setPaywallVisible(false);
         }}
         onClose={() => setPaywallVisible(false)}

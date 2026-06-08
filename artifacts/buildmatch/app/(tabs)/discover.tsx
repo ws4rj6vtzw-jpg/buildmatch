@@ -68,7 +68,7 @@ export default function DiscoverScreen() {
   const [proModalVisible, setProModalVisible] = useState(false);
   const [proModalContext, setProModalContext] = useState<string | undefined>(undefined);
 
-  const { isPro, purchaseBuilderPro, purchaseWorkerPro } = useSubscription();
+  const { isPro, purchaseBuilderBasic, purchaseBuilderPro, purchaseWorkerPro } = useSubscription();
 
   const isWorker = user?.role === "worker";
   const radius = user?.travelRadiusMiles ?? DEFAULT_RADIUS;
@@ -237,9 +237,13 @@ export default function DiscoverScreen() {
     }
   };
 
-  const handleBuilderGoPro = async (_tier: "basic" | "pro") => {
+  const handleBuilderGoPro = async (tier: "basic" | "pro") => {
     setPaywallVisible(false);
-    await purchaseBuilderPro();
+    if (tier === "basic") {
+      await purchaseBuilderBasic();
+    } else {
+      await purchaseBuilderPro();
+    }
     if (pendingSwipe) {
       completeSwipe(pendingSwipe.id);
       setPendingSwipe(null);

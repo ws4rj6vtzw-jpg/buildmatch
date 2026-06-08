@@ -17,7 +17,6 @@ export const modules: ModuleMap = {
   "./components/mockups/app-icons/TwoWorkers.tsx": () => import("../components/mockups/app-icons/TwoWorkers.tsx"),
   "./components/mockups/app-icons/WeldSpark.tsx": () => import("../components/mockups/app-icons/WeldSpark.tsx"),
   "./components/mockups/app-icons/Wordmark.tsx": () => import("../components/mockups/app-icons/Wordmark.tsx"),
-  "./components/mockups/brand/LogoExport.tsx": () => import("../components/mockups/brand/LogoExport.tsx"),
   "./components/mockups/buildmatch-palettes/Cinnabar.tsx": () => import("../components/mockups/buildmatch-palettes/Cinnabar.tsx"),
   "./components/mockups/buildmatch-palettes/Forest.tsx": () => import("../components/mockups/buildmatch-palettes/Forest.tsx"),
   "./components/mockups/buildmatch-palettes/LightTheme.tsx": () => import("../components/mockups/buildmatch-palettes/LightTheme.tsx"),
@@ -26,5 +25,6 @@ export const modules: ModuleMap = {
   "./components/mockups/font-options/BarlowSemiCondensed.tsx": () => import("../components/mockups/font-options/BarlowSemiCondensed.tsx"),
   "./components/mockups/font-options/PlusJakartaSans.tsx": () => import("../components/mockups/font-options/PlusJakartaSans.tsx"),
   "./components/mockups/font-options/Syne.tsx": () => import("../components/mockups/font-options/Syne.tsx"),
-  "./components/mockups/font-options/Urbanist.tsx": () => import("../components/mockups/font-options/Urbanist.tsx")
+  "./components/mockups/font-options/Urbanist.tsx": () => import("../components/mockups/font-options/Urbanist.tsx"),
+  "./components/mockups/brand/LogoExport.tsx": () => import("../components/mockups/brand/LogoExport.tsx")
 };
