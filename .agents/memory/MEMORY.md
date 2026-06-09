@@ -3,5 +3,5 @@
 - [EAS submit - app-specific password](eas-submit-auth.md) — use EXPO_APPLE_APP_SPECIFIC_PASSWORD env var for non-interactive iOS submit; ASC API key route kept failing from Apple portal
 - [GitHub repo](github-repo.md) — repo is github.com/ws4rj6vtzw-jpg/buildmatch; PAT stored as GITHUB_PERSONAL_ACCESS_TOKEN secret; push via inline URL (git remote add is blocked in main agent)
 - [Stripe connector fields + esbuild](stripe-connector-fields.md) — use 'secret'/'publishable' not 'secret_key'/'publishable_key'; must externalise stripe-replit-sync in build.mjs or migrations silently skip
-- [Firebase Phone Auth iOS crash fix](firebase-phone-auth-ios.md) — crash caused by missing REVERSED_CLIENT_ID URL scheme; fix: enable Google Sign-In in Firebase to generate OAuth client, download new plist, add URL scheme to app.json infoPlist.CFBundleURLTypes
 - [EAS build/submit from main agent](eas-cli-main-agent.md) — eas build fails in main agent (git archive triggers destructive-git block); eas submit --id <buildId> works fine; builds can be queued via EAS CLI before git block kills the process
+- [Phone auth — API OTP not Firebase](phone-auth-api-otp.md) — AuthContext must use api.sendOtp/api.verifyOtp, NOT Firebase signInWithPhoneNumber; Firebase triggers reCAPTCHA on iOS (no APNs) which crashes via expo-router +not-found

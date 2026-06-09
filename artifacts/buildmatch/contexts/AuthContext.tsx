@@ -5,11 +5,8 @@ import React, {
   useContext,
   useEffect,
   useMemo,
-  useRef,
   useState,
 } from "react";
-import auth from "@react-native-firebase/auth";
-import type { FirebaseAuthTypes } from "@react-native-firebase/auth";
 
 import type { AuthUser, Role } from "@/types";
 import { api, setAuthToken } from "@/lib/api";
@@ -37,7 +34,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [token, setToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [pendingPhone, setPendingPhone] = useState<string | null>(null);
-  const confirmationRef = useRef<FirebaseAuthTypes.ConfirmationResult | null>(null);
 
   useEffect(() => {
     Promise.all([
@@ -76,8 +72,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const sendOtp = useCallback(async (phone: string) => {
     setPendingPhone(phone);
     try {
-      const confirmation = await auth().signInWithPhoneNumber(phone);
-      confirmationRef.current = confirmation;
+      const result = await api.sendOtp(phone);
+      if (result.error) return { ok: false, error: result.error };
       return { ok: true };
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Failed to send code";
@@ -90,20 +86,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (code.length !== 6) {
         return { ok: false, error: "Please enter the 6-digit code" };
       }
-      if (!confirmationRef.current) {
+      if (!pendingPhone) {
         return { ok: false, error: "No code was sent. Please request a new one." };
       }
       try {
-        const credential = await confirmationRef.current.confirm(code);
-        if (!credential?.user) {
-          return { ok: false, error: "Verification failed. Please try again." };
-        }
-        const idToken = await credential.user.getIdToken();
-        const result = await api.firebaseVerify(idToken);
+        const result = await api.verifyOtp(pendingPhone, code);
         if (result.error) return { ok: false, error: result.error };
         if (!result.data) return { ok: false, error: "No response from server" };
 
-        confirmationRef.current = null;
         setPendingPhone(null);
         await persist(result.data.user, result.data.token);
         return { ok: true };
@@ -112,7 +102,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return { ok: false, error: msg };
       }
     },
-    [persist],
+    [pendingPhone, persist],
   );
 
   const setRole = useCallback(
@@ -131,16 +121,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (!user) return;
       const merged = { ...user, ...patch };
       const isWorker = merged.role === "worker";
-      // Compute profileComplete client-side (server doesn't set this field)
       merged.profileComplete = isWorker
         ? !!(merged.fullName && merged.primaryTrade && merged.suburb)
         : !!(merged.companyName && merged.contactName && merged.suburb);
       await persist(merged, token);
       const result = await api.updateMe(patch);
       if (result.data) {
-        // Always recompute profileComplete from server data — the server response
-        // does not include this field, so persisting it raw would reset it to falsy
-        // and redirect the user to the profile setup screen on next restart.
         const srv = result.data;
         const isW = srv.role === "worker";
         srv.profileComplete = isW
@@ -153,7 +139,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   );
 
   const signOut = useCallback(async () => {
-    await auth().signOut().catch(() => {});
     await persist(null, null);
   }, [persist]);
 
