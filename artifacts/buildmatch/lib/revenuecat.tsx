@@ -18,17 +18,16 @@ const ELITE_PRODUCT = "buildmatch_builder_elite_monthly";
 
 export type BuilderTier = "none" | "basic" | "pro" | "elite";
 
+// Public SDK keys — safe to commit (EXPO_PUBLIC_ = intentionally client-facing)
+const RC_KEY_IOS = "appl_WSDfkTfVGrEkQNAVAfWDnyujbSy";
+const RC_KEY_ANDROID = "goog_jnCqdlxFCpViUbTIHiecXKOFhpB";
+const RC_KEY_TEST = "test_iEMJeiyqjrcBmTDBalrhZvaxiEC";
+
 export function initializeRevenueCat() {
   const apiKey = Platform.select({
-    ios:
-      process.env.EXPO_PUBLIC_REVENUECAT_IOS_API_KEY ??
-      process.env.EXPO_PUBLIC_REVENUECAT_TEST_API_KEY ??
-      "",
-    android:
-      process.env.EXPO_PUBLIC_REVENUECAT_ANDROID_API_KEY ??
-      process.env.EXPO_PUBLIC_REVENUECAT_TEST_API_KEY ??
-      "",
-    default: process.env.EXPO_PUBLIC_REVENUECAT_TEST_API_KEY ?? "",
+    ios: RC_KEY_IOS,
+    android: RC_KEY_ANDROID,
+    default: RC_KEY_TEST,
   });
 
   if (!apiKey) return;
@@ -116,6 +115,9 @@ export function SubscriptionProvider({
   const purchasePackageById = useCallback(
     async (packageId: string): Promise<boolean> => {
       try {
+        // Safety-net: re-run configure before every purchase in case
+        // module-level init was skipped (embedded bundle without baked keys)
+        initializeRevenueCat();
         const offerings = await Purchases.getOfferings();
         const offering = offerings.current;
         if (!offering) throw new Error("No offering available");
@@ -163,6 +165,7 @@ export function SubscriptionProvider({
 
   const restorePurchases = useCallback(async () => {
     try {
+      initializeRevenueCat();
       const info = await Purchases.restorePurchases();
       const active = info.entitlements.active[RC_ENTITLEMENT] != null;
       setProWithCallback(active);
