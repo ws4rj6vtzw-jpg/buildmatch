@@ -5,6 +5,7 @@ import * as schema from "./schema";
 const { Pool } = pg;
 
 const connectionString = process.env.RDS_DATABASE_URL ?? process.env.DATABASE_URL;
+const isRds = !!process.env.RDS_DATABASE_URL;
 
 if (!connectionString) {
   throw new Error(
@@ -12,7 +13,11 @@ if (!connectionString) {
   );
 }
 
-export const pool = new Pool({ connectionString });
+export const pool = new Pool({
+  connectionString,
+  ssl: isRds ? { rejectUnauthorized: false } : undefined,
+});
+
 export const db = drizzle(pool, { schema });
 
 export * from "./schema";

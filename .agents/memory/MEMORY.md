@@ -2,6 +2,7 @@
 - [iOS Firebase static frameworks fix](ios-firebase-plugin.md) — plugin at artifacts/buildmatch/plugins/withFirebaseStaticFrameworks.js must not import @expo/config-plugins; modifies config.mods.ios.dangerous directly
 - [EAS submit - app-specific password](eas-submit-auth.md) — use EXPO_APPLE_APP_SPECIFIC_PASSWORD env var for non-interactive iOS submit; ASC API key route kept failing from Apple portal
 - [GitHub repo](github-repo.md) — repo is github.com/ws4rj6vtzw-jpg/buildmatch; PAT stored as GITHUB_PERSONAL_ACCESS_TOKEN secret; push via inline URL (git remote add is blocked in main agent)
+- [RDS SSL migration](rds-ssl-migration.md) — drizzle-kit ignores dbCredentials.ssl; use PGSSLMODE=require + NODE_TLS_REJECT_UNAUTHORIZED=0 env vars for push commands
 - [Stripe connector fields + esbuild](stripe-connector-fields.md) — use 'secret'/'publishable' not 'secret_key'/'publishable_key'; must externalise stripe-replit-sync in build.mjs or migrations silently skip
 - [EAS build/submit from main agent](eas-cli-main-agent.md) — eas build fails in main agent (git archive triggers destructive-git block); eas submit --id <buildId> works fine; builds can be queued via EAS CLI before git block kills the process
 - [Phone auth — API OTP not Firebase](phone-auth-api-otp.md) — AuthContext must use api.sendOtp/api.verifyOtp, NOT Firebase signInWithPhoneNumber; Firebase triggers reCAPTCHA on iOS (no APNs) which crashes via expo-router +not-found
