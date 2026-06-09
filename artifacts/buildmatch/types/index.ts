@@ -100,7 +100,8 @@ export type UploadedDocument = {
   id: string;
   category: string;   // e.g. "CSCS Card", "Public Liability Insurance"
   section: "ticket" | "insurance" | "business";
-  uri: string;        // local image URI
+  uri: string;        // local image URI (used as preview)
+  url?: string;       // S3 public URL after upload
   uploadedAt: number;
   verified: false;    // always false in MVP — backend review pending
 };

@@ -97,6 +97,14 @@ export const api = {
   redeemPromo: (code: string) =>
     request<{ success: boolean; spotsLeft: number }>("POST", "/promo/redeem", { code }),
 
+  // ── File uploads ─────────────────────────────────────────────────────────
+  presignUpload: (body: { filename: string; contentType: string; folder: string }) =>
+    request<{ uploadUrl: string; publicUrl: string; key: string }>(
+      "POST",
+      "/upload/presign",
+      body,
+    ),
+
   // ── Payments / Placements ────────────────────────────────────────────────
   getPaymentMethod: () =>
     request<{
