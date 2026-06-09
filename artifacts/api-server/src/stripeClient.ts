@@ -36,7 +36,11 @@ async function fetchConnSettings(): Promise<ConnSettings> {
   }
 
   const data = (await resp.json()) as ConnResp;
-  return data.items?.[0]?.settings ?? {};
+  const items = data.items ?? [];
+  // Prefer live connection (sk_live_) over test; fall back to first available
+  const live = items.find((i) => i.settings?.secret?.startsWith('sk_live_'));
+  const chosen = live ?? items[0];
+  return chosen?.settings ?? {};
 }
 
 async function getStripeCredentials(): Promise<{ secretKey: string; webhookSecret?: string }> {
