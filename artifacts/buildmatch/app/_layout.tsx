@@ -127,6 +127,9 @@ function UpdateBridge({ children }: { children: React.ReactNode }) {
       }
     }
 
+    // Check on mount so a fresh install picks up OTA immediately
+    checkForUpdate();
+
     const sub = AppState.addEventListener("change", (next: AppStateStatus) => {
       if (appState.current.match(/inactive|background/) && next === "active") {
         checkForUpdate();
