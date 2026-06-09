@@ -131,12 +131,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (!user) return;
       const merged = { ...user, ...patch };
       const isWorker = merged.role === "worker";
+      // Compute profileComplete client-side (server doesn't set this field)
       merged.profileComplete = isWorker
         ? !!(merged.fullName && merged.primaryTrade && merged.suburb)
         : !!(merged.companyName && merged.contactName && merged.suburb);
       await persist(merged, token);
       const result = await api.updateMe(patch);
-      if (result.data) await persist(result.data, token);
+      if (result.data) {
+        // Always recompute profileComplete from server data — the server response
+        // does not include this field, so persisting it raw would reset it to falsy
+        // and redirect the user to the profile setup screen on next restart.
+        const srv = result.data;
+        const isW = srv.role === "worker";
+        srv.profileComplete = isW
+          ? !!(srv.fullName && srv.primaryTrade && srv.suburb)
+          : !!(srv.companyName && srv.contactName && srv.suburb);
+        await persist(srv, token);
+      }
     },
     [user, token, persist],
   );

@@ -9,6 +9,7 @@ import {
   Pressable,
   StyleSheet,
   Text,
+  TextInput,
   View,
 } from "react-native";
 
@@ -74,6 +75,7 @@ export default function DiscoverScreen() {
   const radius = user?.travelRadiusMiles ?? DEFAULT_RADIUS;
   const radiusLabel = `${radius} mi`;
   const [radiusDraft, setRadiusDraft] = useState(radius);
+  const [suburbDraft, setSuburbDraft] = useState(user?.suburb ?? "");
 
   const builderMatchCount = useMemo(
     () => matches.filter((m) => m.builderId === user?.id).length,
@@ -527,7 +529,16 @@ export default function DiscoverScreen() {
       </Modal>
 
       {/* Radius modal */}
-      <Modal transparent animationType="fade" visible={radiusOpen} onRequestClose={() => setRadiusOpen(false)}>
+      <Modal
+        transparent
+        animationType="fade"
+        visible={radiusOpen}
+        onRequestClose={() => setRadiusOpen(false)}
+        onShow={() => {
+          setRadiusDraft(user?.travelRadiusMiles ?? DEFAULT_RADIUS);
+          setSuburbDraft(user?.suburb ?? "");
+        }}
+      >
         <Pressable style={styles.modalBg} onPress={() => setRadiusOpen(false)}>
           <Pressable
             onPress={(e) => e.stopPropagation()}
@@ -558,14 +569,33 @@ export default function DiscoverScreen() {
               <Text style={[styles.radiusSliderEnd, { color: colors.mutedForeground }]}>1 mi</Text>
               <Text style={[styles.radiusSliderEnd, { color: colors.mutedForeground }]}>100 mi</Text>
             </View>
+
+            <Text style={[styles.radiusBaseLabel, { color: colors.mutedForeground }]}>
+              BASE LOCATION
+            </Text>
+            <TextInput
+              value={suburbDraft}
+              onChangeText={setSuburbDraft}
+              placeholder="Your suburb or town"
+              placeholderTextColor={colors.mutedForeground}
+              style={[
+                styles.radiusBaseInput,
+                { color: colors.foreground, backgroundColor: colors.background, borderColor: colors.border },
+              ]}
+            />
+
             <Pressable
               onPress={() => {
-                updateProfile({ travelRadiusMiles: radiusDraft });
+                const patch: { travelRadiusMiles: number; suburb?: string } = {
+                  travelRadiusMiles: radiusDraft,
+                };
+                if (suburbDraft.trim()) patch.suburb = suburbDraft.trim();
+                updateProfile(patch);
                 setRadiusOpen(false);
               }}
               style={({ pressed }) => [
                 styles.modalBtn,
-                { backgroundColor: colors.primary, opacity: pressed ? 0.85 : 1, marginTop: 18 },
+                { backgroundColor: colors.primary, opacity: pressed ? 0.85 : 1, marginTop: 14 },
               ]}
             >
               <Text style={[styles.modalBtnText, { color: colors.primaryForeground }]}>Done</Text>
@@ -836,6 +866,23 @@ const styles = StyleSheet.create({
   },
   radiusSliderEnd: {
     fontSize: 11,
+    fontFamily: "PlusJakartaSans_500Medium",
+  },
+  radiusBaseLabel: {
+    fontSize: 11,
+    fontFamily: "PlusJakartaSans_600SemiBold",
+    letterSpacing: 0.6,
+    marginTop: 16,
+    marginBottom: 6,
+    alignSelf: "flex-start",
+  },
+  radiusBaseInput: {
+    width: "100%",
+    borderWidth: 1,
+    borderRadius: 10,
+    paddingHorizontal: 13,
+    paddingVertical: 11,
+    fontSize: 15,
     fontFamily: "PlusJakartaSans_500Medium",
   },
   radiusBtn: {

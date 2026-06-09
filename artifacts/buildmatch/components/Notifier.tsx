@@ -7,7 +7,7 @@ import { useNotify } from "@/contexts/NotificationContext";
 
 export function Notifier() {
   const { user } = useAuth();
-  const { matches, messages, workers, builders, jobs } = useData();
+  const { matches, messages, workers, builders, jobs, hydrated } = useData();
   const notify = useNotify();
   const pathname = usePathname();
   const seededRef = useRef(false);
@@ -15,15 +15,20 @@ export function Notifier() {
   const lastMessageId = useRef<string | null>(null);
   const meId = user?.id;
 
-  // Seed initial counts on first mount per user (avoid notifying for existing data)
+  // Reset seed flag whenever the user changes so a fresh session re-seeds
   useEffect(() => {
-    if (!meId) return;
     seededRef.current = false;
+  }, [meId]);
+
+  // Seed baseline counts only AFTER data has loaded from the API.
+  // Without `hydrated`, matches starts as [] → seeds count=0 → every existing
+  // match fires a "Connected!" toast on the next render when real data arrives.
+  useEffect(() => {
+    if (!meId || !hydrated || seededRef.current) return;
     lastMatchCount.current = matches.length;
     lastMessageId.current = messages[messages.length - 1]?.id ?? null;
     seededRef.current = true;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [meId]);
+  }, [meId, hydrated, matches, messages]);
 
   // New matches
   useEffect(() => {

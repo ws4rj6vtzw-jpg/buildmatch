@@ -37,6 +37,7 @@ type Persisted = {
 };
 
 type DataContextValue = Persisted & {
+  hydrated: boolean;
   swipeWorker: (
     workerId: string,
     direction: "right" | "left",
@@ -575,6 +576,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
   const value = useMemo<DataContextValue>(
     () => ({
       ...data,
+      hydrated,
       swipeWorker,
       swipeJob,
       swipeBuilder,
@@ -596,6 +598,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
     }),
     [
       data,
+      hydrated,
       swipeWorker,
       swipeJob,
       swipeBuilder,
