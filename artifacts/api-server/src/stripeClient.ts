@@ -2,9 +2,9 @@ import Stripe from 'stripe';
 import { StripeSync } from 'stripe-replit-sync';
 
 type ConnSettings = {
-  secret_key?: string;
+  secret?: string;
   webhook_secret?: string;
-  publishable_key?: string;
+  publishable?: string;
 };
 type ConnResp = { items?: Array<{ settings?: ConnSettings }> };
 
@@ -42,7 +42,7 @@ async function fetchConnSettings(): Promise<ConnSettings> {
 async function getStripeCredentials(): Promise<{ secretKey: string; webhookSecret?: string }> {
   const settings = await fetchConnSettings();
 
-  if (!settings.secret_key) {
+  if (!settings.secret) {
     throw new Error(
       'Stripe integration not connected or missing secret key. ' +
       'Connect Stripe via the Integrations tab first.'
@@ -50,14 +50,14 @@ async function getStripeCredentials(): Promise<{ secretKey: string; webhookSecre
   }
 
   return {
-    secretKey: settings.secret_key,
+    secretKey: settings.secret,
     webhookSecret: settings.webhook_secret,
   };
 }
 
 export async function getPublishableKey(): Promise<string> {
   const settings = await fetchConnSettings();
-  return settings.publishable_key ?? '';
+  return settings.publishable ?? '';
 }
 
 export async function getUncachableStripeClient(): Promise<Stripe> {

@@ -66,6 +66,7 @@ async function buildAll() {
       "@google-cloud/*",
       "@google/*",
       "googleapis",
+      "stripe-replit-sync",
       "firebase-admin",
       "@parcel/watcher",
       "@sentry/profiling-node",
