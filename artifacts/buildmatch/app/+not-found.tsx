@@ -1,45 +1,22 @@
-import { Link, Stack } from "expo-router";
-import { StyleSheet, Text, View } from "react-native";
+import { usePathname, useRouter } from "expo-router";
+import React, { useEffect } from "react";
+import { View } from "react-native";
 
-import { useColors } from "@/hooks/useColors";
+const FIREBASE_PATHS = ["/firebaseauth/", "/__/auth/"];
 
 export default function NotFoundScreen() {
-  const colors = useColors();
+  const router = useRouter();
+  const pathname = usePathname();
 
-  return (
-    <>
-      <Stack.Screen options={{ title: "Oops!" }} />
-      <View style={[styles.container, { backgroundColor: colors.background }]}>
-        <Text style={[styles.title, { color: colors.foreground }]}>
-          This screen doesn&apos;t exist.
-        </Text>
-
-        <Link href="/" style={styles.link}>
-          <Text style={[styles.linkText, { color: colors.primary }]}>
-            Go to home screen!
-          </Text>
-        </Link>
-      </View>
-    </>
+  const isFirebaseCallback = FIREBASE_PATHS.some((p) =>
+    pathname.startsWith(p)
   );
-}
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    padding: 20,
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: "bold",
-  },
-  link: {
-    marginTop: 15,
-    paddingVertical: 15,
-  },
-  linkText: {
-    fontSize: 14,
-  },
-});
+  useEffect(() => {
+    if (!isFirebaseCallback) {
+      router.replace("/");
+    }
+  }, [isFirebaseCallback]);
+
+  return <View style={{ flex: 1, backgroundColor: "#0E0F12" }} />;
+}
