@@ -309,6 +309,7 @@ export default function ReviewScreen() {
                 placeholder="E.g. Arrived on time, excellent brickwork..."
                 placeholderTextColor={colors.mutedForeground}
                 multiline
+                scrollEnabled={false}
                 maxLength={300}
                 style={[
                   styles.input,

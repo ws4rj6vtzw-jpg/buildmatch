@@ -2,12 +2,12 @@ import { router, Stack } from "expo-router";
 import React, { useState } from "react";
 import {
   Platform,
-  ScrollView,
   StyleSheet,
   Text,
   TextInput,
   View,
 } from "react-native";
+import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 
 import { Pill } from "@/components/Pill";
 import { PrimaryButton } from "@/components/PrimaryButton";
@@ -59,7 +59,7 @@ export default function PostJob() {
           headerTintColor: colors.foreground,
         }}
       />
-      <ScrollView
+      <KeyboardAwareScrollView
         contentContainerStyle={styles.content}
         keyboardShouldPersistTaps="handled"
       >
@@ -177,6 +177,7 @@ export default function PostJob() {
             value={description}
             onChangeText={setDescription}
             multiline
+            scrollEnabled={false}
             placeholder="Scope of work, site conditions, parking, anything a worker needs to know."
             placeholderTextColor={colors.mutedForeground}
             style={[
@@ -190,7 +191,7 @@ export default function PostJob() {
         <View style={{ height: 8 }} />
         <PrimaryButton label="Post job" onPress={onPost} disabled={!valid} />
         <View style={{ height: 40 }} />
-      </ScrollView>
+      </KeyboardAwareScrollView>
     </View>
   );
 }

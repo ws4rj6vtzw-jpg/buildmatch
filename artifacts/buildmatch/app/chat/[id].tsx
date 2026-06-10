@@ -318,6 +318,7 @@ export default function ChatScreen() {
               placeholderTextColor={colors.mutedForeground}
               style={[styles.input, { color: colors.foreground }]}
               multiline
+              scrollEnabled={false}
               maxLength={500}
             />
           </View>

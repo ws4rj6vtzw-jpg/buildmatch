@@ -326,6 +326,7 @@ export default function ProfileSetupScreen() {
             placeholder={isWorker ? "What do you specialise in?" : "What kind of work do you run?"}
             placeholderTextColor={colors.mutedForeground}
             multiline
+            scrollEnabled={false}
             style={[
               styles.input,
               styles.multiline,
