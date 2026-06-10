@@ -98,6 +98,34 @@ export const api = {
     request<{ success: boolean; spotsLeft: number }>("POST", "/promo/redeem", { code }),
 
   // ── File uploads ─────────────────────────────────────────────────────────
+  /**
+   * Upload a file to S3 via the API server (multipart/form-data).
+   * This is the recommended approach from React Native — FormData with a
+   * { uri, type, name } object is natively supported on both iOS and Android.
+   */
+  uploadFile: async (
+    localUri: string,
+    opts: { filename: string; contentType: string; folder: string },
+  ): Promise<{ data?: { publicUrl: string; viewUrl: string; key: string }; error?: string }> => {
+    try {
+      const formData = new FormData();
+      formData.append("file", { uri: localUri, type: opts.contentType, name: opts.filename } as unknown as Blob);
+      const headers: Record<string, string> = {};
+      if (_token) headers["Authorization"] = `Bearer ${_token}`;
+      const res = await fetch(
+        `${BASE_URL}/upload/file?folder=${encodeURIComponent(opts.folder)}`,
+        { method: "POST", headers, body: formData },
+      );
+      const json = (await res.json().catch(() => ({}))) as Record<string, unknown>;
+      if (!res.ok) {
+        return { error: (json["message"] as string) ?? `Upload error ${res.status}` };
+      }
+      return { data: json as { publicUrl: string; viewUrl: string; key: string } };
+    } catch {
+      return { error: "Could not reach the server. Check your connection." };
+    }
+  },
+
   presignUpload: (body: { filename: string; contentType: string; folder: string }) =>
     request<{ uploadUrl: string; viewUrl?: string; publicUrl?: string; key: string }>(
       "POST",
