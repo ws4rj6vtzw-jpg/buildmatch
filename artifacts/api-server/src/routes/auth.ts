@@ -1,8 +1,16 @@
 import { Router } from "express";
 import admin from "firebase-admin";
+import twilio from "twilio";
 import { eq } from "drizzle-orm";
 import { db, usersTable } from "@workspace/db";
 import { signToken } from "../lib/jwt";
+
+function getTwilioClient() {
+  const sid = process.env.TWILIO_ACCOUNT_SID;
+  const token = process.env.TWILIO_AUTH_TOKEN;
+  if (!sid || !token) return null;
+  return twilio(sid, token);
+}
 
 // Initialise Firebase Admin (uses Google's public keys — no service account needed for token verification)
 if (!admin.apps.length) {
@@ -68,12 +76,31 @@ router.post("/auth/send-otp", async (req, res): Promise<void> => {
   }
 
   const normalized = normalizePhone(phone);
+  const code = generateCode();
+  otpStore.set(normalized, { code, expiresAt: Date.now() + 10 * 60 * 1000 });
 
-  // MVP: store wildcard so any 6-digit code is accepted.
-  // Replace this block with a real SMS provider when ready.
-  req.log.info({ normalized }, "OTP requested — wildcard mode (any 6-digit code accepted)");
-  otpStore.set(normalized, { code: "*", expiresAt: Date.now() + 10 * 60 * 1000 });
-  res.json({ ok: true });
+  const client = getTwilioClient();
+  const fromNumber = process.env.TWILIO_PHONE_NUMBER;
+
+  if (client && fromNumber) {
+    try {
+      await client.messages.create({
+        body: `Your BuildMatch verification code is: ${code}. Valid for 10 minutes.`,
+        from: fromNumber,
+        to: normalized,
+      });
+      req.log.info({ normalized }, "OTP sent via Twilio SMS");
+      res.json({ ok: true });
+    } catch (err) {
+      req.log.error({ err }, "Twilio SMS failed");
+      res.status(500).json({ message: "Failed to send verification code. Please try again." });
+    }
+  } else {
+    // Fallback: wildcard mode — any 6-digit code accepted (no Twilio credentials configured)
+    otpStore.set(normalized, { code: "*", expiresAt: Date.now() + 10 * 60 * 1000 });
+    req.log.warn({ normalized }, "OTP requested — wildcard mode (Twilio not configured)");
+    res.json({ ok: true, dev: true });
+  }
 });
 
 // POST /api/auth/verify-otp → { token, user }
