@@ -2,7 +2,8 @@ import { api } from "@/lib/api";
 
 /**
  * Upload a local file URI to S3 via the API's presign endpoint.
- * Returns the public S3 URL on success, or throws on failure.
+ * Uses XMLHttpRequest for reliable binary upload in React Native.
+ * Returns the presigned view URL on success (7-day signed GET URL).
  */
 export async function uploadToS3(
   localUri: string,
@@ -11,17 +12,26 @@ export async function uploadToS3(
   const { data, error } = await api.presignUpload(opts);
   if (!data || error) throw new Error(error ?? "Could not get upload URL");
 
-  const blob = await (await fetch(localUri)).blob();
+  // Read the file as a blob via fetch (works with file:// URIs in React Native)
+  const fileResponse = await fetch(localUri);
+  const blob = await fileResponse.blob();
 
-  const uploadRes = await fetch(data.uploadUrl, {
-    method: "PUT",
-    headers: { "Content-Type": opts.contentType },
-    body: blob,
+  // Use XHR for the PUT upload — more reliable for binary data in React Native
+  await new Promise<void>((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open("PUT", data.uploadUrl);
+    xhr.setRequestHeader("Content-Type", opts.contentType);
+    xhr.onload = () => {
+      if (xhr.status >= 200 && xhr.status < 300) {
+        resolve();
+      } else {
+        reject(new Error(`S3 upload failed: ${xhr.status}`));
+      }
+    };
+    xhr.onerror = () => reject(new Error("S3 upload network error"));
+    xhr.send(blob);
   });
 
-  if (!uploadRes.ok) {
-    throw new Error(`S3 upload failed: ${uploadRes.status}`);
-  }
-
-  return data.publicUrl;
+  // Return the presigned GET URL (works on both public and private buckets)
+  return data.viewUrl;
 }

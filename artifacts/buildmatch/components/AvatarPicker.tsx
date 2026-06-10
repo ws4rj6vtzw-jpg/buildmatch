@@ -29,6 +29,10 @@ export function AvatarPicker({ uri, name, size = 88, onChange }: Props) {
   const colors = useColors();
   const [androidSheet, setAndroidSheet] = useState(false);
   const [uploading, setUploading] = useState(false);
+  // Local preview shown while upload is in progress — never saved to the server
+  const [localPreview, setLocalPreview] = useState<string | undefined>();
+
+  const displayUri = localPreview ?? uri;
 
   const pick = async (source: "camera" | "library") => {
     try {
@@ -62,22 +66,28 @@ export function AvatarPicker({ uri, name, size = 88, onChange }: Props) {
       const asset = result.assets[0];
       const localUri = asset.uri;
 
-      // Show the local image immediately while uploading
-      onChange(localUri);
+      // Show preview immediately from the local temp file while uploading
+      setLocalPreview(localUri);
       setUploading(true);
 
       try {
         const filename = asset.fileName ?? `avatar_${Date.now()}.jpg`;
         const contentType = asset.mimeType ?? "image/jpeg";
-        const s3Url = await uploadToS3(localUri, {
+        const viewUrl = await uploadToS3(localUri, {
           filename,
           contentType,
           folder: "avatars",
         });
-        // Replace local URI with permanent S3 URL
-        onChange(s3Url);
+        // Upload succeeded — commit the permanent S3 URL
+        setLocalPreview(undefined);
+        onChange(viewUrl);
       } catch {
-        // S3 upload failed — local URI stays, photo is still shown
+        // Upload failed — revert preview, don't persist anything
+        setLocalPreview(undefined);
+        Alert.alert(
+          "Upload failed",
+          "Couldn't save your photo. Please try again.",
+        );
       } finally {
         setUploading(false);
       }
@@ -118,7 +128,7 @@ export function AvatarPicker({ uri, name, size = 88, onChange }: Props) {
         style={({ pressed }) => ({ opacity: pressed || uploading ? 0.75 : 1 })}
       >
         <View>
-          <Avatar uri={uri} name={name} size={size} />
+          <Avatar uri={displayUri} name={name} size={size} />
           <View
             style={[
               styles.badge,

@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+import { S3Client, PutObjectCommand, GetObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { requireAuth } from "../middlewares/auth";
 
@@ -14,7 +14,9 @@ const s3 = new S3Client({
 });
 
 const BUCKET = process.env.AWS_S3_BUCKET!;
-const REGION = process.env.AWS_REGION ?? "us-east-1";
+
+// 7 days — maximum allowed for IAM user credentials
+const VIEW_URL_EXPIRY_SECONDS = 60 * 60 * 24 * 7;
 
 router.post("/upload/presign", requireAuth, async (req, res): Promise<void> => {
   const { filename, contentType, folder } = req.body as {
@@ -33,16 +35,23 @@ router.post("/upload/presign", requireAuth, async (req, res): Promise<void> => {
   const key = `${safeFolder}/${Date.now()}-${Math.random().toString(36).slice(2, 9)}.${ext}`;
 
   try {
-    const command = new PutObjectCommand({
+    const putCommand = new PutObjectCommand({
       Bucket: BUCKET,
       Key: key,
       ContentType: contentType,
     });
 
-    const uploadUrl = await getSignedUrl(s3, command, { expiresIn: 300 });
-    const publicUrl = `https://${BUCKET}.s3.${REGION}.amazonaws.com/${key}`;
+    const getCommand = new GetObjectCommand({
+      Bucket: BUCKET,
+      Key: key,
+    });
 
-    res.json({ uploadUrl, publicUrl, key });
+    const [uploadUrl, viewUrl] = await Promise.all([
+      getSignedUrl(s3, putCommand, { expiresIn: 300 }),
+      getSignedUrl(s3, getCommand, { expiresIn: VIEW_URL_EXPIRY_SECONDS }),
+    ]);
+
+    res.json({ uploadUrl, viewUrl, key });
   } catch (err) {
     req.log.error({ err }, "Failed to generate presigned URL");
     res.status(500).json({ message: "Failed to generate upload URL" });

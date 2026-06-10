@@ -99,7 +99,7 @@ export const api = {
 
   // ── File uploads ─────────────────────────────────────────────────────────
   presignUpload: (body: { filename: string; contentType: string; folder: string }) =>
-    request<{ uploadUrl: string; publicUrl: string; key: string }>(
+    request<{ uploadUrl: string; viewUrl: string; key: string }>(
       "POST",
       "/upload/presign",
       body,

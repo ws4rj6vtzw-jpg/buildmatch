@@ -130,7 +130,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const optimistic = { ...user, role };
       await persist(optimistic, token);
       const result = await api.updateMe({ role });
-      if (result.data) await persist(result.data, token);
+      if (result.data) {
+        // Merge server response with local state so locally-managed fields
+        // (documents, etc.) are never wiped by the server response
+        await persist({ ...optimistic, ...result.data }, token);
+      }
     },
     [user, token, persist],
   );
