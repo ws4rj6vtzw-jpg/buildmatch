@@ -14,7 +14,7 @@ import * as WebBrowser from "expo-web-browser";
 import { Feather } from "@expo/vector-icons";
 import { useColors } from "@/hooks/useColors";
 import { useAuth } from "@/contexts/AuthContext";
-import { useRevenueCat } from "@/lib/revenuecat";
+import { useSubscription } from "@/lib/revenuecat";
 import { api } from "@/lib/api";
 
 const DOMAIN = process.env.EXPO_PUBLIC_DOMAIN ?? "buildmatch.online";
@@ -44,7 +44,7 @@ function feeDisplay(pence: number): string {
 export default function ConfirmHireScreen() {
   const colors = useColors();
   const { user, token } = useAuth();
-  const { builderTier } = useRevenueCat();
+  const { builderTier } = useSubscription();
 
   const params = useLocalSearchParams<{
     matchId: string;
