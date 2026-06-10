@@ -115,11 +115,15 @@ export default function DocumentsScreen() {
     let s3Url: string | undefined;
     try {
       s3Url = await uploadToS3(localUri, { filename, contentType, folder: "documents" });
-    } catch {
-      // S3 upload failed — save with local URI as fallback
-    } finally {
+    } catch (err) {
       setUploading(null);
+      Alert.alert(
+        "Upload failed",
+        `Couldn't save your document. Please try again.\n\n${err instanceof Error ? err.message : String(err)}`,
+      );
+      return;
     }
+    setUploading(null);
 
     const newDoc: UploadedDocument = {
       id: replaceId ?? newId(),
