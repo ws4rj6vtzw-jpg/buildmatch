@@ -1,5 +1,4 @@
 import { Feather } from "@expo/vector-icons";
-import * as LocalAuthentication from "expo-local-authentication";
 import { router } from "expo-router";
 import React, { useCallback, useEffect, useState } from "react";
 import { Alert, Pressable, StyleSheet, Text, View } from "react-native";
@@ -8,6 +7,29 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { PinPad } from "@/components/PinPad";
 import { useAuth } from "@/contexts/AuthContext";
 import { useColors } from "@/hooks/useColors";
+
+// Lazy-load so the import only runs when this screen is mounted,
+// not at bundle startup (Expo Router eagerly requires all route files —
+// a static import of expo-local-authentication crashes the app on launch
+// if the native module wasn't compiled into the current binary).
+type LocalAuthModule = {
+  hasHardwareAsync: () => Promise<boolean>;
+  isEnrolledAsync: () => Promise<boolean>;
+  authenticateAsync: (opts: {
+    promptMessage: string;
+    cancelLabel: string;
+    disableDeviceFallback: boolean;
+  }) => Promise<{ success: boolean }>;
+};
+
+function getLocalAuth(): LocalAuthModule | null {
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    return require("expo-local-authentication") as LocalAuthModule;
+  } catch {
+    return null;
+  }
+}
 
 export default function WelcomeBack() {
   const colors = useColors();
@@ -22,8 +44,10 @@ export default function WelcomeBack() {
   const initials = firstName.slice(0, 2).toUpperCase();
 
   const tryBiometric = useCallback(async () => {
+    const LA = getLocalAuth();
+    if (!LA) return;
     try {
-      const result = await LocalAuthentication.authenticateAsync({
+      const result = await LA.authenticateAsync({
         promptMessage: "Unlock BuildMatch",
         cancelLabel: "Use PIN",
         disableDeviceFallback: true,
@@ -33,15 +57,17 @@ export default function WelcomeBack() {
         router.replace("/(tabs)/discover");
       }
     } catch {
-      // biometric unavailable at runtime — silently fall back to PIN
+      // biometric unavailable at runtime — fall back to PIN
     }
   }, [unlock]);
 
   useEffect(() => {
     (async () => {
+      const LA = getLocalAuth();
+      if (!LA) return;
       try {
-        const hw = await LocalAuthentication.hasHardwareAsync();
-        const enrolled = await LocalAuthentication.isEnrolledAsync();
+        const hw = await LA.hasHardwareAsync();
+        const enrolled = await LA.isEnrolledAsync();
         const available = hw && enrolled;
         setBiometricAvailable(available);
         if (available) tryBiometric();
@@ -49,7 +75,7 @@ export default function WelcomeBack() {
         // device doesn't support local auth
       }
     })();
-  }, []);
+  }, [tryBiometric]);
 
   useEffect(() => {
     if (pin.length !== 4) return;
