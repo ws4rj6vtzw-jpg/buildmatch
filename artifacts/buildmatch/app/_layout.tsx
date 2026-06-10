@@ -1,3 +1,14 @@
+// Global error handler — must be the very first code in the bundle.
+// Catches unhandled JS exceptions before React mounts and stores them
+// so the ErrorBoundary / startup screen can display them.
+import { ErrorUtils } from "react-native";
+const _origHandler = ErrorUtils.getGlobalHandler();
+ErrorUtils.setGlobalHandler((error, isFatal) => {
+  // Store on global so any screen can read it
+  (global as Record<string, unknown>).__startupError = error;
+  _origHandler?.(error, isFatal);
+});
+
 import {
   PlusJakartaSans_400Regular,
   PlusJakartaSans_500Medium,
