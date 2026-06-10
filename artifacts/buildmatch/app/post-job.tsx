@@ -50,6 +50,148 @@ export default function PostJob() {
     router.back();
   };
 
+  const scrollView = (
+    <ScrollView
+      contentContainerStyle={styles.content}
+      keyboardShouldPersistTaps="handled"
+      automaticallyAdjustKeyboardInsets={Platform.OS === "ios"}
+    >
+      <Field label="Job title">
+        <TextInput
+          value={title}
+          onChangeText={setTitle}
+          placeholder="e.g. Second-fix carpenter — cafe fit-out"
+          placeholderTextColor={colors.mutedForeground}
+          autoCorrect={false}
+          style={[styles.input, { color: colors.foreground, backgroundColor: colors.card, borderColor: colors.border }]}
+        />
+      </Field>
+
+      <Field label="Trade">
+        <View style={styles.pills}>
+          {TRADES.map((t) => (
+            <Pill key={t} label={t} selected={trade === t} onPress={() => setTrade(t)} />
+          ))}
+        </View>
+      </Field>
+
+      <View style={{ flexDirection: "row", gap: 12 }}>
+        <View style={{ flex: 2 }}>
+          <Field label="Suburb">
+            <TextInput
+              value={suburb}
+              onChangeText={setSuburb}
+              placeholder="Shoreditch"
+              placeholderTextColor={colors.mutedForeground}
+              autoCorrect={false}
+              style={[styles.input, { color: colors.foreground, backgroundColor: colors.card, borderColor: colors.border }]}
+            />
+          </Field>
+        </View>
+        <View style={{ flex: 1 }}>
+          <Field label="Postcode">
+            <TextInput
+              value={postcode}
+              onChangeText={(v) => setPostcode(v.toUpperCase().slice(0, 8))}
+              placeholder="E1 6RF"
+              placeholderTextColor={colors.mutedForeground}
+              autoCapitalize="characters"
+              autoCorrect={false}
+              style={[styles.input, { color: colors.foreground, backgroundColor: colors.card, borderColor: colors.border }]}
+            />
+          </Field>
+        </View>
+      </View>
+
+      <View style={{ flexDirection: "row", gap: 12 }}>
+        <View style={{ flex: 1 }}>
+          <Field label="Start date">
+            <TextInput
+              value={startDate}
+              onChangeText={setStartDate}
+              placeholder="Mon 5 May"
+              placeholderTextColor={colors.mutedForeground}
+              autoCorrect={false}
+              style={[styles.input, { color: colors.foreground, backgroundColor: colors.card, borderColor: colors.border }]}
+            />
+          </Field>
+        </View>
+        <View style={{ flex: 1 }}>
+          <Field label="Duration (days)">
+            <TextInput
+              value={duration}
+              onChangeText={(v) => setDuration(v.replace(/\D/g, ""))}
+              placeholder="5"
+              placeholderTextColor={colors.mutedForeground}
+              keyboardType="number-pad"
+              style={[styles.input, { color: colors.foreground, backgroundColor: colors.card, borderColor: colors.border }]}
+            />
+          </Field>
+        </View>
+      </View>
+
+      <View style={{ flexDirection: "row", gap: 12, alignItems: "flex-end" }}>
+        <View style={{ flex: 1 }}>
+          <Field label="Pay rate (£)">
+            <TextInput
+              value={payRate}
+              onChangeText={(v) => setPayRate(v.replace(/\D/g, ""))}
+              placeholder="80"
+              placeholderTextColor={colors.mutedForeground}
+              keyboardType="number-pad"
+              style={[styles.input, { color: colors.foreground, backgroundColor: colors.card, borderColor: colors.border }]}
+            />
+          </Field>
+        </View>
+        <View style={{ flex: 1, gap: 8 }}>
+          <Text style={[styles.label, { color: colors.mutedForeground }]}>Per</Text>
+          <View style={{ flexDirection: "row", gap: 6 }}>
+            <Pill label="Hour" selected={payType === "hour"} onPress={() => setPayType("hour")} />
+            <Pill label="Day" selected={payType === "day"} onPress={() => setPayType("day")} />
+          </View>
+        </View>
+      </View>
+
+      <Field label="Required tickets">
+        <View style={styles.pills}>
+          {TICKETS.map((t) => (
+            <Pill
+              key={t}
+              label={t}
+              selected={tickets.includes(t)}
+              onPress={() =>
+                setTickets((cur) =>
+                  cur.includes(t) ? cur.filter((x) => x !== t) : [...cur, t],
+                )
+              }
+            />
+          ))}
+        </View>
+      </Field>
+
+      <Field label="Description">
+        <TextInput
+          value={description}
+          onChangeText={setDescription}
+          multiline
+          scrollEnabled={false}
+          autoCorrect={false}
+          placeholder="Scope of work, site conditions, parking, anything a worker needs to know."
+          placeholderTextColor={colors.mutedForeground}
+          style={[
+            styles.input,
+            styles.multiline,
+            { color: colors.foreground, backgroundColor: colors.card, borderColor: colors.border },
+          ]}
+        />
+      </Field>
+
+      <View style={{ height: 8 }} />
+      <PrimaryButton label="Post job" onPress={onPost} disabled={!valid} />
+      <View style={{ height: 40 }} />
+    </ScrollView>
+  );
+
   return (
     <View style={{ flex: 1, backgroundColor: colors.background }}>
       <Stack.Screen
@@ -60,145 +202,13 @@ export default function PostJob() {
           headerTintColor: colors.foreground,
         }}
       />
-      <KeyboardAvoidingView
-        style={{ flex: 1 }}
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        keyboardVerticalOffset={Platform.OS === "ios" ? 88 : 0}
-      >
-        <ScrollView
-          contentContainerStyle={styles.content}
-          keyboardShouldPersistTaps="handled"
-        >
-          <Field label="Job title">
-            <TextInput
-              value={title}
-              onChangeText={setTitle}
-              placeholder="e.g. Second-fix carpenter — cafe fit-out"
-              placeholderTextColor={colors.mutedForeground}
-              style={[styles.input, { color: colors.foreground, backgroundColor: colors.card, borderColor: colors.border }]}
-            />
-          </Field>
-
-          <Field label="Trade">
-            <View style={styles.pills}>
-              {TRADES.map((t) => (
-                <Pill key={t} label={t} selected={trade === t} onPress={() => setTrade(t)} />
-              ))}
-            </View>
-          </Field>
-
-          <View style={{ flexDirection: "row", gap: 12 }}>
-            <View style={{ flex: 2 }}>
-              <Field label="Suburb">
-                <TextInput
-                  value={suburb}
-                  onChangeText={setSuburb}
-                  placeholder="Shoreditch"
-                  placeholderTextColor={colors.mutedForeground}
-                  style={[styles.input, { color: colors.foreground, backgroundColor: colors.card, borderColor: colors.border }]}
-                />
-              </Field>
-            </View>
-            <View style={{ flex: 1 }}>
-              <Field label="Postcode">
-                <TextInput
-                  value={postcode}
-                  onChangeText={(v) => setPostcode(v.toUpperCase().slice(0, 8))}
-                  placeholder="E1 6RF"
-                  placeholderTextColor={colors.mutedForeground}
-                  autoCapitalize="characters"
-                  style={[styles.input, { color: colors.foreground, backgroundColor: colors.card, borderColor: colors.border }]}
-                />
-              </Field>
-            </View>
-          </View>
-
-          <View style={{ flexDirection: "row", gap: 12 }}>
-            <View style={{ flex: 1 }}>
-              <Field label="Start date">
-                <TextInput
-                  value={startDate}
-                  onChangeText={setStartDate}
-                  placeholder="Mon 5 May"
-                  placeholderTextColor={colors.mutedForeground}
-                  style={[styles.input, { color: colors.foreground, backgroundColor: colors.card, borderColor: colors.border }]}
-                />
-              </Field>
-            </View>
-            <View style={{ flex: 1 }}>
-              <Field label="Duration (days)">
-                <TextInput
-                  value={duration}
-                  onChangeText={(v) => setDuration(v.replace(/\D/g, ""))}
-                  placeholder="5"
-                  placeholderTextColor={colors.mutedForeground}
-                  keyboardType="number-pad"
-                  style={[styles.input, { color: colors.foreground, backgroundColor: colors.card, borderColor: colors.border }]}
-                />
-              </Field>
-            </View>
-          </View>
-
-          <View style={{ flexDirection: "row", gap: 12, alignItems: "flex-end" }}>
-            <View style={{ flex: 1 }}>
-              <Field label="Pay rate (£)">
-                <TextInput
-                  value={payRate}
-                  onChangeText={(v) => setPayRate(v.replace(/\D/g, ""))}
-                  placeholder="80"
-                  placeholderTextColor={colors.mutedForeground}
-                  keyboardType="number-pad"
-                  style={[styles.input, { color: colors.foreground, backgroundColor: colors.card, borderColor: colors.border }]}
-                />
-              </Field>
-            </View>
-            <View style={{ flex: 1, gap: 8 }}>
-              <Text style={[styles.label, { color: colors.mutedForeground }]}>Per</Text>
-              <View style={{ flexDirection: "row", gap: 6 }}>
-                <Pill label="Hour" selected={payType === "hour"} onPress={() => setPayType("hour")} />
-                <Pill label="Day" selected={payType === "day"} onPress={() => setPayType("day")} />
-              </View>
-            </View>
-          </View>
-
-          <Field label="Required tickets">
-            <View style={styles.pills}>
-              {TICKETS.map((t) => (
-                <Pill
-                  key={t}
-                  label={t}
-                  selected={tickets.includes(t)}
-                  onPress={() =>
-                    setTickets((cur) =>
-                      cur.includes(t) ? cur.filter((x) => x !== t) : [...cur, t],
-                    )
-                  }
-                />
-              ))}
-            </View>
-          </Field>
-
-          <Field label="Description">
-            <TextInput
-              value={description}
-              onChangeText={setDescription}
-              multiline
-              scrollEnabled={false}
-              placeholder="Scope of work, site conditions, parking, anything a worker needs to know."
-              placeholderTextColor={colors.mutedForeground}
-              style={[
-                styles.input,
-                styles.multiline,
-                { color: colors.foreground, backgroundColor: colors.card, borderColor: colors.border },
-              ]}
-            />
-          </Field>
-
-          <View style={{ height: 8 }} />
-          <PrimaryButton label="Post job" onPress={onPost} disabled={!valid} />
-          <View style={{ height: 40 }} />
-        </ScrollView>
-      </KeyboardAvoidingView>
+      {Platform.OS === "android" ? (
+        <KeyboardAvoidingView style={{ flex: 1 }} behavior="height">
+          {scrollView}
+        </KeyboardAvoidingView>
+      ) : (
+        scrollView
+      )}
     </View>
   );
 }
