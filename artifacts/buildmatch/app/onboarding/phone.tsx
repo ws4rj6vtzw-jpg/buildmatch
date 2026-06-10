@@ -22,13 +22,12 @@ export default function PhoneScreen() {
   const [phone, setPhone] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const valid = phone.replace(/\D/g, "").length >= 10;
+  const valid = phone.replace(/\D/g, "").length >= 6;
 
   const onContinue = async () => {
     setLoading(true);
-    const digits = phone.replace(/\D/g, "");
-    const e164 = digits.startsWith("44") ? `+${digits}` : `+44${digits.replace(/^0/, "")}`;
-    const result = await sendOtp(e164);
+    // Send raw input — the server normalises to E.164 correctly
+    const result = await sendOtp(phone.trim());
     setLoading(false);
     if (!result.ok) {
       Alert.alert("Could not send code", result.error ?? "Please try again.");
@@ -56,11 +55,10 @@ export default function PhoneScreen() {
           </Text>
 
           <View style={[styles.inputWrap, { backgroundColor: colors.card, borderColor: colors.border }]}>
-            <Text style={[styles.prefix, { color: colors.mutedForeground }]}>+44</Text>
             <TextInput
               value={phone}
               onChangeText={setPhone}
-              placeholder="7911 123456"
+              placeholder="+44 7911 123456"
               placeholderTextColor={colors.mutedForeground}
               keyboardType="phone-pad"
               style={[styles.input, { color: colors.foreground }]}

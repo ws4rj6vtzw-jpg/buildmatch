@@ -26,9 +26,19 @@ function generateCode(): string {
 }
 
 function normalizePhone(raw: string): string {
-  const digits = raw.replace(/\D/g, "");
+  const trimmed = raw.trim();
+  // Already in international format — trust it, just clean non-digits after the +
+  if (trimmed.startsWith("+")) {
+    return "+" + trimmed.slice(1).replace(/\D/g, "");
+  }
+  const digits = trimmed.replace(/\D/g, "");
+  // International without + prefix (e.g. 00441234...)
+  if (digits.startsWith("0044")) return `+${digits.slice(2)}`;
+  // International digits only (e.g. 447911123456)
   if (digits.startsWith("44")) return `+${digits}`;
+  // UK local format with leading zero (e.g. 07911123456)
   if (digits.startsWith("0")) return `+44${digits.slice(1)}`;
+  // UK local without leading zero (e.g. 7911123456)
   return `+44${digits}`;
 }
 
