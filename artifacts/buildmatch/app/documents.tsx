@@ -3,6 +3,7 @@ import * as ImagePicker from "expo-image-picker";
 import { router } from "expo-router";
 import React, { useState } from "react";
 import {
+  ActivityIndicator,
   Alert,
   Image,
   Platform,
@@ -16,6 +17,7 @@ import {
 import { ScreenHeader } from "@/components/ScreenHeader";
 import { useAuth } from "@/contexts/AuthContext";
 import { useColors } from "@/hooks/useColors";
+import { uploadToS3 } from "@/lib/uploadToS3";
 import type { UploadedDocument } from "@/types";
 
 // CSCS card colours and their levels
@@ -58,6 +60,7 @@ export default function DocumentsScreen() {
   const colors = useColors();
   const { user, updateProfile } = useAuth();
   const [deleting, setDeleting] = useState<string | null>(null);
+  const [uploading, setUploading] = useState<string | null>(null); // category being uploaded
   const [cscsOpen, setCscsOpen] = useState(false);
 
   if (!user) return null;
@@ -104,14 +107,26 @@ export default function DocumentsScreen() {
 
     if (result.canceled || !result.assets[0]) return;
     const asset = result.assets[0];
-    const uri = asset.uri;
+    const localUri = asset.uri;
+    const filename = asset.fileName ?? `doc_${Date.now()}.jpg`;
+    const contentType = asset.mimeType ?? "image/jpeg";
 
-    // Save locally — server-side S3 upload will be added in a future release
+    setUploading(category);
+    let s3Url: string | undefined;
+    try {
+      s3Url = await uploadToS3(localUri, { filename, contentType, folder: "documents" });
+    } catch {
+      // S3 upload failed — save with local URI as fallback
+    } finally {
+      setUploading(null);
+    }
+
     const newDoc: UploadedDocument = {
       id: replaceId ?? newId(),
       category,
       section,
-      uri,
+      uri: localUri,
+      url: s3Url,
       uploadedAt: Date.now(),
       verified: false,
     };
@@ -282,6 +297,7 @@ export default function DocumentsScreen() {
                   key={cat}
                   label={cat}
                   uploaded={uploaded}
+                  uploading={uploading === cat}
                   onPress={() => uploadDoc(cat, "ticket")}
                   colors={colors}
                 />
@@ -315,6 +331,7 @@ export default function DocumentsScreen() {
                   key={cat}
                   label={cat}
                   uploaded={uploaded}
+                  uploading={uploading === cat}
                   onPress={() => uploadDoc(cat, "insurance")}
                   colors={colors}
                 />
@@ -355,6 +372,7 @@ export default function DocumentsScreen() {
                           key="UTR / HMRC Letter"
                           label="UTR / HMRC Letter (optional)"
                           uploaded={!!uploaded}
+                          uploading={uploading === "UTR / HMRC Letter"}
                           onPress={() => uploadDoc("UTR / HMRC Letter", "business")}
                           colors={colors}
                         />
@@ -394,6 +412,7 @@ export default function DocumentsScreen() {
                           key="Certificate of Incorporation"
                           label="Certificate of Incorporation (optional)"
                           uploaded={!!uploaded}
+                          uploading={uploading === "Certificate of Incorporation"}
                           onPress={() => uploadDoc("Certificate of Incorporation", "business")}
                           colors={colors}
                         />
@@ -456,20 +475,23 @@ function Section({
 function CategoryRow({
   label,
   uploaded,
+  uploading,
   onPress,
   colors,
 }: {
   label: string;
   uploaded: boolean;
+  uploading?: boolean;
   onPress: () => void;
   colors: ReturnType<typeof import("@/hooks/useColors").useColors>;
 }) {
   return (
     <Pressable
       onPress={onPress}
+      disabled={uploading}
       style={({ pressed }) => [
         styles.catRow,
-        { borderColor: colors.border, opacity: pressed ? 0.75 : 1 },
+        { borderColor: colors.border, opacity: pressed || uploading ? 0.6 : 1 },
       ]}
     >
       <View
@@ -481,16 +503,22 @@ function CategoryRow({
           },
         ]}
       >
-        <Feather
-          name={uploaded ? "check" : "upload"}
-          size={13}
-          color={uploaded ? colors.primary : colors.mutedForeground}
-        />
+        {uploading ? (
+          <ActivityIndicator size="small" color={colors.primary} />
+        ) : (
+          <Feather
+            name={uploaded ? "check" : "upload"}
+            size={13}
+            color={uploaded ? colors.primary : colors.mutedForeground}
+          />
+        )}
       </View>
       <Text style={[styles.catLabel, { color: uploaded ? colors.foreground : colors.mutedForeground }]}>
         {label}
       </Text>
-      {uploaded ? (
+      {uploading ? (
+        <Text style={[styles.pendingText, { color: colors.mutedForeground }]}>Uploading…</Text>
+      ) : uploaded ? (
         <View style={[styles.pendingBadge, { backgroundColor: colors.accent + "22", borderColor: colors.accent + "44" }]}>
           <Text style={[styles.pendingText, { color: colors.accent }]}>Pending</Text>
         </View>
@@ -522,7 +550,7 @@ function DocCard({
 
   return (
     <View style={[styles.docCard, { backgroundColor: colors.elevated, borderColor: colors.border }]}>
-      <Image source={{ uri: doc.uri }} style={styles.docThumb} resizeMode="cover" />
+      <Image source={{ uri: doc.url ?? doc.uri }} style={styles.docThumb} resizeMode="cover" />
       <View style={{ flex: 1, gap: 2 }}>
         <Text style={[styles.docName, { color: colors.foreground }]} numberOfLines={2}>
           {doc.category}

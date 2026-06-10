@@ -4,6 +4,7 @@ import * as ImagePicker from "expo-image-picker";
 import React, { useState } from "react";
 import {
   ActionSheetIOS,
+  ActivityIndicator,
   Alert,
   Modal,
   Platform,
@@ -15,6 +16,7 @@ import {
 
 import { Avatar } from "@/components/Avatar";
 import { useColors } from "@/hooks/useColors";
+import { uploadToS3 } from "@/lib/uploadToS3";
 
 type Props = {
   uri?: string;
@@ -26,9 +28,12 @@ type Props = {
 export function AvatarPicker({ uri, name, size = 88, onChange }: Props) {
   const colors = useColors();
   const [androidSheet, setAndroidSheet] = useState(false);
+  const [uploading, setUploading] = useState(false);
 
   const pick = async (source: "camera" | "library") => {
     try {
+      let result: ImagePicker.ImagePickerResult;
+
       if (source === "camera") {
         const perm = await ImagePicker.requestCameraPermissionsAsync();
         if (!perm.granted) {
@@ -38,21 +43,43 @@ export function AvatarPicker({ uri, name, size = 88, onChange }: Props) {
           );
           return;
         }
-        const r = await ImagePicker.launchCameraAsync({
+        result = await ImagePicker.launchCameraAsync({
           mediaTypes: "images",
           allowsEditing: true,
           aspect: [1, 1],
           quality: 0.8,
         });
-        if (!r.canceled && r.assets[0]) onChange(r.assets[0].uri);
       } else {
-        const r = await ImagePicker.launchImageLibraryAsync({
+        result = await ImagePicker.launchImageLibraryAsync({
           mediaTypes: "images",
           allowsEditing: true,
           aspect: [1, 1],
           quality: 0.8,
         });
-        if (!r.canceled && r.assets[0]) onChange(r.assets[0].uri);
+      }
+
+      if (result.canceled || !result.assets[0]) return;
+      const asset = result.assets[0];
+      const localUri = asset.uri;
+
+      // Show the local image immediately while uploading
+      onChange(localUri);
+      setUploading(true);
+
+      try {
+        const filename = asset.fileName ?? `avatar_${Date.now()}.jpg`;
+        const contentType = asset.mimeType ?? "image/jpeg";
+        const s3Url = await uploadToS3(localUri, {
+          filename,
+          contentType,
+          folder: "avatars",
+        });
+        // Replace local URI with permanent S3 URL
+        onChange(s3Url);
+      } catch {
+        // S3 upload failed — local URI stays, photo is still shown
+      } finally {
+        setUploading(false);
       }
     } catch (e) {
       Alert.alert("Couldn't open picker", String(e));
@@ -87,7 +114,8 @@ export function AvatarPicker({ uri, name, size = 88, onChange }: Props) {
     <>
       <Pressable
         onPress={open}
-        style={({ pressed }) => ({ opacity: pressed ? 0.85 : 1 })}
+        disabled={uploading}
+        style={({ pressed }) => ({ opacity: pressed || uploading ? 0.75 : 1 })}
       >
         <View>
           <Avatar uri={uri} name={name} size={size} />
@@ -103,11 +131,15 @@ export function AvatarPicker({ uri, name, size = 88, onChange }: Props) {
               },
             ]}
           >
-            <Feather
-              name="camera"
-              size={badgeSize * 0.55}
-              color={colors.primaryForeground}
-            />
+            {uploading ? (
+              <ActivityIndicator size="small" color={colors.primaryForeground} />
+            ) : (
+              <Feather
+                name="camera"
+                size={badgeSize * 0.55}
+                color={colors.primaryForeground}
+              />
+            )}
           </View>
         </View>
       </Pressable>
