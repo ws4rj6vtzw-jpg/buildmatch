@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 
 const JWT_SECRET = process.env["JWT_SECRET"] ?? "buildmatch-dev-secret-change-in-production";
-const JWT_EXPIRES_IN = "30d";
+const JWT_EXPIRES_IN = "365d";
 
 export type JwtPayload = {
   userId: string;
