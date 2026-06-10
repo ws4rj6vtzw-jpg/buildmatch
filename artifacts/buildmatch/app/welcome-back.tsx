@@ -8,74 +8,20 @@ import { PinPad } from "@/components/PinPad";
 import { useAuth } from "@/contexts/AuthContext";
 import { useColors } from "@/hooks/useColors";
 
-// Lazy-load so the import only runs when this screen is mounted,
-// not at bundle startup (Expo Router eagerly requires all route files —
-// a static import of expo-local-authentication crashes the app on launch
-// if the native module wasn't compiled into the current binary).
-type LocalAuthModule = {
-  hasHardwareAsync: () => Promise<boolean>;
-  isEnrolledAsync: () => Promise<boolean>;
-  authenticateAsync: (opts: {
-    promptMessage: string;
-    cancelLabel: string;
-    disableDeviceFallback: boolean;
-  }) => Promise<{ success: boolean }>;
-};
-
-function getLocalAuth(): LocalAuthModule | null {
-  try {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    return require("expo-local-authentication") as LocalAuthModule;
-  } catch {
-    return null;
-  }
-}
+// NOTE: expo-local-authentication native module is not yet in the current
+// binary — biometric unlock will be enabled automatically in the next build
+// once the module is compiled in. For now, PIN-only unlock.
 
 export default function WelcomeBack() {
   const colors = useColors();
   const { user, security, unlock, signOut } = useAuth();
   const [pin, setPin] = useState("");
   const [error, setError] = useState("");
-  const [biometricAvailable, setBiometricAvailable] = useState(false);
   const [shake, setShake] = useState(false);
 
   const displayName = user?.fullName || user?.contactName || "there";
   const firstName = displayName.split(" ")[0];
   const initials = firstName.slice(0, 2).toUpperCase();
-
-  const tryBiometric = useCallback(async () => {
-    const LA = getLocalAuth();
-    if (!LA) return;
-    try {
-      const result = await LA.authenticateAsync({
-        promptMessage: "Unlock BuildMatch",
-        cancelLabel: "Use PIN",
-        disableDeviceFallback: true,
-      });
-      if (result.success) {
-        unlock();
-        router.replace("/(tabs)/discover");
-      }
-    } catch {
-      // biometric unavailable at runtime — fall back to PIN
-    }
-  }, [unlock]);
-
-  useEffect(() => {
-    (async () => {
-      const LA = getLocalAuth();
-      if (!LA) return;
-      try {
-        const hw = await LA.hasHardwareAsync();
-        const enrolled = await LA.isEnrolledAsync();
-        const available = hw && enrolled;
-        setBiometricAvailable(available);
-        if (available) tryBiometric();
-      } catch {
-        // device doesn't support local auth
-      }
-    })();
-  }, [tryBiometric]);
 
   useEffect(() => {
     if (pin.length !== 4) return;
@@ -93,7 +39,7 @@ export default function WelcomeBack() {
     }
   }, [pin, security, unlock]);
 
-  const handleSignOut = () => {
+  const handleSignOut = useCallback(() => {
     Alert.alert(
       "Sign out",
       "This will remove your account from this device.",
@@ -109,7 +55,7 @@ export default function WelcomeBack() {
         },
       ],
     );
-  };
+  }, [signOut]);
 
   return (
     <SafeAreaView style={[styles.safe, { backgroundColor: colors.background }]}>
@@ -139,18 +85,6 @@ export default function WelcomeBack() {
       </View>
 
       <View style={styles.bottom}>
-        {biometricAvailable && (
-          <Pressable
-            onPress={tryBiometric}
-            style={[styles.biometricBtn, { borderColor: colors.border }]}
-          >
-            <Feather name="smile" size={18} color={colors.primary} />
-            <Text style={[styles.biometricText, { color: colors.primary }]}>
-              Use Face ID / Fingerprint
-            </Text>
-          </Pressable>
-        )}
-
         <Pressable onPress={handleSignOut} style={styles.signOutBtn}>
           <Text style={[styles.signOutText, { color: colors.mutedForeground }]}>
             Not you? Sign out
@@ -203,22 +137,7 @@ const styles = StyleSheet.create({
   },
   bottom: {
     alignItems: "center",
-    gap: 4,
     paddingBottom: 8,
-  },
-  biometricBtn: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-    borderWidth: 1,
-    borderRadius: 14,
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    marginBottom: 4,
-  },
-  biometricText: {
-    fontSize: 15,
-    fontFamily: "PlusJakartaSans_600SemiBold",
   },
   signOutBtn: {
     paddingVertical: 14,
