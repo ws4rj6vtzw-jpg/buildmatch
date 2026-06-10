@@ -16,7 +16,6 @@ import {
 import { ScreenHeader } from "@/components/ScreenHeader";
 import { useAuth } from "@/contexts/AuthContext";
 import { useColors } from "@/hooks/useColors";
-import { api } from "@/lib/api";
 import type { UploadedDocument } from "@/types";
 
 // CSCS card colours and their levels
@@ -107,34 +106,12 @@ export default function DocumentsScreen() {
     const asset = result.assets[0];
     const uri = asset.uri;
 
-    // Derive filename and mime type from the picked asset
-    const filename = asset.fileName ?? `doc_${Date.now()}.jpg`;
-    const contentType = asset.mimeType ?? "image/jpeg";
-
-    // Get a presigned S3 upload URL
-    let publicUrl: string | undefined;
-    try {
-      const { data, error } = await api.presignUpload({ filename, contentType, folder: "documents" });
-      if (data && !error) {
-        const uploadRes = await fetch(data.uploadUrl, {
-          method: "PUT",
-          headers: { "Content-Type": contentType },
-          body: await (await fetch(uri)).blob(),
-        });
-        if (uploadRes.ok) {
-          publicUrl = data.publicUrl;
-        }
-      }
-    } catch {
-      // S3 upload failed — doc saved with local URI only; retry on next open
-    }
-
+    // Save locally — server-side S3 upload will be added in a future release
     const newDoc: UploadedDocument = {
       id: replaceId ?? newId(),
       category,
       section,
       uri,
-      url: publicUrl,
       uploadedAt: Date.now(),
       verified: false,
     };

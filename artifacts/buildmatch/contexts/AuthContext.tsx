@@ -146,12 +146,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       await persist(merged, token);
       const result = await api.updateMe(patch);
       if (result.data) {
-        const srv = result.data;
-        const isW = srv.role === "worker";
-        srv.profileComplete = isW
-          ? !!(srv.fullName && srv.primaryTrade && srv.suburb)
-          : !!(srv.companyName && srv.contactName && srv.suburb);
-        await persist(srv, token);
+        // Merge server response ON TOP of the already-merged local state so that
+        // locally-managed fields the server doesn't know about (e.g. documents,
+        // security, pin) are always preserved.
+        const final = { ...merged, ...result.data };
+        const isW = final.role === "worker";
+        final.profileComplete = isW
+          ? !!(final.fullName && final.primaryTrade && final.suburb)
+          : !!(final.companyName && final.contactName && final.suburb);
+        await persist(final, token);
       }
     },
     [user, token, persist],
