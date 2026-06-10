@@ -3,11 +3,13 @@ import { BlurView } from "expo-blur";
 import { isLiquidGlassAvailable } from "expo-glass-effect";
 import { Tabs } from "expo-router";
 import { Badge, Icon, Label, NativeTabs } from "expo-router/unstable-native-tabs";
-import React from "react";
+import React, { useMemo } from "react";
 import { Platform, StyleSheet, View } from "react-native";
 
 import { useColors } from "@/hooks/useColors";
 import { useData } from "@/contexts/DataContext";
+
+const USE_NATIVE_TABS = isLiquidGlassAvailable();
 
 function NativeTabLayout() {
   const { totalUnread } = useData();
@@ -42,6 +44,24 @@ function ClassicTabLayout() {
   const isIOS = Platform.OS === "ios";
   const isWeb = Platform.OS === "web";
 
+  const tabBarBackground = useMemo(
+    () =>
+      isIOS
+        ? () => (
+            <BlurView
+              intensity={80}
+              tint="systemMaterialDark"
+              style={StyleSheet.absoluteFill}
+            />
+          )
+        : () => (
+            <View
+              style={[StyleSheet.absoluteFill, { backgroundColor: colors.surface }]}
+            />
+          ),
+    [isIOS, colors.surface],
+  );
+
   return (
     <Tabs
       screenOptions={{
@@ -55,27 +75,13 @@ function ClassicTabLayout() {
         headerShown: false,
         tabBarStyle: {
           position: "absolute",
-          backgroundColor: isIOS ? "transparent" : colors.surface,
+          backgroundColor: isIOS ? colors.surface + "CC" : colors.surface,
           borderTopWidth: isWeb ? 1 : 0,
           borderTopColor: colors.border,
           elevation: 0,
           ...(isWeb ? { height: 84 } : {}),
         },
-        tabBarBackground: () =>
-          isIOS ? (
-            <BlurView
-              intensity={100}
-              tint="dark"
-              style={StyleSheet.absoluteFill}
-            />
-          ) : (
-            <View
-              style={[
-                StyleSheet.absoluteFill,
-                { backgroundColor: colors.surface },
-              ]}
-            />
-          ),
+        tabBarBackground,
       }}
     >
       <Tabs.Screen
@@ -96,8 +102,11 @@ function ClassicTabLayout() {
         name="matches"
         options={{
           title: "Matches",
-          tabBarIcon: ({ color }) => <Feather name="message-circle" size={22} color={color} />,
-          tabBarBadge: totalUnread > 0 ? (totalUnread > 99 ? "99+" : totalUnread) : undefined,
+          tabBarIcon: ({ color }) => (
+            <Feather name="message-circle" size={22} color={color} />
+          ),
+          tabBarBadge:
+            totalUnread > 0 ? (totalUnread > 99 ? "99+" : totalUnread) : undefined,
           tabBarBadgeStyle: {
             backgroundColor: colors.primary,
             color: colors.primaryForeground,
@@ -121,7 +130,7 @@ function ClassicTabLayout() {
 }
 
 export default function TabLayout() {
-  if (isLiquidGlassAvailable()) {
+  if (USE_NATIVE_TABS) {
     return <NativeTabLayout />;
   }
   return <ClassicTabLayout />;

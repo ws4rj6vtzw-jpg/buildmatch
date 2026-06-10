@@ -22,7 +22,7 @@ const ThemeContext = createContext<ThemeCtx>({
 const STORAGE_KEY = "buildmatch.theme.v1";
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [mode, setModeState] = useState<ThemeMode>("light");
+  const [mode, setModeState] = useState<ThemeMode>("dark");
 
   useEffect(() => {
     AsyncStorage.getItem(STORAGE_KEY).then((v) => {
