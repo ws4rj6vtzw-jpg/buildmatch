@@ -53,6 +53,7 @@ function RootLayoutNav() {
       <Stack.Screen name="worker" />
       <Stack.Screen name="post-job" options={{ presentation: "modal" }} />
       <Stack.Screen name="documents" />
+      <Stack.Screen name="welcome-back" />
     </Stack>
   );
 }

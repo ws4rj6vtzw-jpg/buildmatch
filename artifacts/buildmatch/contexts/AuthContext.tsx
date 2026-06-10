@@ -11,6 +11,11 @@ import React, {
 import type { AuthUser, Role } from "@/types";
 import { api, setAuthToken } from "@/lib/api";
 
+export type SecurityData = {
+  pin: string | null;
+  prompted: boolean;
+};
+
 type AuthContextValue = {
   user: AuthUser | null;
   token: string | null;
@@ -22,29 +27,43 @@ type AuthContextValue = {
   setRole: (role: Role) => Promise<void>;
   updateProfile: (patch: Partial<AuthUser>) => Promise<void>;
   signOut: () => Promise<void>;
+  locked: boolean;
+  security: SecurityData | null;
+  setupPin: (pin: string) => Promise<void>;
+  skipLock: () => Promise<void>;
+  unlock: () => void;
 };
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
 const USER_KEY = "buildmatch.user.v2";
 const TOKEN_KEY = "buildmatch.token.v1";
+const SECURITY_KEY = "buildmatch.security.v1";
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [pendingPhone, setPendingPhone] = useState<string | null>(null);
+  const [security, setSecurity] = useState<SecurityData | null>(null);
+  const [locked, setLocked] = useState(false);
 
   useEffect(() => {
     Promise.all([
       AsyncStorage.getItem(USER_KEY),
       AsyncStorage.getItem(TOKEN_KEY),
+      AsyncStorage.getItem(SECURITY_KEY),
     ])
-      .then(([rawUser, rawToken]) => {
+      .then(([rawUser, rawToken, rawSecurity]) => {
         if (rawUser) setUser(JSON.parse(rawUser) as AuthUser);
         if (rawToken) {
           setToken(rawToken);
           setAuthToken(rawToken);
+        }
+        if (rawSecurity) {
+          const sec = JSON.parse(rawSecurity) as SecurityData;
+          setSecurity(sec);
+          if (sec.pin) setLocked(true);
         }
       })
       .finally(() => setLoading(false));
@@ -138,8 +157,29 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     [user, token, persist],
   );
 
+  const setupPin = useCallback(async (pin: string) => {
+    const sec: SecurityData = { pin, prompted: true };
+    setSecurity(sec);
+    setLocked(false);
+    await AsyncStorage.setItem(SECURITY_KEY, JSON.stringify(sec));
+  }, []);
+
+  const skipLock = useCallback(async () => {
+    const sec: SecurityData = { pin: null, prompted: true };
+    setSecurity(sec);
+    setLocked(false);
+    await AsyncStorage.setItem(SECURITY_KEY, JSON.stringify(sec));
+  }, []);
+
+  const unlock = useCallback(() => {
+    setLocked(false);
+  }, []);
+
   const signOut = useCallback(async () => {
     await persist(null, null);
+    await AsyncStorage.removeItem(SECURITY_KEY);
+    setSecurity(null);
+    setLocked(false);
   }, [persist]);
 
   const value = useMemo<AuthContextValue>(
@@ -154,8 +194,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setRole,
       updateProfile,
       signOut,
+      locked,
+      security,
+      setupPin,
+      skipLock,
+      unlock,
     }),
-    [user, token, loading, pendingPhone, sendOtp, verifyOtp, setRole, updateProfile, signOut],
+    [user, token, loading, pendingPhone, sendOtp, verifyOtp, setRole, updateProfile, signOut, locked, security, setupPin, skipLock, unlock],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

@@ -81,7 +81,7 @@ export default function ProfileSetupScreen() {
         skills: tradesNeeded,
       });
     }
-    router.replace("/(tabs)/discover");
+    router.replace("/onboarding/pin-setup");
   };
 
   return (

@@ -7,7 +7,7 @@ import { useAuth } from "@/contexts/AuthContext";
 
 export default function Index() {
   const colors = useColors();
-  const { user, loading } = useAuth();
+  const { user, loading, locked, security } = useAuth();
 
   if (loading) {
     return (
@@ -19,6 +19,11 @@ export default function Index() {
 
   if (!user) return <Redirect href="/onboarding/phone" />;
   if (!user.profileComplete) return <Redirect href="/onboarding/profile" />;
+
+  if (locked) return <Redirect href="/welcome-back" />;
+
+  if (!security?.prompted) return <Redirect href="/onboarding/pin-setup" />;
+
   return <Redirect href="/(tabs)/discover" />;
 }
 

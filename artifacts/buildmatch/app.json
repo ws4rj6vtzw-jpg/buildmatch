@@ -21,6 +21,7 @@
       "infoPlist": {
         "NSPhotoLibraryUsageDescription": "BuildMatch uses your photo library so you can set a profile picture.",
         "NSCameraUsageDescription": "BuildMatch uses your camera so you can take a profile photo.",
+        "NSFaceIDUsageDescription": "Use Face ID to quickly unlock your BuildMatch account.",
         "ITSAppUsesNonExemptEncryption": false,
         "CFBundleURLTypes": [
           {
@@ -76,6 +77,12 @@
         {
           "icon": "./assets/images/icon.png",
           "color": "#0f172a"
+        }
+      ],
+      [
+        "expo-local-authentication",
+        {
+          "faceIDPermission": "Use Face ID to quickly unlock your BuildMatch account."
         }
       ]
     ],
