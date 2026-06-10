@@ -3,7 +3,8 @@ import { api } from "@/lib/api";
 /**
  * Upload a local file URI to S3 via the API's presign endpoint.
  * Uses XMLHttpRequest for reliable binary upload in React Native.
- * Returns the presigned view URL on success (7-day signed GET URL).
+ * Returns the best available display URL: presigned GET URL (viewUrl) if the
+ * server supports it, falling back to the public URL.
  */
 export async function uploadToS3(
   localUri: string,
@@ -12,8 +13,12 @@ export async function uploadToS3(
   const { data, error } = await api.presignUpload(opts);
   if (!data || error) throw new Error(error ?? "Could not get upload URL");
 
+  const displayUrl = data.viewUrl ?? data.publicUrl;
+  if (!displayUrl) throw new Error("Server did not return a display URL");
+
   // Read the file as a blob via fetch (works with file:// URIs in React Native)
   const fileResponse = await fetch(localUri);
+  if (!fileResponse.ok) throw new Error("Could not read local file");
   const blob = await fileResponse.blob();
 
   // Use XHR for the PUT upload — more reliable for binary data in React Native
@@ -32,6 +37,5 @@ export async function uploadToS3(
     xhr.send(blob);
   });
 
-  // Return the presigned GET URL (works on both public and private buckets)
-  return data.viewUrl;
+  return displayUrl;
 }
