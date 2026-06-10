@@ -7,3 +7,4 @@
 - [Stripe connector fields + esbuild](stripe-connector-fields.md) — use 'secret'/'publishable' not 'secret_key'/'publishable_key'; must externalise stripe-replit-sync in build.mjs or migrations silently skip
 - [EAS build/submit from main agent](eas-cli-main-agent.md) — eas build fails in main agent (git archive triggers destructive-git block); eas submit --id <buildId> works fine; builds can be queued via EAS CLI before git block kills the process
 - [Phone auth — API OTP not Firebase](phone-auth-api-otp.md) — AuthContext must use api.sendOtp/api.verifyOtp, NOT Firebase signInWithPhoneNumber; Firebase triggers reCAPTCHA on iOS (no APNs) which crashes via expo-router +not-found
+- [S3 upload — OTA unreliable, use native builds](s3-upload-ota-issue.md) — OTAs pushed to production branch never applied to device; original binary had no S3 upload (stored local URIs directly); fix requires new native build
