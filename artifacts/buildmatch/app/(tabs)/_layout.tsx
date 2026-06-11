@@ -1,6 +1,5 @@
 import { Feather } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
-import { isLiquidGlassAvailable } from "expo-glass-effect";
 import { Tabs } from "expo-router";
 import { Badge, Icon, Label, NativeTabs } from "expo-router/unstable-native-tabs";
 import React from "react";
@@ -123,12 +122,15 @@ function ClassicTabLayout() {
 }
 
 export default function TabLayout() {
-  let useLiquidGlass = false;
-  try {
-    useLiquidGlass = isLiquidGlassAvailable();
-  } catch {
-    useLiquidGlass = false;
-  }
+  // Liquid glass (NativeTabs) is available on iOS 26+.
+  // We intentionally avoid importing expo-glass-effect here because its iOS
+  // entry calls requireNativeViewManager at module level, which crashes on
+  // devices that don't support the ExpoGlassEffect native view manager.
+  const useLiquidGlass =
+    Platform.OS === "ios" &&
+    typeof Platform.Version === "string"
+      ? parseInt(Platform.Version, 10) >= 26
+      : (Platform.Version as number) >= 26;
 
   if (useLiquidGlass) {
     return <NativeTabLayout />;
