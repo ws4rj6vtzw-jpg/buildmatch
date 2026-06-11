@@ -1,41 +1,13 @@
 import { Feather } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
 import { Tabs } from "expo-router";
-import { Badge, Icon, Label, NativeTabs } from "expo-router/unstable-native-tabs";
 import React from "react";
 import { Platform, StyleSheet, View } from "react-native";
 
 import { useColors } from "@/hooks/useColors";
 import { useData } from "@/contexts/DataContext";
 
-function NativeTabLayout() {
-  const { totalUnread } = useData();
-  return (
-    <NativeTabs>
-      <NativeTabs.Trigger name="discover">
-        <Icon sf={{ default: "flame", selected: "flame.fill" }} />
-        <Label>Discover</Label>
-      </NativeTabs.Trigger>
-      <NativeTabs.Trigger name="jobs">
-        <Icon sf={{ default: "briefcase", selected: "briefcase.fill" }} />
-        <Label>Jobs</Label>
-      </NativeTabs.Trigger>
-      <NativeTabs.Trigger name="matches">
-        <Icon sf={{ default: "message", selected: "message.fill" }} />
-        <Label>Matches</Label>
-        {totalUnread > 0 ? (
-          <Badge>{totalUnread > 99 ? "99+" : String(totalUnread)}</Badge>
-        ) : null}
-      </NativeTabs.Trigger>
-      <NativeTabs.Trigger name="profile">
-        <Icon sf={{ default: "person", selected: "person.fill" }} />
-        <Label>Profile</Label>
-      </NativeTabs.Trigger>
-    </NativeTabs>
-  );
-}
-
-function ClassicTabLayout() {
+export default function TabLayout() {
   const colors = useColors();
   const { totalUnread } = useData();
   const isIOS = Platform.OS === "ios";
@@ -119,21 +91,4 @@ function ClassicTabLayout() {
       />
     </Tabs>
   );
-}
-
-export default function TabLayout() {
-  // Liquid glass (NativeTabs) is available on iOS 26+.
-  // We intentionally avoid importing expo-glass-effect here because its iOS
-  // entry calls requireNativeViewManager at module level, which crashes on
-  // devices that don't support the ExpoGlassEffect native view manager.
-  const useLiquidGlass =
-    Platform.OS === "ios" &&
-    typeof Platform.Version === "string"
-      ? parseInt(Platform.Version, 10) >= 26
-      : (Platform.Version as number) >= 26;
-
-  if (useLiquidGlass) {
-    return <NativeTabLayout />;
-  }
-  return <ClassicTabLayout />;
 }
