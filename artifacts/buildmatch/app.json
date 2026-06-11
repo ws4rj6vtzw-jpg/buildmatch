@@ -16,12 +16,11 @@
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "app.buildmatch.ios",
-      "buildNumber": "10",
+      "buildNumber": "11",
       "googleServicesFile": "./GoogleService-Info.plist",
       "infoPlist": {
         "NSPhotoLibraryUsageDescription": "BuildMatch uses your photo library so you can set a profile picture.",
         "NSCameraUsageDescription": "BuildMatch uses your camera so you can take a profile photo.",
-        "NSFaceIDUsageDescription": "Use Face ID to quickly unlock your BuildMatch account.",
         "ITSAppUsesNonExemptEncryption": false,
         "CFBundleURLTypes": [
           {
@@ -34,7 +33,7 @@
     },
     "android": {
       "package": "app.buildmatch.android",
-      "versionCode": 10,
+      "versionCode": 11,
       "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
@@ -56,7 +55,6 @@
         }
       ],
       "@react-native-firebase/app",
-      "expo-updates",
       [
         "expo-router",
         {
@@ -85,12 +83,9 @@
     },
     "updates": {
       "url": "https://u.expo.dev/c675e172-afb6-48f4-b860-d1026e5ad61a",
-      "enabled": true,
+      "enabled": false,
       "fallbackToCacheTimeout": 0,
       "checkAutomatically": "ON_LOAD"
-    },
-    "runtimeVersion": {
-      "policy": "appVersion"
     },
     "extra": {
       "eas": {
