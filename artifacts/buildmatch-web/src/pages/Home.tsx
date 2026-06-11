@@ -4,7 +4,7 @@ import { motion, useAnimation, useInView, AnimatePresence } from "framer-motion"
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { HardHat, Smartphone, Zap, MapPin, CheckCircle, ShieldCheck, ArrowRight, Star, Clock, Building2, Apple, Play, ChevronRight, ChevronLeft, Menu, X, Users, ThumbsUp } from "lucide-react";
+import { HardHat, Smartphone, Zap, MapPin, CheckCircle, ShieldCheck, ArrowRight, Star, Clock, Building2, Apple, Play, ChevronRight, ChevronLeft, Menu, X, Users, ThumbsUp, Award, Bell, FileText, TrendingUp } from "lucide-react";
 
 const FadeIn = ({ children, delay = 0, className = "", direction = "up" }: { children: React.ReactNode, delay?: number, className?: string, direction?: "up" | "left" | "right" }) => {
   const ref = React.useRef(null);
@@ -128,76 +128,108 @@ export default function Home() {
             </FadeIn>
           </div>
 
+          {/* Phone mock — reflects current dark-theme app UI */}
           <div className="relative h-[600px] hidden lg:flex items-center justify-center">
-            <FadeIn delay={0.4} direction="left" className="relative w-full max-w-[340px] aspect-[9/19] bg-[#060D1F] rounded-[3rem] border-[12px] border-[#1E293B] shadow-2xl overflow-hidden ring-1 ring-black/10">
-              {/* Phone Notch */}
-              <div className="absolute top-0 inset-x-0 h-6 bg-[#1E293B] rounded-b-3xl mx-auto w-1/3 z-20"></div>
+            <FadeIn delay={0.4} direction="left" className="relative w-full max-w-[300px] aspect-[9/19] bg-[#0f172a] rounded-[3rem] border-[10px] border-[#1E293B] shadow-2xl overflow-hidden ring-1 ring-black/10">
+              {/* Status bar */}
+              <div className="absolute top-0 inset-x-0 h-7 bg-[#0f172a] flex items-center justify-center z-20">
+                <div className="w-20 h-4 bg-[#1E293B] rounded-b-xl"></div>
+              </div>
               
               {/* App UI */}
-              <div className="absolute inset-0 flex flex-col p-4 pt-10">
-                <div className="flex justify-between items-center mb-4">
-                  <div className="text-xl font-black tracking-tighter text-white">BM.</div>
-                  <Badge variant="outline" className="border-accent text-accent bg-accent/10 px-2 py-0.5 rounded-sm uppercase text-[10px] tracking-widest font-bold">Matching</Badge>
+              <div className="absolute inset-0 flex flex-col pt-8">
+                {/* Header */}
+                <div className="flex justify-between items-center px-4 py-3">
+                  <div className="text-base font-black tracking-tighter text-white">DISCOVER</div>
+                  <Badge className="border-none bg-[#F59E0B]/20 text-[#F59E0B] px-2 py-0.5 rounded-sm uppercase text-[9px] tracking-widest font-bold">
+                    🔥 3 nearby
+                  </Badge>
                 </div>
                 
-                <div className="relative rounded-2xl overflow-hidden flex-1 bg-[#1E293B] shadow-lg border border-white/10">
+                {/* Swipe card */}
+                <div className="flex-1 mx-3 mb-2 relative rounded-2xl overflow-hidden bg-[#1E293B] border border-white/10 shadow-xl">
                   <img src={`${import.meta.env.BASE_URL}images/worker-1.png`} alt="Worker profile" className="w-full h-full object-cover" />
                   
-                  <div className="absolute top-4 right-4 bg-[#060D1F]/80 backdrop-blur border border-white/10 rounded px-2 py-1 flex items-center gap-1">
-                    <MapPin className="w-3 h-3 text-accent" />
-                    <span className="text-xs font-bold text-white">2.4m</span>
+                  {/* Distance badge */}
+                  <div className="absolute top-3 right-3 bg-[#0f172a]/80 backdrop-blur border border-white/10 rounded-md px-2 py-1 flex items-center gap-1">
+                    <MapPin className="w-2.5 h-2.5 text-[#F59E0B]" />
+                    <span className="text-[10px] font-bold text-white">2.4 mi</span>
                   </div>
 
-                  <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-[#060D1F] via-[#060D1F]/80 to-transparent p-5 pt-20">
-                    <div className="flex items-end justify-between mb-3">
+                  {/* Verified badge */}
+                  <div className="absolute top-3 left-3 bg-[#4F73D6]/90 rounded-md px-2 py-1 flex items-center gap-1">
+                    <ShieldCheck className="w-2.5 h-2.5 text-white" />
+                    <span className="text-[9px] font-bold text-white uppercase">Verified</span>
+                  </div>
+
+                  {/* Worker info overlay */}
+                  <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-[#0f172a] via-[#0f172a]/85 to-transparent p-4 pt-16">
+                    <div className="flex items-end justify-between mb-2">
                       <div>
-                        <h3 className="text-2xl font-black text-white flex items-center gap-2 uppercase tracking-tight">
-                          Liam M. <ShieldCheck className="w-5 h-5 text-accent" />
-                        </h3>
-                        <p className="text-primary font-bold">Level 3 Electrician</p>
+                        <h3 className="text-lg font-black text-white uppercase tracking-tight leading-none">Liam M.</h3>
+                        <p className="text-[#4F73D6] font-bold text-xs mt-0.5">Level 3 Electrician</p>
                       </div>
                       <div className="text-right">
-                        <p className="text-2xl font-black text-accent">£220<span className="text-xs text-white/60 font-normal">/day</span></p>
+                        <p className="text-lg font-black text-[#F59E0B]">£220<span className="text-[10px] text-white/50 font-normal">/day</span></p>
                       </div>
                     </div>
-                    <div className="flex flex-wrap gap-2 mb-4">
-                      <span className="bg-white/10 text-white text-[10px] uppercase tracking-wider font-bold px-2 py-1 rounded-sm border border-white/10">JIB Gold Card</span>
-                      <span className="bg-white/10 text-white text-[10px] uppercase tracking-wider font-bold px-2 py-1 rounded-sm border border-white/10">IPAF</span>
-                      <span className="bg-white/10 text-white text-[10px] uppercase tracking-wider font-bold px-2 py-1 rounded-sm border border-white/10">Own Tools</span>
+                    <div className="flex flex-wrap gap-1.5">
+                      <span className="bg-white/10 text-white text-[9px] uppercase tracking-wide font-bold px-1.5 py-0.5 rounded-sm border border-white/10">JIB Gold</span>
+                      <span className="bg-white/10 text-white text-[9px] uppercase tracking-wide font-bold px-1.5 py-0.5 rounded-sm border border-white/10">IPAF</span>
+                      <span className="bg-white/10 text-white text-[9px] uppercase tracking-wide font-bold px-1.5 py-0.5 rounded-sm border border-white/10">Own Tools</span>
                     </div>
                   </div>
                 </div>
                 
-                <div className="flex gap-4 justify-center mt-6 mb-4">
-                  <button className="w-16 h-16 rounded-full bg-[#1E293B] border border-white/10 text-white/50 flex items-center justify-center shadow-lg hover:bg-destructive hover:text-white transition-all transform hover:scale-105">
-                    <X className="w-8 h-8" />
+                {/* Action buttons */}
+                <div className="flex gap-5 justify-center py-3">
+                  <button className="w-12 h-12 rounded-full bg-[#1E293B] border border-white/10 flex items-center justify-center shadow-lg">
+                    <X className="w-5 h-5 text-white/40" />
                   </button>
-                  <button className="w-16 h-16 rounded-full bg-primary border-none text-white flex items-center justify-center shadow-[0_0_20px_rgba(37,99,235,0.4)] hover:bg-primary/90 transition-all transform hover:scale-105">
-                    <Zap className="w-8 h-8 fill-current" />
+                  <button className="w-14 h-14 rounded-full bg-[#4F73D6] flex items-center justify-center shadow-[0_0_20px_rgba(79,115,214,0.5)]">
+                    <Zap className="w-6 h-6 text-white fill-current" />
                   </button>
+                </div>
+
+                {/* Tab bar */}
+                <div className="flex justify-around items-center px-4 py-2 border-t border-white/10 bg-[#0f172a]/90 backdrop-blur">
+                  {[
+                    { icon: "⚡", label: "Discover", active: true },
+                    { icon: "💼", label: "Jobs", active: false },
+                    { icon: "💬", label: "Matches", active: false },
+                    { icon: "👤", label: "Profile", active: false },
+                  ].map((tab) => (
+                    <div key={tab.label} className="flex flex-col items-center gap-0.5">
+                      <span className="text-sm">{tab.icon}</span>
+                      <span className={`text-[8px] font-bold uppercase ${tab.active ? "text-[#4F73D6]" : "text-white/30"}`}>{tab.label}</span>
+                    </div>
+                  ))}
                 </div>
               </div>
             </FadeIn>
             
-            {/* Floating Elements */}
-            <FadeIn delay={0.6} direction="right" className="absolute top-1/4 -right-12 bg-card p-4 border border-border shadow-[0_20px_50px_rgba(0,0,0,0.1)] max-w-[220px] transform rotate-3">
+            {/* Floating match notification */}
+            <FadeIn delay={0.6} direction="right" className="absolute top-1/4 -right-10 bg-card p-4 border border-border shadow-[0_20px_50px_rgba(0,0,0,0.1)] max-w-[200px] transform rotate-3">
               <div className="flex items-start gap-3 mb-2">
-                <div className="w-10 h-10 bg-primary/20 flex items-center justify-center text-primary flex-shrink-0"><Building2 className="w-5 h-5" /></div>
+                <div className="w-8 h-8 bg-green-500/20 flex items-center justify-center text-green-500 flex-shrink-0 rounded-sm">
+                  <CheckCircle className="w-4 h-4" />
+                </div>
                 <div>
-                  <div className="text-sm font-black uppercase tracking-tight leading-none mb-1">Canary Wharf Tower</div>
-                  <p className="text-xs text-muted-foreground font-medium">Needs 2 Dryliners. Starts Monday.</p>
+                  <div className="text-xs font-black uppercase tracking-tight leading-none mb-1">It's a Match!</div>
+                  <p className="text-[10px] text-muted-foreground font-medium">Liam M. is ready to start Monday.</p>
                 </div>
               </div>
             </FadeIn>
             
-            <FadeIn delay={0.7} direction="left" className="absolute bottom-1/3 -left-16 bg-card p-4 border border-border shadow-[0_20px_50px_rgba(0,0,0,0.1)] transform -rotate-3">
+            {/* Floating document verified */}
+            <FadeIn delay={0.7} direction="left" className="absolute bottom-1/3 -left-14 bg-card p-4 border border-border shadow-[0_20px_50px_rgba(0,0,0,0.1)] transform -rotate-3">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-green-500/20 flex items-center justify-center text-green-500">
-                  <CheckCircle className="w-6 h-6" />
+                <div className="w-9 h-9 rounded-sm bg-[#4F73D6]/20 flex items-center justify-center text-[#4F73D6]">
+                  <ShieldCheck className="w-5 h-5" />
                 </div>
                 <div>
-                  <div className="text-sm font-black uppercase">CSCS Verified</div>
-                  <div className="text-xs text-muted-foreground font-medium">Auto-checked against CITB</div>
+                  <div className="text-xs font-black uppercase">CSCS Verified</div>
+                  <div className="text-[10px] text-muted-foreground font-medium">Docs checked in-app</div>
                 </div>
               </div>
             </FadeIn>
@@ -216,7 +248,6 @@ export default function Home() {
           </div>
 
           <div className="grid md:grid-cols-3 gap-8 relative">
-            {/* Connecting line for desktop */}
             <div className="hidden md:block absolute top-24 left-[10%] right-[10%] h-px bg-border -z-10"></div>
             
             <FadeIn delay={0.1}>
@@ -225,7 +256,7 @@ export default function Home() {
                   <Smartphone className="w-8 h-8 text-primary" />
                 </div>
                 <h3 className="text-2xl font-black uppercase tracking-tight mb-4">Set Your Terms</h3>
-                <p className="text-muted-foreground font-medium leading-relaxed">Trades set their day rate, skills, and travel radius. Builders post site needs, duration, and budget. The algorithm filters the noise.</p>
+                <p className="text-muted-foreground font-medium leading-relaxed">Trades set their day rate, skills, and travel radius. Builders post site needs, duration, and budget. Upload your tickets once and they're verified for every job.</p>
               </div>
             </FadeIn>
 
@@ -235,7 +266,7 @@ export default function Home() {
                   <Zap className="w-8 h-8 text-accent" />
                 </div>
                 <h3 className="text-2xl font-black uppercase tracking-tight mb-4">Swipe to Match</h3>
-                <p className="text-muted-foreground font-medium leading-relaxed">Review anonymous profiles highlighting only what matters: tickets, distance, rate, and past ratings. Right swipe if they fit.</p>
+                <p className="text-muted-foreground font-medium leading-relaxed">Review profiles showing only what matters: tickets, distance, rate, and past ratings. Right swipe if they fit. It's mutual — both sides have to say yes.</p>
               </div>
             </FadeIn>
 
@@ -245,7 +276,7 @@ export default function Home() {
                   <CheckCircle className="w-8 h-8 text-foreground" />
                 </div>
                 <h3 className="text-2xl font-black uppercase tracking-tight mb-4">Chat & Hire</h3>
-                <p className="text-muted-foreground font-medium leading-relaxed">When both sides swipe right, it's a match. Instant messaging opens up. Agree on start times, share site inductions, get to work.</p>
+                <p className="text-muted-foreground font-medium leading-relaxed">When both sides swipe right, instant messaging opens up. Agree on start times, share site inductions, get to work. No middleman, no delays.</p>
               </div>
             </FadeIn>
           </div>
@@ -286,10 +317,10 @@ export default function Home() {
                   
                   <div className="bg-card border border-border p-6 transform hover:-translate-y-1 transition-transform shadow-sm">
                     <div className="w-12 h-12 bg-foreground/5 flex items-center justify-center mb-6">
-                      <ShieldCheck className="w-6 h-6 text-foreground" />
+                      <FileText className="w-6 h-6 text-foreground" />
                     </div>
                     <h3 className="font-black text-xl mb-2 uppercase tracking-tight">Digital Tickets</h3>
-                    <p className="text-sm font-medium text-muted-foreground leading-relaxed">Upload your CSCS, SMSTS, and IPAF once. We verify them automatically so you never have to email photos of them again.</p>
+                    <p className="text-sm font-medium text-muted-foreground leading-relaxed">Upload your CSCS, SMSTS, IPAF, PASMA, First Aid, and insurance docs once. Verified and ready to share — no more emailing photos.</p>
                   </div>
                   
                   <div className="bg-card border border-border p-6 sm:mt-12 transform hover:-translate-y-1 transition-transform shadow-sm">
@@ -326,11 +357,11 @@ export default function Home() {
                   
                   <div className="flex items-center gap-4 bg-card border border-border p-4 shadow-sm">
                     <div className="w-12 h-12 flex-shrink-0 bg-secondary flex items-center justify-center border border-border">
-                      <Star className="w-6 h-6 text-accent" />
+                      <Award className="w-6 h-6 text-accent" />
                     </div>
                     <div>
-                      <div className="font-black uppercase tracking-tight">Build your reputation</div>
-                      <div className="text-sm text-muted-foreground">Get rated after every job. High ratings = higher rates.</div>
+                      <div className="font-black uppercase tracking-tight">Worker Boost — £9.99/mo</div>
+                      <div className="text-sm text-muted-foreground">Verified badge, priority listing, instant job alerts. 7-day free trial.</div>
                     </div>
                   </div>
                 </div>
@@ -365,7 +396,7 @@ export default function Home() {
                   </div>
                   <div className="pt-2 pb-6">
                     <h4 className="font-black text-xl uppercase tracking-tight mb-2">Post requirement</h4>
-                    <p className="text-muted-foreground font-medium bg-secondary border border-border p-4 text-sm">
+                    <p className="text-muted-foreground font-medium bg-secondary border border-border p-4 text-sm font-mono">
                       &gt; Need 2 Carpenters<br/>
                       &gt; Location: Kensington W8<br/>
                       &gt; Duration: 4 weeks<br/>
@@ -379,8 +410,8 @@ export default function Home() {
                     <span className="text-primary font-black">2</span>
                   </div>
                   <div className="pt-2 pb-6">
-                    <h4 className="font-black text-xl uppercase tracking-tight mb-2">Swipe Available Local Labor</h4>
-                    <p className="text-muted-foreground font-medium">The algorithm instantly shows you profiles of verified tradesmen who match your criteria, are available now, and within range.</p>
+                    <h4 className="font-black text-xl uppercase tracking-tight mb-2">Swipe Available Local Labour</h4>
+                    <p className="text-muted-foreground font-medium">The algorithm instantly shows you verified tradespeople who match your criteria, are available now, and within range. Every profile has verified tickets.</p>
                   </div>
                 </div>
 
@@ -406,7 +437,7 @@ export default function Home() {
                 <div className="relative z-10 h-full flex flex-col justify-between">
                   <div className="self-end bg-white/90 backdrop-blur-md border border-border px-4 py-2 flex items-center gap-3 shadow-sm">
                     <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
-                    <span className="font-bold text-xs uppercase tracking-widest text-foreground">Project: Elephant & Castle</span>
+                    <span className="font-bold text-xs uppercase tracking-widest text-foreground">Project: Elephant &amp; Castle</span>
                   </div>
 
                   <div>
@@ -452,7 +483,6 @@ export default function Home() {
               </div>
             </FadeIn>
             
-            {/* Stat overlay */}
             <FadeIn delay={0.4} direction="up" className="absolute -bottom-8 -right-8 bg-primary p-6 border-4 border-background shadow-2xl z-20 max-w-[200px]">
               <div className="text-5xl font-black text-white mb-2">8hr</div>
               <p className="text-xs font-bold uppercase tracking-wider text-white/80 leading-tight">Average time to fill an urgent site vacancy.</p>
@@ -461,64 +491,174 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Pricing Section */}
+      {/* Pricing Section — updated to match actual in-app pricing */}
       <section id="pricing" className="py-24 md:py-32 px-6 bg-background relative overflow-hidden">
-        {/* Background graphic */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/5 rounded-full blur-[120px] pointer-events-none"></div>
 
-        <div className="max-w-4xl mx-auto text-center mb-20 relative z-10">
+        <div className="max-w-5xl mx-auto text-center mb-16 relative z-10">
           <FadeIn>
             <h2 className="text-4xl lg:text-6xl font-black uppercase tracking-tighter mb-6">Straight Up <span className="text-primary">Pricing.</span></h2>
             <p className="text-xl text-muted-foreground font-medium">No hidden agency fees. No percentages taken from day rates. Ever.</p>
           </FadeIn>
         </div>
-        
-        <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-0 relative z-10">
-          <FadeIn direction="right" delay={0.1}>
-            <div className="bg-card border border-border p-10 h-full flex flex-col relative z-0 md:pr-16 shadow-sm">
-              <h3 className="text-2xl font-black uppercase tracking-tight mb-2">For Workers</h3>
-              <div className="flex items-baseline gap-2 mb-6">
-                <span className="text-6xl font-black text-foreground">Free</span>
+
+        {/* Workers row */}
+        <div className="max-w-5xl mx-auto relative z-10 mb-10">
+          <FadeIn>
+            <div className="bg-card border border-border p-8 md:p-10 flex flex-col md:flex-row md:items-center gap-8 shadow-sm">
+              <div className="flex-1">
+                <div className="inline-block bg-primary/10 text-primary text-xs font-bold uppercase tracking-widest px-3 py-1 mb-4">For Workers</div>
+                <div className="flex items-baseline gap-3 mb-3">
+                  <span className="text-5xl font-black text-foreground">Free</span>
+                  <span className="text-muted-foreground font-bold uppercase tracking-wider text-sm">always</span>
+                </div>
+                <p className="text-muted-foreground font-medium text-lg">You do the hard work. We don't take a cut.</p>
               </div>
-              <p className="text-muted-foreground font-medium mb-10 text-lg">You do the hard work. We don't take a cut.</p>
-              
-              <ul className="space-y-5 mb-10 flex-1 text-foreground/80 font-medium">
-                <li className="flex items-center gap-4"><CheckCircle className="w-6 h-6 text-primary flex-shrink-0" /> <span>Unlimited job matching</span></li>
-                <li className="flex items-center gap-4"><CheckCircle className="w-6 h-6 text-primary flex-shrink-0" /> <span>Digital ticket storage (CSCS, etc)</span></li>
-                <li className="flex items-center gap-4"><CheckCircle className="w-6 h-6 text-primary flex-shrink-0" /> <span>Direct messaging with connections</span></li>
-                <li className="flex items-center gap-4"><CheckCircle className="w-6 h-6 text-primary flex-shrink-0" /> <span>Keep 100% of your agreed rate</span></li>
-                <li className="flex items-center gap-4"><CheckCircle className="w-6 h-6 text-primary flex-shrink-0" /> <span><span className="font-bold">Boost:</span> verified badge, priority listing, instant alerts</span></li>
-              </ul>
-              
-              <Button variant="outline" className="w-full bg-transparent hover:bg-foreground/5 text-foreground rounded-none border border-border h-14 font-black uppercase tracking-wider text-lg">Create Profile</Button>
+              <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {[
+                  "Unlimited job matching",
+                  "Digital ticket storage (CSCS, IPAF, PASMA…)",
+                  "Document verification",
+                  "Keep 100% of your agreed rate",
+                  "Direct messaging with matches",
+                  "Apply to jobs directly",
+                ].map((f) => (
+                  <div key={f} className="flex items-center gap-3">
+                    <CheckCircle className="w-5 h-5 text-primary flex-shrink-0" />
+                    <span className="text-sm font-medium">{f}</span>
+                  </div>
+                ))}
+              </div>
+              <div className="md:w-64 flex-shrink-0">
+                <div className="bg-secondary border border-border p-6 text-center">
+                  <div className="flex items-center justify-center gap-1.5 mb-1">
+                    <Award className="w-4 h-4 text-accent" />
+                    <span className="text-xs font-black uppercase tracking-widest text-accent">Worker Boost</span>
+                  </div>
+                  <div className="text-3xl font-black text-foreground mb-0.5">£9.99</div>
+                  <div className="text-xs text-muted-foreground font-bold uppercase tracking-wider mb-4">/month</div>
+                  <div className="bg-accent/10 border border-accent/30 rounded-sm px-3 py-1.5 text-xs font-bold text-accent mb-4">7-day free trial</div>
+                  <ul className="text-left space-y-2 mb-4">
+                    {[
+                      "Verified badge on profile",
+                      "Boosted to top of discover",
+                      "Instant job alerts",
+                      "5 DMs / month before matching",
+                    ].map((b) => (
+                      <li key={b} className="flex items-center gap-2 text-xs font-medium">
+                        <CheckCircle className="w-3.5 h-3.5 text-accent flex-shrink-0" />
+                        {b}
+                      </li>
+                    ))}
+                  </ul>
+                  <Button variant="outline" className="w-full rounded-none border-accent text-accent hover:bg-accent hover:text-white h-10 font-black uppercase text-xs tracking-wider">
+                    Try Free
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </FadeIn>
+        </div>
+
+        {/* Builder tiers */}
+        <div className="max-w-5xl mx-auto relative z-10">
+          <FadeIn>
+            <div className="text-center mb-8">
+              <div className="inline-block bg-accent/10 text-accent text-xs font-bold uppercase tracking-widest px-3 py-1 mb-2">For Hirers</div>
+              <p className="text-muted-foreground font-medium">Start with 5 free swipes, then choose the plan that fits your site.</p>
             </div>
           </FadeIn>
 
-          <FadeIn direction="left" delay={0.2}>
-            <div className="bg-primary p-10 h-full flex flex-col relative z-10 shadow-[0_0_50px_rgba(59,130,246,0.3)] md:-ml-8 md:my-[-20px]">
-              <div className="absolute top-0 right-0 bg-foreground text-background text-xs font-black uppercase tracking-widest px-4 py-2 border-b border-l border-white/10">Most Popular</div>
-              
-              <h3 className="text-2xl font-black uppercase tracking-tight mb-2 text-white mt-4">For Hirers</h3>
-              <div className="flex items-baseline gap-2 mb-1">
-                <span className="text-white/70 uppercase tracking-widest text-sm font-bold">from</span>
-                <span className="text-6xl font-black text-white">£14.90</span>
-                <span className="text-white/70 uppercase tracking-widest text-sm font-bold">/month</span>
+          <div className="grid md:grid-cols-3 gap-0">
+            {/* Basic */}
+            <FadeIn delay={0.1} direction="right">
+              <div className="bg-card border border-border p-8 h-full flex flex-col shadow-sm hover:bg-secondary/30 transition-colors">
+                <h3 className="text-xl font-black uppercase tracking-tight mb-1 text-foreground">Basic</h3>
+                <div className="flex items-baseline gap-1 mb-1">
+                  <span className="text-4xl font-black text-foreground">£14.90</span>
+                  <span className="text-muted-foreground text-sm font-bold uppercase tracking-wider">/mo</span>
+                </div>
+                <p className="text-sm text-accent font-bold mb-6">+ £8 per placement</p>
+                <ul className="space-y-3 mb-8 flex-1 text-sm font-medium text-foreground/80">
+                  {[
+                    "Unlimited swipes",
+                    "3 job posts / month",
+                    "Browse worker contact info",
+                    "Matched workers messaging",
+                  ].map((f) => (
+                    <li key={f} className="flex items-center gap-3">
+                      <CheckCircle className="w-4 h-4 text-primary flex-shrink-0" />
+                      {f}
+                    </li>
+                  ))}
+                </ul>
+                <Button variant="outline" className="w-full rounded-none h-12 font-black uppercase tracking-wider border-border hover:bg-foreground/5">Get Started</Button>
               </div>
-              <div className="flex items-center gap-2 mb-6">
-                <span className="bg-accent/30 text-accent font-black text-sm px-3 py-1 rounded-full">+ £5 per successful match</span>
+            </FadeIn>
+
+            {/* Pro — featured */}
+            <FadeIn delay={0.2}>
+              <div className="bg-primary p-8 h-full flex flex-col relative shadow-[0_0_50px_rgba(59,130,246,0.25)] md:-my-4 md:z-10">
+                <div className="absolute top-0 right-0 bg-foreground text-background text-[10px] font-black uppercase tracking-widest px-3 py-1.5">Most Popular</div>
+                <h3 className="text-xl font-black uppercase tracking-tight mb-1 text-white mt-3">Pro</h3>
+                <div className="flex items-baseline gap-1 mb-1">
+                  <span className="text-4xl font-black text-white">£24.90</span>
+                  <span className="text-white/70 text-sm font-bold uppercase tracking-wider">/mo</span>
+                </div>
+                <p className="text-sm text-accent font-bold mb-6">+ £5 per placement</p>
+                <ul className="space-y-3 mb-8 flex-1 text-sm font-medium text-white">
+                  {[
+                    "Unlimited swipes",
+                    "Unlimited job posts",
+                    "Browse worker contact info",
+                    "5 DMs / month before matching",
+                    "Verified builder badge",
+                  ].map((f) => (
+                    <li key={f} className="flex items-center gap-3">
+                      <CheckCircle className="w-4 h-4 text-accent flex-shrink-0" />
+                      {f}
+                    </li>
+                  ))}
+                </ul>
+                <Button className="w-full bg-foreground hover:bg-foreground/90 text-background rounded-none h-12 font-black uppercase tracking-wider shadow-xl">Get Started</Button>
               </div>
-              <p className="text-white/90 font-medium mb-8 text-base leading-snug">Low monthly base. Only pay when you find the right person. No agency fees ever.</p>
-              
-              <ul className="space-y-4 mb-8 flex-1 text-white font-medium">
-                <li className="flex items-center gap-4"><CheckCircle className="w-6 h-6 text-accent flex-shrink-0" /> <span>Post unlimited job requirements</span></li>
-                <li className="flex items-center gap-4"><CheckCircle className="w-6 h-6 text-accent flex-shrink-0" /> <span>Browse verified worker profiles</span></li>
-                <li className="flex items-center gap-4"><CheckCircle className="w-6 h-6 text-accent flex-shrink-0" /> <span>Access to verified CSCS database</span></li>
-                <li className="flex items-center gap-4"><CheckCircle className="w-6 h-6 text-accent flex-shrink-0" /> <span>Instant chat & hiring tools</span></li>
-                <li className="flex items-center gap-4 bg-white/10 p-2 -mx-2"><CheckCircle className="w-6 h-6 text-accent flex-shrink-0" /> <span className="font-bold">Pro plan: £24.90/mo + boosts & badge</span></li>
-              </ul>
-              
-              <Button className="w-full bg-foreground hover:bg-foreground/90 text-background rounded-none h-14 font-black uppercase tracking-wider text-lg shadow-xl">Get Started</Button>
-            </div>
+            </FadeIn>
+
+            {/* Elite */}
+            <FadeIn delay={0.3} direction="left">
+              <div className="bg-card border border-border p-8 h-full flex flex-col shadow-sm hover:bg-secondary/30 transition-colors">
+                <div className="flex items-center justify-between mb-1">
+                  <h3 className="text-xl font-black uppercase tracking-tight text-foreground">Elite</h3>
+                  <span className="text-[10px] bg-accent/20 text-accent font-black uppercase tracking-wider px-2 py-0.5 rounded-sm">Best value</span>
+                </div>
+                <div className="flex items-baseline gap-1 mb-1">
+                  <span className="text-4xl font-black text-foreground">£49.90</span>
+                  <span className="text-muted-foreground text-sm font-bold uppercase tracking-wider">/mo</span>
+                </div>
+                <p className="text-sm text-green-500 font-bold mb-6">No placement fee</p>
+                <ul className="space-y-3 mb-8 flex-1 text-sm font-medium text-foreground/80">
+                  {[
+                    "Unlimited swipes",
+                    "Unlimited job posts",
+                    "Browse worker contact info",
+                    "Unlimited DMs before matching",
+                    "Verified builder badge",
+                    "Priority support & analytics",
+                    "Job listings boosted to top",
+                  ].map((f) => (
+                    <li key={f} className="flex items-center gap-3">
+                      <CheckCircle className="w-4 h-4 text-primary flex-shrink-0" />
+                      {f}
+                    </li>
+                  ))}
+                </ul>
+                <Button variant="outline" className="w-full rounded-none h-12 font-black uppercase tracking-wider border-border hover:bg-foreground/5">Get Started</Button>
+              </div>
+            </FadeIn>
+          </div>
+          
+          <FadeIn delay={0.4}>
+            <p className="text-center text-sm text-muted-foreground font-medium mt-6">All plans billed monthly. Cancel any time from the app. Placement fee charged only when a hire is confirmed.</p>
           </FadeIn>
         </div>
       </section>
@@ -559,10 +699,10 @@ export default function Home() {
           <div>
             <h4 className="font-black text-foreground uppercase tracking-wider mb-6">Platform</h4>
             <ul className="space-y-4 text-sm font-medium text-muted-foreground">
-              <li><a href="#" className="hover:text-primary transition-colors">For Workers</a></li>
-              <li><a href="#" className="hover:text-primary transition-colors">For Hirers</a></li>
-              <li><a href="#" className="hover:text-primary transition-colors">Pricing</a></li>
-              <li><a href="#" className="hover:text-primary transition-colors">Safety & Verification</a></li>
+              <li><a href="#trades" className="hover:text-primary transition-colors">For Workers</a></li>
+              <li><a href="#builders" className="hover:text-primary transition-colors">For Hirers</a></li>
+              <li><a href="#pricing" className="hover:text-primary transition-colors">Pricing</a></li>
+              <li><a href="#" className="hover:text-primary transition-colors">Safety &amp; Verification</a></li>
             </ul>
           </div>
           
@@ -585,7 +725,7 @@ export default function Home() {
         </div>
         
         <div className="max-w-7xl mx-auto pt-8 border-t border-border text-center md:text-left flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-sm text-muted-foreground font-medium">© {new Date().getFullYear()} BuildMatch Limited. Registered in England & Wales · Company No. 17191553</p>
+          <p className="text-sm text-muted-foreground font-medium">© {new Date().getFullYear()} BuildMatch Limited. Registered in England &amp; Wales · Company No. 17191553</p>
           <div className="flex gap-3 items-center">
             <a href="#" className="hover:opacity-80 transition-opacity" style={{ display: 'flex', alignItems: 'center', height: 40, overflow: 'hidden' }}>
               <img src={`${import.meta.env.BASE_URL}images/badge-app-store.svg`} alt="Download on the App Store" style={{ height: 40, width: 'auto' }} />
