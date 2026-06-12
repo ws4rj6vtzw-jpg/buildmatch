@@ -9,3 +9,4 @@
 - [Phone auth — API OTP not Firebase](phone-auth-api-otp.md) — AuthContext must use api.sendOtp/api.verifyOtp, NOT Firebase signInWithPhoneNumber; Firebase triggers reCAPTCHA on iOS (no APNs) which crashes via expo-router +not-found
 - [S3 upload — OTA unreliable, use native builds](s3-upload-ota-issue.md) — OTAs pushed to production branch never applied to device; original binary had no S3 upload (stored local URIs directly); fix requires new native build
 - [OTA can't fix embedded-bundle crashes](ota-embedded-crash-limit.md) — with fallbackToCacheTimeout=0, OTAs cannot fix startup crashes baked into the embedded bundle; only a new native build works
+- [iOS 26 crash — worklets incompatibility](ios26-worklets-crash.md) — worklets@0.5.1 crashes before JS on iOS 26; fix is worklets@0.8.3 + reanimated@4.3.1 (both support RN 0.81.x, no SDK upgrade needed)

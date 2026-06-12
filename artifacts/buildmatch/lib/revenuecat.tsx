@@ -65,10 +65,13 @@ const SubscriptionContext = createContext<SubscriptionState>({
 
 type OnProChange = (isPro: boolean) => void;
 
-function detectBuilderTier(activeSubscriptions: Set<string>): BuilderTier {
-  if (activeSubscriptions.has(ELITE_PRODUCT)) return "elite";
-  if (activeSubscriptions.has(PRO_PRODUCT)) return "pro";
-  if (activeSubscriptions.has(BASIC_PRODUCT)) return "basic";
+function detectBuilderTier(activeSubscriptions: string[] | Set<string>): BuilderTier {
+  const subs = Array.isArray(activeSubscriptions)
+    ? new Set(activeSubscriptions)
+    : activeSubscriptions;
+  if (subs.has(ELITE_PRODUCT)) return "elite";
+  if (subs.has(PRO_PRODUCT)) return "pro";
+  if (subs.has(BASIC_PRODUCT)) return "basic";
   return "none";
 }
 
